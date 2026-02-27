@@ -1,0 +1,514 @@
+{
+  "title": {
+    "smartbank": "البنك الذكي",
+    "smartbankatm": "ماكينة الصراف الآلي للبنك الذكي"
+  },
+  "mode": {
+    "light": "فاتح",
+    "dark": "داكن",
+    "system": "النظام"
+  },
+  "dashboard": {
+    "overview": "نظرة عامة",
+    "analytics": "التحليلات",
+    "cards": "البطاقات",
+    "settings": "الإعدادات",
+    "recentTransactions": "المعاملات الأخيرة",
+    "transactionsOverview": "نظرة عامة على المعاملات",
+    "creditsVsDebits": "الإيداعات مقابل السحوبات (آخر 6 أشهر)",
+    "authorizeDevice": "تفويض جهاز ثانوي",
+    "all": "الكل",
+    "in": "داخل",
+    "out": "خارج",
+    "hi": "مرحباً،",
+    "yourBalanceIs": "رصيدك هو",
+    "noTransactions": "لا توجد معاملات",
+    "loading": "جارٍ التحميل...",
+    "wallet": "المحفظة",
+    "securebank": "بنك آمن وموثوق",
+    "nodata": "لا توجد بيانات للعرض"
+  },
+  "actions": {
+    "addBeneficiary": "إضافة مستفيد",
+    "transfer": "تحويل",
+    "adding": "جارٍ الإضافة...",
+    "fullname": "الاسم الكامل",
+    "nickname": "الكنية",
+    "iban": "رقم الحساب المصرفي الدولي",
+    "accountno": "رقم الحساب"
+  },
+  "header": {
+    "myAccount": "حسابي",
+    "profile": "الملف الشخصي",
+    "signOut": "تسجيل الخروج"
+  },
+  "atm-dashboard": {
+    "card_slot": "فتحة البطاقة",
+    "header": {
+      "title": "ماكينة الصراف الآلي للبنك الذكي"
+    },
+    "softkeys": {
+      "left": {
+        "accountInfo": "معلومات الحساب",
+        "withdraw": "سحب",
+        "deposit": "إيداع"
+      },
+      "right": {
+        "pinChange": "تغيير الرقم السري",
+        "balance": "الرصيد",
+        "otherServices": "خدمات أخرى"
+      }
+    },
+    "screen": {
+      "welcome": "مرحبًا بكم في ماكينة الصراف الآلي للبنك الذكي",
+      "instructions1": "استخدم الأزرار الجانبية لاختيار الخدمة. ستظهر الشاشة المحددة هنا.",
+      "instructions2": "عند الطلب، أدخل الأرقام باستخدام لوحة المفاتيح.",
+      "pressToBegin": "اضغط على زر جانبي للبدء.",
+      "balanceTitle": "الرصيد",
+      "accountTitle": "معلومات الحساب",
+      "otherTitle": "خدمات أخرى",
+      "otherMessage": "يرجى زيارة التطبيق أو الفرع للمزيد من الخدمات.",
+      "withdrawTitle": "السحب النقدي",
+      "depositTitle": "الإيداع النقدي",
+      "transferTitle": "تحويل الأموال",
+      "pinChangeTitle": "تغيير الرقم السري",
+      "withdrawDesc": "أدخل المبلغ للسحب.",
+      "depositDesc": "أدخل المبلغ للإيداع.",
+      "transferDesc": "أدخل حساب المستفيد والمبلغ.",
+      "pinChangeDesc": "أدخل رقمًا سريًا جديدًا مكونًا من 4–6 أرقام.",
+      "recipientLabel": "حساب المستفيد",
+      "amountLabel": "المبلغ",
+      "enterAmountPlaceholder": "أدخل المبلغ",
+      "newPinLabel": "الرقم السري الجديد",
+      "enterPinPlaceholder": "أدخل رقمًا سريًا من 4–6 أرقام",
+      "denominationInfo": "الفئات {value} فقط متاحة.",
+      "useKeypad": "استخدم لوحة المفاتيح لإدخال الأرقام.",
+      "processing": "جارٍ المعالجة...",
+      "submit": "إرسال",
+      "close": "إغلاق",
+      "receiptTitle": "الإيصال",
+      "useCloseHint": "اضغط إغلاق للعودة إلى الشاشة الرئيسية.",
+      "keypadHint": "استخدم لوحة المفاتيح: الأرقام للإدخال، Enter للإرسال، Clear للمسح، Cancel للعودة."
+    },
+    "messages": {
+      "withdrawFailed": "فشل السحب",
+      "withdrawSuccessful": "تم السحب بنجاح",
+      "withdrawDeclined": "تم رفض السحب",
+      "withdrawTimeout": "انتهت مهلة السحب",
+      "withdrawError": "خطأ أثناء السحب",
+      "depositSuccessful": "تم الإيداع بنجاح",
+      "transferSuccessful": "تم التحويل بنجاح",
+      "transferFailed": "فشل التحويل",
+      "pinChangeFailed": "فشل تغيير الرقم السري",
+      "pinChanged": "تم تغيير الرقم السري بنجاح",
+      "noReceipt": "لا يوجد إيصال حديث"
+    },
+    "keypad": {
+      "enter": "إدخال",
+      "clear": "مسح"
+    }
+  },
+  "demo": {
+    "actionsPage": {
+      "title": "إجراءات التحقق",
+      "description": "قم بتنفيذ خطوات التحقق الأساسية واختبار مصادقة 3-D Secure.",
+      "createUser": "إنشاء مستخدم",
+      "callVerification": "التحقق عبر الاتصال",
+      "salesVerification": "التحقق من المبيعات",
+      "3dsTitle": "3-DS",
+      "3dsDescription": "دفع آمن",
+      "proceedTo3ds": "المتابعة إلى 3DS",
+      "needHelp": "هل تحتاج مساعدة؟",
+      "viewLogs": "عرض السجلات",
+      "settings": "الإعدادات"
+    },
+    "createUserPage": {
+      "title": "إنشاء مستخدم",
+      "customerId": "رقم العميل",
+      "customerIdPlaceholder": "CUST12345",
+      "fullName": "الاسم الكامل",
+      "fullNamePlaceholder": "John Doe",
+      "phonePlaceholder": "أدخل رقم الهاتف...",
+      "username": "اسم المستخدم",
+      "usernamePlaceholder": "johndoe",
+      "phoneNumber": "رقم الهاتف",
+      "cardNumber": "رقم البطاقة",
+      "cardNumberPlaceholder": "4111111111111111",
+      "submit": "إرسال",
+      "submitting": "جارٍ الإرسال...",
+      "errorMissingFields": "يرجى ملء جميع الحقول قبل الإرسال.",
+      "errorNoToken": "لم يتم العثور على رمز تسجيل الدخول. يرجى تسجيل الدخول أولاً.",
+      "successMessage": "تم إنشاء المستخدم بنجاح",
+      "errorMessage": "حدث خطأ أثناء إنشاء المستخدم"
+    },
+    "orderSummaryPage": {
+      "title": "ملخص الطلب",
+      "product": {
+        "name": "MacBook Pro M4 — فضي",
+        "display": "شاشة 14 بوصة",
+        "alt": "MacBook Pro M4 فضي"
+      },
+      "price": {
+        "details": "تفاصيل السعر",
+        "items": "العناصر:",
+        "shipping": "الشحن والمناولة:",
+        "total": "الإجمالي:"
+      },
+      "payment": {
+        "title": "معلومات الدفع",
+        "cardBrand": "فيزا",
+        "masked": "**** 1234",
+        "bank": "البنك",
+        "amountPaid": "المبلغ المدفوع:",
+        "amountRemaining": "المبلغ المتبقي:",
+        "orderTotal": "إجمالي الطلب:"
+      },
+      "actions": {
+        "payNow": "ادفع الآن",
+        "viewReceipt": "عرض الإيصال",
+        "viewReceiptAlert": "جارٍ عرض الإيصال...",
+        "done": "تم"
+      },
+      "dialog": {
+        "title": "اكتمل الشراء",
+        "description": "تمت معالجة الدفع بنجاح."
+      }
+    },
+    "salesVerificationPage": {
+      "title": "التحقق من المبيعات",
+      "employeeId": "رقم الموظف",
+      "employeeIdPlaceholder": "أدخل رقم الموظف",
+      "verify": "تحقق",
+      "error": "خطأ في التحقق من المبيعات",
+      "successPrefix": "التحقق من المبيعات:"
+    },
+    "callVerificationPage": {
+      "title": "التحقق عبر الاتصال",
+      "employeeId": "رقم الموظف",
+      "employeeIdPlaceholder": "أدخل رقم الموظف",
+      "verify": "تحقق",
+      "error": "خطأ في التحقق عبر الاتصال",
+      "successPrefix": "التحقق عبر الاتصال:"
+    }
+  },
+  "bankLoginPage": {
+    "title":" مرحبًا بكم في البنك الذكي",
+    "subtitle": "يرجى تسجيل الدخول باستخدام رقم العميل للمتابعة.",
+    "customerIdLabel": "رقم العميل",
+    "customerIdPlaceholder": "أدخل رقم العميل",
+    "customerIdTooltip": "معرّفك الفريد لدى البنك الذكي.",
+    "login": "تسجيل الدخول",
+    "bind": "ربط",
+    "loggingIn": "جارٍ تسجيل الدخول...",
+    "binding": "جارٍ الربط...",
+    "termsText": "بمتابعتك، أنت توافق على",
+    "privacyPolicy": "سياسة الخصوصية",
+    "terms": "الشروط والأحكام",
+    "and": "و",
+    "poweredBy": "مدعوم من",
+    "atm_id": "إذا كنت تريد الوصول عبر الصراف الذكي للبنك",
+    "click_here": "اضغط هنا",
+    "toast": {
+      "loginSuccess": {
+        "title": "تم تسجيل الدخول بنجاح",
+        "description": "جارٍ تحويلك إلى صفحة QR..."
+      },
+      "loginError": {
+        "title": "فشل تسجيل الدخول",
+        "description": "يرجى التحقق من رقم العميل والمحاولة مرة أخرى.",
+        "destructive": "تدميري",
+        "failed_auth": "فشل في بدء عملية التحقق من الجهاز"
+      }
+    },
+    "redirectKeycloak": "جارٍ تحويلك إلى Keycloak..."
+  },
+  "atmLoginPage": {
+    "title": "ماكينة الصراف الآلي للبنك الذكي",
+    "subtitle": "يرجى تسجيل الدخول باستخدام رقم العميل للمتابعة.",
+    "customerIdLabel": "رقم العميل",
+    "customerIdPlaceholder": "أدخل رقم العميل",
+    "customerIdTooltip": "معرّف ATM الخاص بك من البنك الذكي.",
+    "bind": "ربط",
+    "binding": "جارٍ الربط...",
+    "footerNote": "الوصول مسموح فقط لمشغّلي أجهزة الصراف المصرح لهم.",
+    "poweredBy": "مدعوم من",
+    "toast": {
+      "loginSuccess": {
+        "title": "تم منح الوصول",
+        "description": "جارٍ تحويلك إلى صفحة QR..."
+      },
+      "loginError": {
+        "title": "فشل تسجيل الدخول",
+        "description": "يرجى التحقق من رقم العميل والمحاولة مرة أخرى."
+      }
+    }
+  },
+  "bankQRPage": {
+    "title": "امسح لتسجيل الدخول",
+    "subtitle": "استخدم تطبيق الهاتف لمسح رمز الاستجابة السريعة.",
+    "status": "الحالة:",
+    "expire_timer": "⏳ تنتهي خلال",
+    "Connectionissue": "مشكلة في الاتصال",
+
+    "Security": {
+      "warning": "تحذير أمني"
+    },
+
+    "Session": {
+      "expired": "انتهت الجلسة",
+      "error": "لم يتم العثور على جلسة",
+      "error_description": "يرجى بدء جلسة تسجيل دخول جديدة.",
+      "expired_description": "ارجع إلى صفحة تسجيل الدخول لبدء جلسة QR جديدة.",
+
+      "cancelled": "تم إلغاء جلسة رمز الاستجابة السريعة",
+      "cancelled_description": "حرصًا على أمانك، تم إلغاء جلسة تسجيل الدخول باستخدام رمز الاستجابة السريعة.",
+      "window_switch_detected": "تم إلغاء هذه الجلسة لأنه تم تبديل التطبيق أو نافذة المتصفح."
+    },
+
+    "login": {
+      "guide_title": "طريقة تسجيل الدخول",
+      "subtitle_1": "افتح تطبيق البنك الذكي ← 'تسجيل الدخول عبر QR'.",
+      "Condition": "يرجى إبقاء هذه الصفحة مفتوحة حتى يتم التحقق.",
+      "backbutton": "العودة إلى تسجيل الدخول"
+    }
+  },
+  "atmQRPage": {
+    "title": "امسح للتسجيل الدخول",
+    "subtitle": "استخدم التطبيق لمسح رمز QR.",
+    "status": "الحالة:",
+    "expire_timer": "⏳ تنتهي في",
+    "Connectionissue": "مشكلة في الاتصال",
+    "Session": {
+      "expired": "انتهت الجلسة",
+      "error": "لم يتم العثور على جلسة",
+      "error_description": "يرجى بدء جلسة تسجيل دخول جديدة.",
+      "expired_description": "ارجع إلى صفحة تسجيل الدخول لبدء جلسة QR جديدة."
+    },
+    "login": {
+      "guide_title": "كيفية تسجيل الدخول",
+      "subtitle_1": "افتح التطبيق → تسجيل الدخول QR",
+      "Condition": "أبقِ الصفحة مفتوحة حتى يتم التحقق.",
+      "backbutton": "العودة لتسجيل الدخول"
+    }
+  },
+
+  "policy": {
+    "title": "سياسة الخصوصية",
+    "para1": "في Fidar Technologies، نحن ملتزمون بحماية خصوصيتك وضمان سرية بياناتك الشخصية.",
+    "section1": "1. المعلومات التي نجمعها",
+    "section1_body": "نجمع معلومات مثل الاسم، البريد الإلكتروني، رقم العميل، وبيانات تقنية متعلقة بالجهاز والمتصفح.",
+    "section2": "2. كيفية استخدام المعلومات",
+    "section2_body": "نستخدم بياناتك للتحقق من الهوية، تحسين الخدمات، وتعزيز الأمان السيبراني.",
+    "section3": "3. أمان البيانات",
+    "section3_body": "يتم تشفير جميع البيانات الحساسة وفقاً لمعايير الأمن الحديثة لمنع الوصول غير المصرح به.",
+    "section4": "4. حقوقك",
+    "section4_body": "يمكنك طلب الوصول إلى بياناتك، تعديلها، أو حذفها في أي وقت.",
+    "lastUpdated": "آخر تحديث: نوفمبر 2025",
+    "back": "← العودة"
+  },
+
+  "terms": {
+    "title": "الشروط والأحكام",
+    "para1": "باستخدام خدمات Fidar Technologies، فإنك توافق على الالتزام بالشروط الموضحة أدناه.",
+    "section1": "1. الاستخدام المصرح به",
+    "section1_body": "يجب استخدام المنصة لأغراض قانونية ومصرح بها فقط.",
+    "section2": "2. مسؤولية الحساب",
+    "section2_body": "أنت مسؤول عن الحفاظ على سرية بيانات تسجيل الدخول الخاصة بك.",
+    "section3": "3. الملكية الفكرية",
+    "section3_body": "جميع المحتوى والبرمجيات مملوكة لـ Fidar Technologies ولا يجوز نسخها أو استخدامها دون إذن.",
+    "section4": "4. القانون المعمول به",
+    "section4_body": "تخضع هذه الشروط للقوانين المعمول بها في منطقتك.",
+    "lastUpdated": "آخر تحديث: نوفمبر 2025",
+    "back": "← العودة"
+  },
+
+  "errors": {
+    "genericTitle": "حدث خطأ ما",
+    "genericMessage": "الرجاء المحاولة مرة أخرى.",
+
+    "networkTitle": "مشكلة في الشبكة",
+    "networkMessage": "تعذّر الاتصال. يرجى التحقق من اتصال الإنترنت.",
+
+    "invalidRequestTitle": "طلب غير صالح",
+
+    "authTitle": "فشل في المصادقة",
+    "authMessage": "انتهت صلاحية جلستك أو تم رفض الوصول.",
+
+    "notFoundTitle": "غير موجود",
+    "notFoundMessage": "لم يتم العثور على الحساب المطلوب.",
+
+    "expiredTitle": "انتهت الجلسة",
+    "expiredMessage": "يرجى المحاولة مرة أخرى.",
+
+    "serverTitle": "خطأ في الخادم",
+    "serverMessage": "حدث خطأ ما في الخادم.",
+
+    "unknownTitle": "خطأ غير متوقع"
+  },
+
+
+
+  "settingsPage": {
+    "title": "الإعدادات",
+
+    "profile": {
+      "title": "إعدادات الملف الشخصي",
+      "description": "قم بتحديث معلومات ملفك الشخصي.",
+      "fullName": "الاسم الكامل",
+      "emailAddress": "البريد الإلكتروني",
+      "saveChanges": "حفظ التغييرات"
+    },
+
+    "security": {
+      "title": "إعدادات الأمان",
+      "description": "قم بتحديث كلمة المرور لتأمين حسابك.",
+      "currentPassword": "كلمة المرور الحالية",
+      "newPassword": "كلمة المرور الجديدة",
+      "updatePassword": "تحديث كلمة المرور"
+    },
+
+    "twofa": {
+      "title": "المصادقة الثنائية (2FA)",
+      "description": "أضف طبقة إضافية لحماية حسابك.",
+      "enable": "تفعيل المصادقة الثنائية"
+    },
+
+    "devices": {
+      "title": "إدارة الأجهزة",
+      "description": "إدارة الأجهزة التي سجلت الدخول إلى حسابك.",
+      "lastActive": "آخر نشاط",
+      "remove": "إزالة"
+    },
+
+    "preferences": {
+      "title": "تفضيلات التطبيق",
+      "description": "اختر اللغة والثيم وإعدادات الإشعارات.",
+      "open": "فتح التفضيلات"
+    }
+  },
+
+  "analyticsPage": {
+  "jan": "يناير",
+  "feb": "فبراير",
+  "mar": "مارس",
+  "apr": "أبريل",
+  "may": "مايو",
+  "jun": "يونيو",
+  "amount": "المبلغ",
+
+  "shopping": "التسوق",
+  "bills": "الفواتير",
+  "transfers": "التحويلات",
+  "travel": "السفر",
+  "atm": "الصراف الآلي",
+  "groceries": "البقالة",
+  "others": "أخرى",
+
+  "totalIncome": "إجمالي الدخل",
+  "totalExpenses": "إجمالي المصروفات",
+  "netSavings": "صافي الادخار",
+  "monthlyChange": "التغيير الشهري",
+
+  "last6months": "آخر 6 أشهر",
+  "afterExpenses": "بعد المصروفات",
+  "comparedToLastMonth": "مقارنة بالشهر الماضي",
+
+  "spendingBreakdown": "تفصيل الإنفاق",
+  "incomeVsExpense6Months": "الدخل مقابل المصروفات (6 أشهر)",
+  "topSpendingCategories": "أفضل فئات الإنفاق",
+
+  "monthlyInsight": "📊 رؤى شهرية",
+  "monthlyInsightDesc": "انخفض إنفاقك بنسبة 14% هذا الشهر. تحكم مالي ممتاز!",
+
+  "depositActivity": "💰 نشاط الإيداعات",
+  "depositActivityDesc": "تلقيت 3 إيداعات عالية القيمة هذا الأسبوع."
+},
+  "cardsPage": {
+  "manageCards": "إدارة البطاقات",
+  "validThru": "صالح حتى",
+  "freeze": "تجميد",
+  "replace": "استبدال",
+  "cardSecurity": "أمان البطاقة والتحكم",
+  "cardSecurityDesc": "إدارة حدود الإنفاق، الاستخدام الدولي، المعاملات عبر الإنترنت، والدفع بدون تلامس والتحقق عبر التطبيق.",
+  "spendingLimit": "تعيين حد الإنفاق",
+  "onlineUse": "تفعيل/تعطيل الاستخدام عبر الإنترنت",
+  "pinSettings": "إعدادات رقم البطاقة السري",
+  "addNewCard": "إضافة بطاقة جديدة",
+  "applyNow": "تقديم الطلب الآن",
+  "applyCardDesc": "قدّم طلب الحصول على بطاقة خصم أو ائتمان جديدة خلال بضع خطوات.",
+  "credit": "ائتمان",
+  "debit": "خصم"
+},
+
+  "landing.header_logo": "شعار FIDAR",
+
+  "landing.nav_features": "المميزات",
+  "landing.nav_security": "الأمان",
+  "landing.nav_customers": "العملاء",
+  "landing.nav_contact": "تواصل",
+  "landing.nav_login": "تسجيل الدخول",
+
+  "landing.hero_title": "الثقة، مُستعادة.",
+  "landing.hero_subtitle": "منصة مصادقة مقاومة للتصيد تعتمد على بنية صفر ثقة — مدعومة بالتشفير والذكاء السلوكي والذكاء الاصطناعي لحماية العملاء من الاحتيال.",
+  "landing.hero_cta_security": "عرض تفاصيل الأمان",
+
+  "landing.badge_mfa": "مصادقة MFA مقاومة للتصيد",
+  "landing.badge_multilayer": "حماية متعددة الطبقات",
+  "landing.badge_nfc": "ربط جهاز آمن عبر NFC",
+
+  "landing.why_title": "لماذا مصادقة FIDO؟",
+  "landing.why_desc": "تقلل تكلفة الاحتيال، وتحسن التحويلات، وتزيل الحاجة لرموز OTP وأسئلة المعرفة.",
+
+  "landing.why_reduce_title": "تقليل التكاليف",
+  "landing.why_reduce_desc": "إزالة تكلفة رسائل OTP وتقليل العبء التشغيلي.",
+
+  "landing.why_convert_title": "زيادة التحويلات",
+  "landing.why_convert_desc": "تجربة سلسة تقلل التخلي عن العملية.",
+
+  "landing.why_future_title": "جاهزة للمستقبل",
+  "landing.why_future_desc": "ربط أجهزة آمن وتحقق متقدم متوافق مع المعايير الحديثة.",
+
+  "landing.features_title": "القدرات",
+  "landing.features_desc": "مصادقة متعددة القنوات عبر الجوال والويب وأجهزة الصراف ومراكز الاتصال.",
+
+  "landing.f1_title": "مصادقة بدون كلمة مرور",
+  "landing.f1_desc": "تدفقات FIDO المقاومة للتصيد بدون كلمات مرور أو OTP.",
+
+  "landing.f2_title": "المس وانطلق (NFC)",
+  "landing.f2_desc": "ربط جهاز سريع وآمن باستخدام NFC.",
+
+  "landing.f3_title": "3DS 2.0 + تجربة التاجر",
+  "landing.f3_desc": "تبسيط مصادقة الدفع وزيادة السرعة.",
+
+  "landing.f4_title": "مصادقة مراكز الاتصال",
+  "landing.f4_desc": "تحقق آمن بدون PIN أو أسئلة سرية.",
+
+  "landing.security_title": "أمان متعدد الطبقات",
+  "landing.security_desc": "طبقات حماية مستقلة تعمل معًا لضمان حماية شاملة.",
+
+  "landing.s1_title": "حماية متعددة الطبقات",
+  "landing.s1_desc": "لا توجد نقطة فشل واحدة — مصمم للمتانة والاستمرارية.",
+
+  "landing.s2_title": "ذكاء الجهاز والمحيط",
+  "landing.s2_desc": "تحليل سلوكي وبصمة جهازية لتعزيز التحقق.",
+
+  "landing.s3_title": "التكيف مع التهديدات",
+  "landing.s3_desc": "تحليل مخاطر مدفوع بالذكاء الاصطناعي لمواجهة التهديدات.",
+
+  "landing.customers_title": "موثوق به من قبل الشركات",
+  "landing.customers_desc": "تقليل الاحتيال وتحسين تجربة المستخدم عبر مختلف القنوات.",
+
+  "landing.c1_name": "عائشة ر.",
+  "landing.c1_role": "صاحبة مشروع صغير",
+  "landing.c1_quote": "كانت عملية الانضمام سلسة — إضافة المستفيدين فورية والتحويلات أسرع.",
+
+  "landing.c2_name": "رحول س.",
+  "landing.c2_role": "قائد المنتج",
+  "landing.c2_quote": "إزالة رموز OTP حسّنت التحويلات فورًا.",
+
+  "landing.c3_name": "بريا ك.",
+  "landing.c3_role": "مهندسة أمن",
+  "landing.c3_quote": "ربط الأجهزة المتقدم والحماية متعددة الطبقات قللا من مخاطر الاحتيال."
+
+
+}

@@ -1,0 +1,232 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ------------------------------------------------------------------
+   FIDO / Smart-Bank Design Tokens (HSL)
+   Brand Primary: #E40046 (HSL: 341.6 100% 44.7%)
+------------------------------------------------------------------- */
+@layer base {
+  :root {
+    /* LIGHT THEME */
+    --background: 210 40% 98%;
+    --foreground: 220.9 39.3% 11%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 220.9 39.3% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 220.9 39.3% 11%;
+
+    --primary: 341.6 100% 44.7%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 9% 46.1%;
+
+    --accent: 281.7 100% 96%;
+    --accent-foreground: 281.7 67.9% 37.8%;
+
+    --destructive: 347.8 100% 61.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 341.6 100% 44.7%;
+
+    --radius: 0.5rem;
+
+    /* Chart tokens */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Sidebar (light) */
+    --sidebar-background: #ffffff;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 341.6 100% 44.7%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 281.7 100% 96%;
+    --sidebar-accent-foreground: 281.7 67.9% 37.8%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 341.6 100% 44.7%;
+  }
+
+  /* -------------------------
+        DARK THEME TOKENS
+  -------------------------- */
+  .dark {
+    --background: 225.7 48.8% 8.4%;
+    --foreground: 233.3 25.7% 93.1%;
+
+    --card: 230 44.1% 13.3%;
+    --card-foreground: 233.3 25.7% 93.1%;
+
+    --popover: 230 44.1% 13.3%;
+    --popover-foreground: 233.3 25.7% 93.1%;
+
+    --primary: 341.6 100% 44.7%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 236.3 60.9% 26.1%;
+    --secondary-foreground: 233.3 25.7% 93.1%;
+
+    --muted: 228.9 24.3% 21.8%;
+    --muted-foreground: 231.1 18.6% 71.6%;
+
+    --accent: 281.7 67.9% 37.8%;
+    --accent-foreground: 233.3 25.7% 93.1%;
+
+    --destructive: 347.8 100% 61.6%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 228.9 24.3% 21.8%;
+    --input: 228.9 24.3% 21.8%;
+    --ring: 341.6 100% 44.7%;
+
+    --chart-1: 220 70% 50%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 30 80% 55%;
+    --chart-4: 280 65% 60%;
+    --chart-5: 340 75% 55%;
+
+    --sidebar-background: 230 44.1% 13.3%;
+    --sidebar-foreground: 233.3 25.7% 93.1%;
+    --sidebar-primary: 341.6 100% 44.7%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 236.3 60.9% 26.1%;
+    --sidebar-accent-foreground: 233.3 25.7% 93.1%;
+    --sidebar-border: 228.9 24.3% 21.8%;
+    --sidebar-ring: 341.6 100% 44.7%;
+  }
+}
+
+/* Base utility behavior */
+@layer base {
+  * { @apply border-border; }
+  html { @apply antialiased; }
+  body {
+    @apply bg-background text-foreground;
+    /* ❌ removed: background-image: none; */
+  }
+  .dark body {
+    /* ❌ removed: background-image: none; */
+  }
+}
+
+/* ============================================================
+   RTL SUPPORT
+============================================================ */
+body.rtl { direction: rtl; text-align: right; }
+body.rtl .ml-auto { margin-left: 0 !important; margin-right: auto !important; }
+body.rtl .mr-auto { margin-right: 0 !important; margin-left: auto !important; }
+body.rtl .text-left { text-align: right; }
+body.rtl .text-right { text-align: left; }
+
+/* Drawer animations */
+.ltr-slide { animation: slideInLeft 0.3s ease-out; }
+.rtl-slide { animation: slideInRight 0.3s ease-out; }
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(0); }
+}
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to   { transform: translateX(0); }
+}
+
+/* ============================================================
+   PHONE INPUT (RTL SAFE)
+============================================================ */
+.phone-input { position: relative; }
+
+.phone-input .phone-input__field {
+  direction: ltr;
+  padding-inline-start: 3rem;
+  padding-inline-end: .75rem;
+}
+
+.phone-input .phone-input__button {
+  position: absolute !important;
+  top: 50% !important;
+  transform: translateY(-50%);
+  inset-inline-start: .5rem;
+  border: 0 !important;
+  background: transparent !important;
+  z-index: 3;
+  padding: 0 !important;
+}
+
+.phone-input.rtl .phone-input__field {
+  text-align: right;
+  padding-inline-start: .75rem;
+  padding-inline-end: 3rem;
+}
+
+.phone-input.rtl .phone-input__button {
+  inset-inline-start: auto;
+  inset-inline-end: .5rem;
+}
+
+.flag-dropdown { position: absolute !important; }
+
+.phone-input.ltr .flag-dropdown { left: .5rem !important; }
+.phone-input.rtl .flag-dropdown { right: .5rem !important; }
+
+.phone-input .country-list {
+  max-width: min(320px, 92vw);
+}
+
+/* ============================================================
+   HERO ANIMATIONS + GRID + GLOW
+============================================================ */
+
+/* Fade up animation */
+@layer utilities {
+  .animate-fade-up {
+    animation: fadeUp 0.8s ease-out forwards;
+  }
+}
+@keyframes fadeUp {
+  0%   { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+
+/* Floating animation */
+@layer utilities {
+  .animate-float {
+    animation: floatAnim 3s ease-in-out infinite;
+  }
+}
+@keyframes floatAnim {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-6px); }
+}
+
+/* Cyber grid effect */
+@layer utilities {
+  .cyber-grid {
+    background-image: url('/grid.svg');
+    background-size: cover;
+    opacity: 0.06;
+    animation: gridPulse 6s ease-in-out infinite;
+  }
+}
+@keyframes gridPulse {
+  0%, 100% { opacity: 0.06; }
+  50%      { opacity: 0.10; }
+}
+
+/* Glow helper */
+@layer utilities {
+  .red-glow {
+    background: radial-gradient(circle, rgba(228,0,70,0.18) 0%, transparent 70%);
+    filter: blur(90px);
+  }
+}

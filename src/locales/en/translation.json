@@ -1,0 +1,503 @@
+{
+  "title": {
+    "smartbank": "Smart Bank",
+    "smartbankatm": "Smart Bank ATM"
+  },
+  "mode": {
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "dashboard": {
+    "overview": "Overview",
+    "analytics": "Analytics",
+    "cards": "Cards",
+    "settings": "Settings",
+    "recentTransactions": "Recent Transactions",
+    "transactionsOverview": "Transactions Overview",
+    "creditsVsDebits": "Credits vs Debits (last 6 months)",
+    "authorizeDevice": "Authorize secondary device",
+    "all": "All",
+    "in": "In",
+    "out": "Out",
+    "hi": "Hi,",
+    "yourBalanceIs": "Your balance is",
+    "noTransactions": "No transactions found",
+    "loading": "Loading...",
+    "wallet": "Wallet",
+    "securebank": "Secure & Trusted Bank",
+    "nodata": "No data to display"
+  },
+  "actions": {
+    "addBeneficiary": "Add Beneficiary",
+    "transfer": "Transfer",
+    "adding": "Adding...",
+    "fullname": "Full Name",
+    "nickname": "Nickname",
+    "iban": "IBAN",
+    "accountno": "Account Number"
+  },
+  "header": {
+    "myAccount": "My Account",
+    "profile": "Profile",
+    "signOut": "Sign out"
+  },
+  "atm-dashboard": {
+    "card_slot": "Card Slot",
+    "header": {
+      "title": "Smart Bank ATM"
+    },
+    "softkeys": {
+      "left": {
+        "accountInfo": "Account Info",
+        "withdraw": "Withdraw",
+        "deposit": "Deposit"
+      },
+      "right": {
+        "pinChange": "PIN Change",
+        "balance": "Balance",
+        "otherServices": "Other Services"
+      }
+    },
+    "screen": {
+      "welcome": "Welcome to Smart Bank ATM",
+      "instructions1": "Use the side buttons to choose a service. The selected screen will appear here with simple steps.",
+      "instructions2": "When prompted, enter numbers using the keypad. Submit and Close will be shown on each screen.",
+      "pressToBegin": "Press a side button to begin.",
+      "balanceTitle": "Balance",
+      "accountTitle": "Account Info",
+      "otherTitle": "Other Services",
+      "otherMessage": "Please visit the mobile app or branch for additional services.",
+      "withdrawTitle": "Cash Withdrawal",
+      "depositTitle": "Cash Deposit",
+      "transferTitle": "Funds Transfer",
+      "pinChangeTitle": "Change PIN",
+      "withdrawDesc": "Enter the amount to withdraw.",
+      "depositDesc": "Enter the amount to deposit.",
+      "transferDesc": "Enter recipient and amount.",
+      "pinChangeDesc": "Enter a new 4–6 digit PIN.",
+      "recipientLabel": "Recipient Account",
+      "amountLabel": "Amount",
+      "enterAmountPlaceholder": "Enter amount",
+      "newPinLabel": "New PIN",
+      "enterPinPlaceholder": "Enter 4–6 digit PIN",
+      "denominationInfo": "Denominations of {value} only.",
+      "useKeypad": "Use keypad or type to enter amount.",
+      "processing": "Processing…",
+      "submit": "Submit",
+      "close": "Close",
+      "receiptTitle": "Receipt",
+      "useCloseHint": "Use Close to return to the welcome screen.",
+      "keypadHint": "Use keypad: numbers to input, Enter to submit, Clear to erase, Cancel to go back."
+    },
+    "messages": {
+      "withdrawFailed": "Withdrawal Failed",
+      "withdrawSuccessful": "Withdrawal Successful",
+      "withdrawDeclined": "Withdrawal Declined",
+      "withdrawTimeout": "Withdrawal Timeout",
+      "withdrawError": "Withdrawal Error",
+      "depositSuccessful": "Deposit Successful",
+      "transferSuccessful": "Transfer Successful",
+      "transferFailed": "Transfer Failed",
+      "pinChangeFailed": "PIN Change Failed",
+      "pinChanged": "PIN Changed",
+      "noReceipt": "No recent receipt"
+    },
+    "keypad": {
+      "enter": "Enter",
+      "clear": "Clear"
+    }
+  },
+  "demo": {
+    "actionsPage": {
+      "title": "Verification Actions",
+      "description": "Perform key verification steps and test 3-D Secure authentication.",
+      "createUser": "Create User",
+      "callVerification": "Call Verification",
+      "salesVerification": "Sales Verification",
+      "3dsTitle": "3-DS",
+      "3dsDescription": "Secure Payment",
+      "proceedTo3ds": "Proceed to 3DS",
+      "needHelp": "Need help?",
+      "viewLogs": "View Logs",
+      "settings": "Settings"
+    },
+    "createUserPage": {
+      "title": "Create User",
+      "phonePlaceholder": "Enter phone number...",
+      "customerId": "Customer ID",
+      "customerIdPlaceholder": "CUST12345",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "username": "Username",
+      "usernamePlaceholder": "johndoe",
+      "phoneNumber": "Phone Number",
+      "cardNumber": "Card Number",
+      "cardNumberPlaceholder": "4111111111111111",
+      "submit": "Submit",
+      "submitting": "Submitting...",
+      "errorMissingFields": "Please fill in all fields before submitting.",
+      "errorNoToken": "No auth token found in localStorage. Please log in first.",
+      "successMessage": "User created successfully",
+      "errorMessage": "Error creating user"
+    },
+    "orderSummaryPage": {
+      "title": "Order Summary",
+      "product": {
+        "name": "MacBook Pro M4 — Silver",
+        "display": "14-inch Display",
+        "alt": "MacBook Pro M4 Silver"
+      },
+      "price": {
+        "details": "Price Details",
+        "items": "Items:",
+        "shipping": "Shipping & Handling:",
+        "total": "Total:"
+      },
+      "payment": {
+        "title": "Payment Information",
+        "cardBrand": "VISA",
+        "masked": "**** 1234",
+        "bank": "Bank",
+        "amountPaid": "Amount Paid:",
+        "amountRemaining": "Amount Remaining:",
+        "orderTotal": "Order Total:"
+      },
+      "actions": {
+        "payNow": "Pay Now",
+        "viewReceipt": "View Receipt",
+        "viewReceiptAlert": "Viewing receipt...",
+        "done": "Done"
+      },
+      "dialog": {
+        "title": "Purchase Completed",
+        "description": "Your payment has been successfully processed."
+      }
+    },
+    "salesVerificationPage": {
+      "title": "Sales Verification",
+      "employeeId": "Employee ID",
+      "employeeIdPlaceholder": "Enter employee ID",
+      "verify": "Verify",
+      "error": "Error in sales verification",
+      "successPrefix": "Sales Verification:"
+    },
+    "callVerificationPage": {
+      "title": "Call Verification",
+      "employeeId": "Employee ID",
+      "employeeIdPlaceholder": "Enter employee ID",
+      "verify": "Verify",
+      "error": "Error in call verification",
+      "successPrefix": "Call Verification:"
+    }
+  },
+  "bankLoginPage": {
+    "title": "Welcome to CPX App",
+    "subtitle": "Please login with your Employee ID to continue.",
+    "customerIdLabel": "Employee ID",
+    "customerIdPlaceholder": "Enter your Employee ID",
+    "customerIdTooltip": "Your unique identifier provided by Smart Bank.",
+    "login": "Login",
+    "bind": "Bind",
+    "loggingIn": "Logging in...",
+    "binding": "Binding...",
+    "termsText": "By proceeding, you agree to our",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms & Conditions",
+    "and": "and",
+    "poweredBy": "Powered by",
+    "atm_id": "If you want to access via Smart Bank ATM  ",
+    "click_here":"Click Here",
+    "toast": {
+      "loginSuccess": {
+        "title": "Login successful",
+        "description": "Redirecting you to QR page..."
+      },
+      "loginError": {
+        "title": "Login failed",
+        "description": "Please check your Customer ID and try again.",
+        "destructive": "destructive",
+        "failed_auth": "Failed to start device authentication"
+      }
+    },
+    "redirectKeycloak": "Redirecting to Keycloak..."
+  },
+  "atmLoginPage": {
+    "title": "Smart Bank ATM",
+    "subtitle": "Please login with your Customer ID to continue.",
+    "customerIdLabel": "Customer ID",
+    "customerIdPlaceholder": "Enter your Customer ID",
+    "customerIdTooltip": "Your ATM identifier provided by Smart Bank.",
+    "bind": "Bind",
+    "binding": "Binding...",
+    "footerNote": "Access restricted to authorized ATM operators per policy.",
+    "poweredBy": "Powered by",
+    "click_here":"Click Here",
+    "banklogin":"If you want to access via Smart Bank",
+    "toast": {
+      "loginSuccess": {
+        "title": "ATM access granted",
+        "description": "Redirecting you to QR page..."
+      },
+      "loginError": {
+        "title": "ATM access failed",
+        "description": "Please verify your ATM ID and try again."
+      }
+    }
+  },
+  "bankQRPage": {
+    "title": "Scan to login",
+    "subtitle": "Use the mobile app to scan this code.",
+    "status": "Status:",
+    "expire_timer": "⏳ Expires in",
+    "Connectionissue": "Connection issue",
+
+    "Security": {
+      "warning": "Security warning"
+    },
+
+    "Session": {
+      "expired": "Session expired",
+      "error": "No session found",
+      "error_description": "Please start a new login session.",
+      "expired_description": "Return to login to start a new QR session.",
+
+      "cancelled": "QR session cancelled",
+      "cancelled_description": "For your security, this QR login session has been cancelled.",
+      "window_switch_detected": "This session was cancelled because the app or browser window was switched."
+    },
+
+    "login": {
+      "guide_title": "How to login",
+      "subtitle_1": "Open Smart Bank app → 'QR Login'.",
+      "Condition": "Keep this page open until verified.",
+      "backbutton": "Back to login"
+    }
+  },
+  "atmQRPage": {
+    "title": "Scan to login",
+    "subtitle": "Use the mobile app to scan this code.",
+    "status": "Status:",
+    "expire_timer": "⏳ Expires in",
+    "Connectionissue": "Connection issue",
+    "Session": {
+      "expired": "Session expired",
+      "error": "No session found",
+      "error_description": "Please start a new login session.",
+      "expired_description": "Return to login to start a new QR session."
+    },
+    "login": {
+      "guide_title": "How to login",
+      "subtitle_1": "Open Smart Bank app → 'QR Login'.",
+      "Condition": "Keep this page open until verified.",
+      "backbutton": "Back to login"
+    }
+  },
+  
+  "policy": {
+    "title": "Privacy Policy",
+    "para1": "At Fidar Technologies, we value your privacy and are committed to protecting your personal data.",
+    "section1": "1. Information We Collect",
+    "section1_body": "We collect personal details such as your name, email, Customer ID, and technical data like IP address and browser information.",
+    "section2": "2. How We Use Your Information",
+    "section2_body": "We use your information to authenticate your account, improve our services, and ensure cybersecurity compliance.",
+    "section3": "3. Data Security",
+    "section3_body": "All sensitive data is encrypted and protected using modern cybersecurity standards to prevent unauthorized access.",
+    "section4": "4. Your Rights",
+    "section4_body": "You may access, correct, or request deletion of your personal data at any time.",
+    "lastUpdated": "Last Updated: November 2025",
+    "back": "← Back"
+  },
+
+  "terms": {
+    "title": "Terms & Conditions",
+    "para1": "By using the services of Fidar Technologies, you agree to the following terms and conditions.",
+    "section1": "1. Authorized Use",
+    "section1_body": "You agree to use this platform only for lawful and authorized purposes.",
+    "section2": "2. Account Responsibility",
+    "section2_body": "Users are responsible for keeping their login credentials confidential.",
+    "section3": "3. Intellectual Property",
+    "section3_body": "All content and code are owned by Fidar Technologies and may not be copied, modified, or reused without permission.",
+    "section4": "4. Governing Law",
+    "section4_body": "These terms are governed by the applicable laws of your jurisdiction.",
+    "lastUpdated": "Last Updated: November 2025",
+    "back": "← Back"
+  },
+  "errors": {
+    "genericTitle": "Something went wrong",
+    "genericMessage": "Please try again.",
+
+    "networkTitle": "Network issue",
+    "networkMessage": "Unable to connect. Check your internet connection.",
+
+    "invalidRequestTitle": "Invalid Request",
+
+    "authTitle": "Authentication Failed",
+    "authMessage": "Your session expired or access was denied.",
+
+    "notFoundTitle": "Not Found",
+    "notFoundMessage": "Requested account not found.",
+
+    "expiredTitle": "Session Expired",
+    "expiredMessage": "Please try again.",
+
+    "serverTitle": "Server Error",
+    "serverMessage": "Something went wrong on the server.",
+
+    "unknownTitle": "Unexpected Error"
+  },
+  "settingsPage": {
+    "title": "Settings",
+    "profile": {
+      "title": "Profile Settings",
+      "description": "Update your personal profile information.",
+      "fullName": "Full Name",
+      "emailAddress": "Email Address",
+      "saveChanges": "Save Changes"
+    },
+    "security": {
+      "title": "Security Settings",
+      "description": "Update your password and keep your account secure.",
+      "currentPassword": "Current Password",
+      "newPassword": "New Password",
+      "updatePassword": "Update Password"
+    },
+    "twofa": {
+      "title": "Two-Factor Authentication (2FA)",
+      "description": "Add an extra layer of security to your account.",
+      "enable": "Enable 2FA"
+    },
+    "devices": {
+      "title": "Device Management",
+      "description": "Manage devices logged into your Smart Bank account.",
+      "lastActive": "Last Active",
+      "remove": "Remove"
+    },
+    "preferences": {
+      "title": "App Preferences",
+      "description": "Choose language, theme, and notification settings.",
+      "open": "Open Preferences"
+    }
+  },
+  "analyticsPage": {
+    "jan": "Jan",
+    "feb": "Feb",
+    "mar": "Mar",
+    "apr": "Apr",
+    "may": "May",
+    "jun": "Jun",
+    "shopping": "Shopping",
+    "bills": "Bills",
+    "transfers": "Transfers",
+    "travel": "Travel",
+    "atm": "ATM",
+    "groceries": "Groceries",
+    "others": "Others",
+    "totalIncome": "Total Income",
+    "totalExpenses": "Total Expenses",
+    "netSavings": "Net Savings",
+    "monthlyChange": "Monthly Change",
+    "afterExpenses": "After Expenses",
+    "last6months": "Last 6 Months",
+    "comparedToLastMonth": "Compared to Last Month",
+    "spendingBreakdown": "Spending Breakdown",
+    "incomeVsExpense6Months": "Income vs Expense (6 Months)",
+    "topSpendingCategories": "Top Spending Categories",
+    "monthlyInsight": "📊 Monthly Insight",
+    "monthlyInsightDesc": "Your spending is down by 14% this month. Great financial control!",
+    "depositActivity": "💰 Deposit Activity",
+    "depositActivityDesc": "You received 3 major deposits in your account this week.",
+    "amount": "Amount"
+  },
+
+  "cardsPage": {
+    "manageCards": "Manage Cards",
+    "validThru": "Valid Thru",
+    "freeze": "Freeze",
+    "replace": "Replace",
+    "cardSecurity": "Card Security & Controls",
+    "cardSecurityDesc": "Manage card limits, international usage, online transactions, contactless payments, and app-based verification.",
+    "spendingLimit": "Set Spending Limit",
+    "onlineUse": "Enable/Disable Online Use",
+    "pinSettings": "Card PIN Settings",
+    "addNewCard": "Add New Card",
+    "applyNow": "Apply Now",
+    "applyCardDesc": "Apply for a new debit or credit card in just a few steps.",
+    "credit": "Credit",
+    "debit": "Debit"
+  },
+
+  
+  "landing.header_logo": "FIDAR Logo",
+
+  "landing.nav_features": "Features",
+  "landing.nav_security": "Security",
+  "landing.nav_customers": "Customers",
+  "landing.nav_contact": "Contact",
+  "landing.nav_login": "Login",
+
+  "landing.hero_tagline": "ZERO-TRUST AUTHENTICATION",
+  "landing.hero_title": "Trust, restored.",
+  "landing.hero_subtitle": "A phishing-resistant authentication platform built on zero-trust architecture — powered by cryptography, behavioral intelligence & AI to effectively prevent fraud and restore customer trust.",
+  "landing.hero_cta_security": "See security details",
+
+  "landing.badge_mfa": "Phishing-resistant MFA",
+  "landing.badge_multilayer": "Multi-layer defence",
+  "landing.badge_nfc": "Secure NFC device binding",
+
+  "landing.why_title": "Why FIDO-backed authentication?",
+  "landing.why_desc": "Optimizes fraud costs, improves conversions and removes friction by eliminating OTPs and knowledge-based authentication.",
+
+  "landing.why_reduce_title": "Reduce costs",
+  "landing.why_reduce_desc": "Eliminate OTP SMS costs and lower operational burden across call centers and fraud teams.",
+
+  "landing.why_convert_title": "Increase conversions",
+  "landing.why_convert_desc": "Frictionless flows reduce cart abandonment and accelerate transactions.",
+
+  "landing.why_future_title": "Future-proof",
+  "landing.why_future_desc": "Passwordless, cryptographic device binding and adaptive step-up authentication aligned with evolving standards.",
+
+  "landing.features_title": "Capabilities",
+  "landing.features_desc": "Omnichannel authentication across mobile banking, internet banking, payments, ATMs and contact centers.",
+
+  "landing.f1_title": "Passwordless MFA",
+  "landing.f1_desc": "Phishing-resistant WebAuthN / FIDO flows that remove OTPs and passwords from the user journey.",
+
+  "landing.f2_title": "Tap & Go (NFC)",
+  "landing.f2_desc": "Secure NFC-enabled device binding for fast, secure ATMs and cardless flows.",
+
+  "landing.f3_title": "3DS 2.0 + Merchant UX",
+  "landing.f3_desc": "Streamlined e-commerce authentication for faster checkout with less friction.",
+
+  "landing.f4_title": "Call center & agent authentication",
+  "landing.f4_desc": "Secure agent access and seamless customer verification without PINs or security questions.",
+
+  "landing.security_title": "Robust, multi-layer security",
+  "landing.security_desc": "Multiple independent security layers work in harmony to deliver end-to-end protection and resilience.",
+
+  "landing.s1_title": "Multi-Layer Defence",
+  "landing.s1_desc": "No single point of failure — designed for continuity and enhanced breach resistance.",
+
+  "landing.s2_title": "Device & perimeter intelligence",
+  "landing.s2_desc": "Fingerprinting, behavioral analytics, and proximity checks enhance authentication decisions.",
+
+  "landing.s3_title": "Adaptive threat adaptation",
+  "landing.s3_desc": "AI-powered risk assessment and step-up flows to counter evolving threats.",
+
+  "landing.customers_title": "Trusted by businesses",
+  "landing.customers_desc": "Across mobile, web, ATMs, and contact centers — reducing fraud and improving UX.",
+
+  "landing.c1_name": "Asha R.",
+  "landing.c1_role": "SME owner",
+  "landing.c1_quote": "Onboarding was seamless — instant beneficiary addition and faster transfers.",
+
+  "landing.c2_name": "Rahul S.",
+  "landing.c2_role": "Product lead",
+  "landing.c2_quote": "Frictionless flows removed OTP friction — conversions improved immediately.",
+
+  "landing.c3_name": "Priya K.",
+  "landing.c3_role": "Security architect",
+  "landing.c3_quote": "Strong device binding and layered defence reduced fraud exposure."
+  }
+
+
