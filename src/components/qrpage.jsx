@@ -139,7 +139,7 @@ function QrPage() {
 
             <Button
               className="w-full"
-              onClick={() => navigate("/bank-login")}
+              onClick={() => navigate("/Emp-login")}
             >
               {t("bankQRPage.login.backbutton")}
             </Button>

@@ -94,7 +94,7 @@ export default function EmployeeLanding() {
           <div className="flex items-center gap-2 sm:gap-3">
 
             <button
-              onClick={() => navigate("/bank-login")}
+              onClick={() => navigate("/Emp-login")}
               className="w-32 h-10 text-sm font-semibold rounded-lg
                 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900
                 text-white shadow-lg hover:scale-[1.03] active:scale-95

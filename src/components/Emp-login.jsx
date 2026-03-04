@@ -74,7 +74,7 @@ function LanguageSwitcher() {
   );
 }
 
-function BankLogin() {
+function EmpLogin() {
   const [customerId, setCustomerId] = useState("");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
@@ -223,4 +223,4 @@ function BankLogin() {
   );
 }
 
-export default BankLogin;
+export default EmpLogin;

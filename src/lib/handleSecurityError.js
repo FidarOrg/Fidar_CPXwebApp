@@ -29,7 +29,7 @@ export function handleSecurityError(err, options) {
   // 5️⃣ Delay destructive actions (CRITICAL)
   setTimeout(() => {
     options?.onBlocked?.();
-    options?.redirect?.("/bank-login");
+    options?.redirect?.("/Emp-login");
   }, 250);
 
   return true; // ✅ handled
