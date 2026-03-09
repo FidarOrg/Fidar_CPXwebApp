@@ -1,12 +1,17 @@
 // src/pages/EmployeeDashboardPage.jsx
+
 import React, { useState, useEffect, useMemo } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import Header from "@/components/header/Header";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
+
 import {
   Select,
   SelectTrigger,
@@ -14,21 +19,42 @@ import {
   SelectItem,
   SelectValue,
 } from "@/components/ui/select";
+
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+
 import { fidar } from "@/lib/fidar";
 import { isFidarException } from "fidar-web-sdk";
 
 export default function EmployeeDashboardPage() {
+
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const [activeItem, setActiveItem] = useState("overview");
   const [open, setOpen] = useState(false);
 
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  // 🔥 Hardcoded Designation
   const designation = "Senior Operations Manager";
 
-  // ✅ Default Tasks (6 tasks added)
+  const [openBudgetPopup, setOpenBudgetPopup] = useState(false);
+
   const [tasks, setTasks] = useState([
+    {
+      id: 7,
+      title: "Sanction Financial Budget",
+      priority: "critical",
+      due: "02 Mar 2026",
+      status: "pending",
+      description:
+        "Approve the quarterly financial budget for operational expenses and department allocations.",
+    },
     {
       id: 1,
       title: "Server outage - Payment API",
@@ -79,7 +105,24 @@ export default function EmployeeDashboardPage() {
   const [newTaskStatus, setNewTaskStatus] = useState("pending");
   const [newTaskDueDate, setNewTaskDueDate] = useState("");
 
-  // 🔹 Load Profile
+  // Handle QR result when returning from QR page
+  useEffect(() => {
+    const { qrSuccess, taskId } = location.state || {};
+    if (taskId !== undefined && qrSuccess !== undefined) {
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === taskId
+            ? { ...task, status: qrSuccess ? "done" : "pending" }
+            : task
+        )
+      );
+      // Clear the state so re-renders don't re-apply it
+      navigate("/dashboard", { replace: true, state: {} });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Load profile
   useEffect(() => {
     async function loadProfile() {
       try {
@@ -94,11 +137,13 @@ export default function EmployeeDashboardPage() {
         setLoadingProfile(false);
       }
     }
+
     loadProfile();
   }, []);
 
-  // 🔹 Add Task
+  // Add new task
   const handleAddTask = () => {
+
     if (!newTaskTitle.trim() || !newTaskDueDate) return;
 
     const formattedDate = new Date(newTaskDueDate).toLocaleDateString(
@@ -123,7 +168,20 @@ export default function EmployeeDashboardPage() {
     setShowAddForm(false);
   };
 
-  // 🔹 Status Counts
+  // Accept budget task → navigate to QR
+  const acceptBudgetTask = () => {
+    setOpenBudgetPopup(false);
+    // Pass the taskId so QR page can send back the result
+    navigate("/qr", {
+      state: {
+        customerId: "EMP-BUDGET-APPROVAL",
+        taskId: 7, // id of "Sanction Financial Budget"
+        returnTo: "/dashboard",
+      },
+    });
+  };
+
+  // Status counts
   const statusCounts = useMemo(() => {
     return {
       pending: tasks.filter((t) => t.status === "pending").length,
@@ -132,7 +190,7 @@ export default function EmployeeDashboardPage() {
     };
   }, [tasks]);
 
-  // 🔹 Group by Priority
+  // Group tasks
   const groupedTasks = useMemo(() => {
     return {
       critical: tasks.filter((t) => t.priority === "critical"),
@@ -150,146 +208,134 @@ export default function EmployeeDashboardPage() {
 
   const PrioritySection = ({ title, items, badgeColor }) => (
     <div className="rounded-lg bg-card border">
+
       <div className="p-6 pb-2 flex justify-between items-center">
         <h3 className="font-semibold text-lg">{title}</h3>
         <Badge className={badgeColor}>{items.length}</Badge>
       </div>
 
       <div className="p-6 pt-2 space-y-4">
+
         {items.map((task) => (
+
           <div
             key={task.id}
             className="flex items-center justify-between p-4 rounded-md border bg-background"
           >
+
             <div className="flex items-center gap-3">
+
               <Checkbox checked={task.status === "done"} />
+
               <div>
                 <p
-                  className={`font-medium ${
-                    task.status === "done"
+                  className={`font-medium ${task.status === "done"
                       ? "line-through text-muted-foreground"
                       : ""
-                  }`}
+                    }`}
                 >
                   {task.title}
                 </p>
+
                 <p className="text-xs text-muted-foreground">
                   Due: {task.due}
                 </p>
               </div>
+
             </div>
-            <Badge variant="outline">{task.status}</Badge>
+
+            <div className="flex items-center gap-2">
+
+              {task.title === "Sanction Financial Budget" && (
+                <Button
+                  size="sm"
+                  onClick={() => setOpenBudgetPopup(true)}
+                >
+                  View
+                </Button>
+              )}
+
+              <Badge variant="outline">{task.status}</Badge>
+
+            </div>
+
           </div>
+
         ))}
+
       </div>
+
     </div>
   );
 
   return (
+
     <div className="min-h-screen">
+
       <Header open={open} onOpenChange={setOpen} type={"employee"} />
 
       <div className="flex">
+
         <div className="hidden lg:block sticky top-14 h-[calc(100vh-56px)]">
           <AppSidebar activeItem={activeItem} onNavigate={setActiveItem} />
         </div>
 
         <main className="flex-1 w-full px-4 lg:px-8 py-6">
+
           <div className="max-w-screen-2xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6">
 
             {/* Welcome Section */}
+
             <section className="lg:col-span-12">
+
               <div className="rounded-lg bg-card border p-6">
+
                 {loadingProfile ? (
                   <Skeleton className="h-8 w-64" />
                 ) : (
                   <>
                     <h2 className="text-2xl font-bold">
-                      Welcome back, {profile?.name || "Employee"} 
+                      Welcome back, {profile?.name || "Employee"}
                     </h2>
+
                     <p className="text-muted-foreground text-sm mt-1">
                       {profile?.email}
                     </p>
+
                     <p className="text-sm font-medium text-primary mt-2">
                       {designation}
                     </p>
                   </>
                 )}
+
               </div>
+
             </section>
 
-            {/* Status Summary */}
+            {/* Status Cards */}
+
             <section className="lg:col-span-4">
               <StatusCard title="Pending Tasks" value={statusCounts.pending} />
             </section>
+
             <section className="lg:col-span-4">
               <StatusCard title="In Progress" value={statusCounts.inProgress} />
             </section>
+
             <section className="lg:col-span-4">
               <StatusCard title="Completed" value={statusCounts.done} />
             </section>
 
-            {/* Tasks Header + Add Form */}
+            {/* Tasks Title */}
+
             <section className="lg:col-span-12">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-semibold">
-                  These are the Tasks assigned to you this week
-                </h3>
-                <Button onClick={() => setShowAddForm(!showAddForm)}>
-                  {showAddForm ? "Cancel" : "Add Task"}
-                </Button>
-              </div>
-
-              {showAddForm && (
-                <div className="mt-4 p-6 border rounded-lg bg-card space-y-4">
-                  <Input
-                    placeholder="Task title"
-                    value={newTaskTitle}
-                    onChange={(e) => setNewTaskTitle(e.target.value)}
-                  />
-
-                  <Select
-                    value={newTaskPriority}
-                    onValueChange={setNewTaskPriority}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="critical">Critical</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Select
-                    value={newTaskStatus}
-                    onValueChange={setNewTaskStatus}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="pending">Pending</SelectItem>
-                      <SelectItem value="in-progress">In Progress</SelectItem>
-                      <SelectItem value="done">Done</SelectItem>
-                    </SelectContent>
-                  </Select>
-
-                  <Input
-                    type="date"
-                    value={newTaskDueDate}
-                    onChange={(e) => setNewTaskDueDate(e.target.value)}
-                  />
-
-                  <Button onClick={handleAddTask} className="w-full">
-                    Save Task
-                  </Button>
-                </div>
-              )}
+              <h3 className="text-lg font-semibold">
+                These are the Tasks assigned to you this week
+              </h3>
             </section>
 
-            {/* Priority Columns */}
+            {/* Task Columns */}
+
             <section className="lg:col-span-4">
               <PrioritySection
                 title="Critical"
@@ -315,8 +361,46 @@ export default function EmployeeDashboardPage() {
             </section>
 
           </div>
+
         </main>
+
       </div>
+
+      {/* Budget Approval Popup */}
+
+      <Dialog open={openBudgetPopup} onOpenChange={setOpenBudgetPopup}>
+
+        <DialogContent>
+
+          <DialogHeader>
+            <DialogTitle>Sanction Financial Budget</DialogTitle>
+          </DialogHeader>
+
+          <p className="text-sm text-muted-foreground">
+            Approve the quarterly financial budget for operational expenses
+            and department allocations. This approval will allow the finance
+            team to release funds.
+          </p>
+
+          <div className="flex justify-end gap-3 mt-6">
+
+            <Button
+              variant="outline"
+              onClick={() => setOpenBudgetPopup(false)}
+            >
+              Cancel
+            </Button>
+
+            <Button onClick={acceptBudgetTask}>
+              Accept
+            </Button>
+
+          </div>
+
+        </DialogContent>
+
+      </Dialog>
+
     </div>
   );
 }

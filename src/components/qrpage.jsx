@@ -23,6 +23,7 @@ import { useTranslation } from "react-i18next";
 
 import { fidar } from "@/lib/fidar";
 import { handleFidarError } from "@/lib/handleFidarError";
+import { handleSecurityError } from "@/lib/handleSecurityError";
 import BluetoothGate from "./BluetoothGate";
 import toast from "react-hot-toast";
 import { ErrorCode, isFidarException } from "fidar-web-sdk";
@@ -33,6 +34,8 @@ function QrPage() {
   const { t } = useTranslation();
 
   const customerId = location.state?.customerId;
+  const taskId = location.state?.taskId;
+  const returnTo = location.state?.returnTo || "/dashboard";
 
   const [status, setStatus] = useState("STARTING");
   const [error, setError] = useState("");
@@ -82,7 +85,11 @@ function QrPage() {
         );
 
         if (!cancelled) {
-          navigate("/dashboard");
+          // QR passkey succeeded — navigate back with success flag
+          navigate(returnTo, {
+            replace: true,
+            state: { qrSuccess: true, taskId },
+          });
         }
       } catch (err) {
         if (cancelled) return;
@@ -92,6 +99,11 @@ function QrPage() {
             redirect: navigate,
           })
         ) {
+          // Security error — navigate back with failure flag
+          navigate(returnTo, {
+            replace: true,
+            state: { qrSuccess: false, taskId },
+          });
           return;
         }
         handleFidarError(err, t);
@@ -99,6 +111,15 @@ function QrPage() {
         setError(
           err?.payload?.message || t("bankQRPage.Connectionissue")
         );
+        // Passkey failed — navigate back with failure flag after a short delay
+        setTimeout(() => {
+          if (!cancelled) {
+            navigate(returnTo, {
+              replace: true,
+              state: { qrSuccess: false, taskId },
+            });
+          }
+        }, 2500);
       }
     }
 
@@ -203,108 +224,108 @@ function QrPage() {
         />
         <Card className="relative shadow-md border rounded-2xl z-10">
           {!bluetoothReady ? (
-          <BluetoothGate onReady={() => setBluetoothReady(true)} />
-        ) : (
-          <>
-          <CardHeader className="pt-4 px-5 pb-2">
-            <div className="w-full flex justify-center mb-2">
-              <img
-                src={logo}
-                alt="Smart Bank"
-                className="w-16 sm:w-20 rounded-md shadow select-none"
-                draggable={false}
-              />
-            </div>
-            <div className="text-center">
-              <CardTitle className="text-base sm:text-lg font-semibold">
-                {t("bankQRPage.title")}
-              </CardTitle>
-              <CardDescription className="text-xs text-muted-foreground">
-                {t("bankQRPage.subtitle")}
-              </CardDescription>
-            </div>
-          </CardHeader>
-
-          <Separator className="mx-5" />
-
-          <CardContent className="flex flex-col items-center gap-3 py-4">
-            <div className="w-[180px] sm:w-[200px]">
-              <AspectRatio ratio={1}>
-                <div className="p-1.5 rounded-lg bg-white shadow-sm h-full w-full flex items-center justify-center">
-                  {qrImage ? (
-                    <img
-                      src={qrImage}
-                      alt="Login QR"
-                      className="h-full w-full object-contain"
-                    />
-                  ) : (
-                    <Skeleton className="h-full w-full rounded-md" />
-                  )}
+            <BluetoothGate onReady={() => setBluetoothReady(true)} />
+          ) : (
+            <>
+              <CardHeader className="pt-4 px-5 pb-2">
+                <div className="w-full flex justify-center mb-2">
+                  <img
+                    src={logo}
+                    alt="Smart Bank"
+                    className="w-16 sm:w-20 rounded-md shadow select-none"
+                    draggable={false}
+                  />
                 </div>
-              </AspectRatio>
-            </div>
+                <div className="text-center">
+                  <CardTitle className="text-base sm:text-lg font-semibold">
+                    {t("bankQRPage.title")}
+                  </CardTitle>
+                  <CardDescription className="text-xs text-muted-foreground">
+                    {t("bankQRPage.subtitle")}
+                  </CardDescription>
+                </div>
+              </CardHeader>
 
-            <Badge
-              variant={isExpired ? "destructive" : "secondary"}
-              className="uppercase tracking-wide font-semibold px-2 py-0.5 text-xs"
-            >
-              {t("bankQRPage.status")} {statusLabel}
-            </Badge>
+              <Separator className="mx-5" />
 
-            <div className="w-full max-w-xs text-center">
-              <p className="text-xs mb-1">
-                {t("bankQRPage.expire_timer")} {minutes}:{seconds.toString().padStart(2, "0")}
-              </p>
-              <Progress
-                value={(timeLeft / expiresIn) * 100}
-                className="h-2 rounded-full"
-              />
-            </div>
+              <CardContent className="flex flex-col items-center gap-3 py-4">
+                <div className="w-[180px] sm:w-[200px]">
+                  <AspectRatio ratio={1}>
+                    <div className="p-1.5 rounded-lg bg-white shadow-sm h-full w-full flex items-center justify-center">
+                      {qrImage ? (
+                        <img
+                          src={qrImage}
+                          alt="Login QR"
+                          className="h-full w-full object-contain"
+                        />
+                      ) : (
+                        <Skeleton className="h-full w-full rounded-md" />
+                      )}
+                    </div>
+                  </AspectRatio>
+                </div>
 
-            {error && (
-              <Alert variant="destructive" className="w-full p-2 text-xs">
-                <AlertTitle className="text-sm">
-                  {t("bankQRPage.Connectionissue")}
-                </AlertTitle>
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
+                <Badge
+                  variant={isExpired ? "destructive" : "secondary"}
+                  className="uppercase tracking-wide font-semibold px-2 py-0.5 text-xs"
+                >
+                  {t("bankQRPage.status")} {statusLabel}
+                </Badge>
 
-            {isExpired && (
-              <Alert className="w-full p-2 text-xs">
-                <AlertTitle className="text-sm">
-                  {t("bankQRPage.Session.expired")}
-                </AlertTitle>
-                <AlertDescription>
-                  {t("bankQRPage.Session.expired_description")}
-                </AlertDescription>
-              </Alert>
-            )}
+                <div className="w-full max-w-xs text-center">
+                  <p className="text-xs mb-1">
+                    {t("bankQRPage.expire_timer")} {minutes}:{seconds.toString().padStart(2, "0")}
+                  </p>
+                  <Progress
+                    value={(timeLeft / expiresIn) * 100}
+                    className="h-2 rounded-full"
+                  />
+                </div>
 
-            <div className="w-full rounded-md border p-3 bg-background/60">
-              <p className="font-medium mb-2 text-xs">
-                {t("bankQRPage.login.guide_title")}
-              </p>
-              <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
-                <li className="flex gap-1 items-start">
-                  <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
-                  <span>{t("bankQRPage.login.subtitle_1")}</span>
-                </li>
-                <li>{t("bankQRPage.login.Condition")}</li>
-              </ul>
-            </div>
+                {error && (
+                  <Alert variant="destructive" className="w-full p-2 text-xs">
+                    <AlertTitle className="text-sm">
+                      {t("bankQRPage.Connectionissue")}
+                    </AlertTitle>
+                    <AlertDescription>{error}</AlertDescription>
+                  </Alert>
+                )}
 
-            <div className="flex w-full justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => navigate("/")}
-              >
-                {t("bankQRPage.login.backbutton")}
-              </Button>
-            </div>
-          </CardContent>
-          </>
+                {isExpired && (
+                  <Alert className="w-full p-2 text-xs">
+                    <AlertTitle className="text-sm">
+                      {t("bankQRPage.Session.expired")}
+                    </AlertTitle>
+                    <AlertDescription>
+                      {t("bankQRPage.Session.expired_description")}
+                    </AlertDescription>
+                  </Alert>
+                )}
+
+                <div className="w-full rounded-md border p-3 bg-background/60">
+                  <p className="font-medium mb-2 text-xs">
+                    {t("bankQRPage.login.guide_title")}
+                  </p>
+                  <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
+                    <li className="flex gap-1 items-start">
+                      <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
+                      <span>{t("bankQRPage.login.subtitle_1")}</span>
+                    </li>
+                    <li>{t("bankQRPage.login.Condition")}</li>
+                  </ul>
+                </div>
+
+                <div className="flex w-full justify-end">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => navigate("/")}
+                  >
+                    {t("bankQRPage.login.backbutton")}
+                  </Button>
+                </div>
+              </CardContent>
+            </>
           )}
         </Card>
       </div>
