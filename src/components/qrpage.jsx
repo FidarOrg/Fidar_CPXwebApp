@@ -160,7 +160,7 @@ function QrPage() {
 
             <Button
               className="w-full"
-              onClick={() => navigate("/Emp-login")}
+              onClick={() => navigate(returnTo)}
             >
               {t("bankQRPage.login.backbutton")}
             </Button>
@@ -189,7 +189,7 @@ function QrPage() {
           <CardContent>
             <Skeleton className="h-36 w-full rounded-lg" />
             <div className="mt-3 flex justify-end">
-              <Button onClick={() => navigate("/")}>
+              <Button onClick={() => navigate(returnTo)}>
                 {t("bankQRPage.login.backbutton")}
               </Button>
             </div>
@@ -319,7 +319,7 @@ function QrPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    onClick={() => navigate("/")}
+                    onClick={() => navigate(returnTo)}
                   >
                     {t("bankQRPage.login.backbutton")}
                   </Button>
