@@ -35,7 +35,6 @@ import { useLanguage } from "@/providers/LanguageProvider";
 import { fidar } from "@/lib/fidar";
 import { handleFidarError } from "@/lib/handleFidarError";
 import { handleSecurityError } from "@/lib/handleSecurityError";
-import PasskeyLoginButton from "@/components/passkey/PasskeyLoginButton";
 
 // 🔹 Inline component for language switcher
 function LanguageSwitcher() {
@@ -214,37 +213,10 @@ function EmpLogin() {
               Sign in with SSO
             </a>
 
-            {/* ── Passkey Login ── */}
-            <PasskeyLoginButton />
           </CardContent>
 
           <Separator />
 
-          <CardFooter className="flex flex-col space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t("bankLoginPage.termsText")}{" "}
-              <Link
-                to="/privacy"
-                className="text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-700 transition-colors duration-200"
-              >
-                {t("bankLoginPage.privacyPolicy")}
-              </Link>{" "}
-              {t("bankLoginPage.and")}{" "}
-              <Link
-                to="/terms"
-                className="text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-700 transition-colors duration-200"
-              >
-                {t("bankLoginPage.terms")}
-              </Link>
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <p className="text-sm text-muted-foreground">
-                {t("bankLoginPage.poweredBy")}
-              </p>
-              <img src={fidarLogo} className="h-10" alt="Fidar Logo" />
-            </div>
-          </CardFooter>
         </Card>
       </div>
     </div>
