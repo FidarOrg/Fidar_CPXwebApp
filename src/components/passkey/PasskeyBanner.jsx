@@ -26,16 +26,18 @@ export default function PasskeyBanner() {
 
     // ── Read user email from URL param or sessionStorage ─────────────────────
     useEffect(() => {
-        const params = new URLSearchParams(window.location.search);
+        const params = new URLSearchParams(globalThis.location.search);
         const urlEmail = params.get('saml_email');
 
         if (urlEmail) {
             // Fresh SAML login — store and clean up URL
             sessionStorage.setItem('saml_email', urlEmail);
+            // Mark as authenticated so ProtectedRoute allows /analytics, /settings etc.
+            localStorage.setItem('authToken', 'saml-session');
             setSamlEmail(urlEmail);
             // Remove the param from the URL without reloading
-            const clean = window.location.pathname;
-            window.history.replaceState({}, '', clean);
+            const clean = globalThis.location.pathname;
+            globalThis.history.replaceState({}, '', clean);
         } else {
             // Returning visit — check sessionStorage
             const stored = sessionStorage.getItem('saml_email');

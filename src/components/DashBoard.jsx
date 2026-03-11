@@ -123,22 +123,30 @@ export default function EmployeeDashboardPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Load profile
+  // Load profile — use backend API for SSO/passkey sessions, fidar SDK for QR sessions
   useEffect(() => {
     async function loadProfile() {
       try {
-        const data = await fidar.getMyProfile();
-        setProfile(data);
+        const authToken = localStorage.getItem('authToken');
+        const isSamlOrPasskey = authToken === 'saml-session' || authToken === 'passkey-session';
+
+        if (isSamlOrPasskey) {
+          // For SSO/passkey: get email from sessionStorage (set by PasskeyBanner)
+          const samlEmail = sessionStorage.getItem('saml_email');
+          if (samlEmail) {
+            setProfile({ name: samlEmail, email: samlEmail, image: null });
+          }
+        } else {
+          // Original QR-bind flow: use fidar SDK
+          const data = await fidar.getMyProfile();
+          setProfile(data);
+        }
       } catch (err) {
         console.error("[Profile Error]", err);
-        if (isFidarException(err)) {
-          console.error("Fidar error:", err.payload);
-        }
       } finally {
         setLoadingProfile(false);
       }
     }
-
     loadProfile();
   }, []);
 

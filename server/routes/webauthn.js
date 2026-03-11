@@ -212,10 +212,13 @@ router.post('/login/options', async (req, res) => {
 router.post('/login/verify', async (req, res) => {
     try {
         const body = req.body;
-        const userId = req.session?.passkeyLoginUserId;
+
+        // Resolve userId: prefer session (set by /login/options), fall back to body.email
+        // The body fallback is needed because Vite proxy can lose session between calls
+        const userId = req.session?.passkeyLoginUserId || body.email;
 
         if (!userId) {
-            return res.status(400).json({ error: 'No login attempt in progress.' });
+            return res.status(400).json({ error: 'No login attempt in progress. Provide email.' });
         }
 
         const expectedChallenge = store.getChallenge(userId);

@@ -239,15 +239,25 @@ router.get('/dashboard', (req, res) => {
 </html>`);
 });
 
-// ── JSON API — used by React frontend if needed ───────────────────────────────
+// ── JSON API — used by React frontend ────────────────────────────────────────
 router.get('/api/me', (req, res) => {
-    if (!req.isAuthenticated() && !req.session?.user) {
-        return res.status(401).json({ error: 'Not authenticated' });
-    }
-    const user = req.user || req.session?.user;
-    const userId = user?.nameID || user?.id || '';
-    const creds = store.getUserCredentials(userId);
-    res.json({ id: userId, email: userId, nameID: userId, hasPasskey: creds.length > 0, passkeyCount: creds.length });
+  const user = req.user || req.session?.user;
+  if (!user) return res.status(401).json({ error: 'Not authenticated' });
+
+  const userId = user?.nameID || user?.id || '';
+  const creds  = store.getUserCredentials(userId);
+  res.json({ id: userId, email: userId, nameID: userId, hasPasskey: creds.length > 0, passkeyCount: creds.length });
+});
+
+// ── Employee directory API ────────────────────────────────────────────────────
+router.get('/api/employees', (req, res) => {
+  res.json([
+    { id: 101, name: 'Aamir Khan',   role: 'Software Engineer', dept: 'IT',             email: 'aamir@cpx.com',  status: 'Active'   },
+    { id: 102, name: 'Sara Ali',     role: 'HR Manager',        dept: 'HR',             email: 'sara@cpx.com',   status: 'Active'   },
+    { id: 103, name: 'Rahul Verma',  role: 'DevOps Engineer',   dept: 'Infrastructure', email: 'rahul@cpx.com',  status: 'On Leave' },
+    { id: 104, name: 'Fatima Noor',  role: 'UI/UX Designer',    dept: 'Design',         email: 'fatima@cpx.com', status: 'Active'   },
+    { id: 105, name: 'Zubair Ahmed', role: 'QA Engineer',       dept: 'Testing',        email: 'zubair@cpx.com', status: 'Inactive' },
+  ]);
 });
 
 // ── Logout ────────────────────────────────────────────────────────────────────

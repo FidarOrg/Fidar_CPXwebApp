@@ -47,7 +47,7 @@ export default function PasskeyLoginButton() {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(assertion),
+                body: JSON.stringify({ ...assertion, email: email.trim() }),
             });
 
             const result = await verifyRes.json();
