@@ -1,0 +1,19 @@
+{
+    "name": "cpx-auth-server",
+    "version": "1.0.0",
+    "description": "CPX backend: SAML SSO (PingOne) + WebAuthn passkey server",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "node --watch index.js"
+    },
+    "dependencies": {
+        "@simplewebauthn/server": "^9.0.3",
+        "body-parser": "^1.20.2",
+        "cors": "^2.8.5",
+        "express": "^4.18.2",
+        "express-session": "^1.17.3",
+        "passport": "^0.7.0",
+        "passport-saml": "^3.2.4"
+    }
+}

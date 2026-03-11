@@ -35,6 +35,7 @@ import { useLanguage } from "@/providers/LanguageProvider";
 import { fidar } from "@/lib/fidar";
 import { handleFidarError } from "@/lib/handleFidarError";
 import { handleSecurityError } from "@/lib/handleSecurityError";
+import PasskeyLoginButton from "@/components/passkey/PasskeyLoginButton";
 
 // 🔹 Inline component for language switcher
 function LanguageSwitcher() {
@@ -188,6 +189,33 @@ function EmpLogin() {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? t("bankLoginPage.binding") : t("bankLoginPage.bind")}
             </Button>
+
+            {/* ── Divider ── */}
+            <div className="relative my-1">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">or continue with</span>
+              </div>
+            </div>
+
+            {/* ── SSO Login (PingOne / Keycloak via SAML) ── */}
+            <a
+              href="/login"
+              className="flex items-center justify-center w-full h-11 sm:h-10 gap-2 rounded-lg border border-border
+                         bg-card hover:bg-accent text-sm font-semibold text-foreground
+                         shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] active:scale-95"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                <path d="M12 8v4l3 3" />
+              </svg>
+              Sign in with SSO
+            </a>
+
+            {/* ── Passkey Login ── */}
+            <PasskeyLoginButton />
           </CardContent>
 
           <Separator />

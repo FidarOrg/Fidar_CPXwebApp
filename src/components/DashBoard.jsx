@@ -29,6 +29,7 @@ import {
 
 import { fidar } from "@/lib/fidar";
 import { isFidarException } from "fidar-web-sdk";
+import PasskeyBanner from "@/components/passkey/PasskeyBanner";
 
 export default function EmployeeDashboardPage() {
 
@@ -230,8 +231,8 @@ export default function EmployeeDashboardPage() {
               <div>
                 <p
                   className={`font-medium ${task.status === "done"
-                      ? "line-through text-muted-foreground"
-                      : ""
+                    ? "line-through text-muted-foreground"
+                    : ""
                     }`}
                 >
                   {task.title}
@@ -289,6 +290,9 @@ export default function EmployeeDashboardPage() {
             <section className="lg:col-span-12">
 
               <div className="rounded-lg bg-card border p-6">
+
+                {/* Passkey Registration Banner (shown after SAML login) */}
+                <PasskeyBanner />
 
                 {loadingProfile ? (
                   <Skeleton className="h-8 w-64" />
