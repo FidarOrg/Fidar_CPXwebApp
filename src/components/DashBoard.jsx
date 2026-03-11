@@ -30,6 +30,7 @@ import {
 import { fidar } from "@/lib/fidar";
 import { isFidarException } from "fidar-web-sdk";
 import PasskeyBanner from "@/components/passkey/PasskeyBanner";
+import { signTaskApproval } from "@/api/taskApproval";
 
 export default function EmployeeDashboardPage() {
 
@@ -45,6 +46,8 @@ export default function EmployeeDashboardPage() {
   const designation = "Senior Operations Manager";
 
   const [openBudgetPopup, setOpenBudgetPopup] = useState(false);
+  const [signingTaskId, setSigningTaskId] = useState(null);
+  const [taskApprovalError, setTaskApprovalError] = useState("");
 
   const [tasks, setTasks] = useState([
     {
@@ -53,6 +56,13 @@ export default function EmployeeDashboardPage() {
       priority: "critical",
       due: "02 Mar 2026",
       status: "pending",
+      requiresSigning: true,
+      signing: {
+        amount: 250000,
+        currency: "INR",
+        toAccount: "FIN-BUDGET-Q1",
+        remark: "Approve quarterly financial budget release",
+      },
       description:
         "Approve the quarterly financial budget for operational expenses and department allocations.",
     },
@@ -178,16 +188,36 @@ export default function EmployeeDashboardPage() {
   };
 
   // Accept budget task → navigate to QR
-  const acceptBudgetTask = () => {
-    setOpenBudgetPopup(false);
-    // Pass the taskId so QR page can send back the result
-    navigate("/qr", {
-      state: {
-        customerId: "EMP-BUDGET-APPROVAL",
-        taskId: 7, // id of "Sanction Financial Budget"
-        returnTo: "/dashboard",
-      },
-    });
+  const acceptBudgetTask = async () => {
+    const budgetTask = tasks.find((task) => task.id === 7);
+    if (!budgetTask) return;
+
+    setTaskApprovalError("");
+    setSigningTaskId(budgetTask.id);
+
+    try {
+      const approval = await signTaskApproval(budgetTask);
+
+      setTasks((prev) =>
+        prev.map((task) =>
+          task.id === budgetTask.id
+            ? {
+                ...task,
+                status: "done",
+                approval,
+              }
+            : task
+        )
+      );
+
+      setOpenBudgetPopup(false);
+    } catch (err) {
+      setTaskApprovalError(
+        err?.message || "Task approval signing was cancelled or failed."
+      );
+    } finally {
+      setSigningTaskId(null);
+    }
   };
 
   // Status counts
@@ -255,7 +285,7 @@ export default function EmployeeDashboardPage() {
 
             <div className="flex items-center gap-2">
 
-              {task.title === "Sanction Financial Budget" && (
+              {task.requiresSigning && task.status !== "done" && (
                 <Button
                   size="sm"
                   onClick={() => setOpenBudgetPopup(true)}
@@ -394,6 +424,17 @@ export default function EmployeeDashboardPage() {
             team to release funds.
           </p>
 
+          <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground">
+            Accepting this task now triggers a passkey signing ceremony. If a
+            FIDAR token is available, the app uses the SDK transaction signing
+            flow. Otherwise it falls back to the existing local device passkey
+            flow.
+          </div>
+
+          {taskApprovalError && (
+            <p className="text-sm text-destructive">{taskApprovalError}</p>
+          )}
+
           <div className="flex justify-end gap-3 mt-6">
 
             <Button
@@ -403,8 +444,8 @@ export default function EmployeeDashboardPage() {
               Cancel
             </Button>
 
-            <Button onClick={acceptBudgetTask}>
-              Accept
+            <Button onClick={acceptBudgetTask} disabled={signingTaskId === 7}>
+              {signingTaskId === 7 ? "Signing..." : "Accept"}
             </Button>
 
           </div>
