@@ -41,14 +41,14 @@ router.post('/login/callback',
             req.logIn(user, (loginErr) => {
                 if (loginErr) { console.error('❌ Session error:', loginErr); return res.redirect('http://localhost:5173/'); }
 
-                // Save user in store so WebAuthn routes can look them up
+                // Save user in our in-memory store
                 store.getOrCreateUser(user.nameID, user.nameID, user.nameID);
-
                 req.session.user = { id: user.nameID, nameID: user.nameID, email: user.nameID };
                 console.log('✅ SAML session created for:', user.nameID);
 
-                // Stay on the Express backend dashboard (like the sample app)
-                res.redirect('/dashboard');
+                // Redirect back to the React app dashboard, passing email in URL
+                const email = encodeURIComponent(user.nameID);
+                res.redirect(`http://localhost:5173/saml-dashboard?saml_email=${email}`);
             });
         })(req, res, next);
     }

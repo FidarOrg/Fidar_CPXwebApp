@@ -42,12 +42,22 @@ function requireSession(req, res, next) {
 
 /**
  * POST /webauthn/register/options
- * Generates PublicKeyCredentialCreationOptions for the authenticated user.
- * Requires an active SAML session.
+ * Generates PublicKeyCredentialCreationOptions.
+ * Accepts user identity from:
+ *   - req.session.user  (SAML session — same-origin)
+ *   - req.body.email    (React app after SAML redirect — cross-origin)
  */
-router.post('/register/options', requireSession, async (req, res) => {
+router.post('/register/options', async (req, res) => {
     try {
-        const { id: userId, email } = req.session.user;
+        // Resolve user: session first, then body email
+        const email = req.session?.user?.email || req.body?.email;
+        if (!email) {
+            return res.status(401).json({ error: 'Authentication required. Provide email in body.' });
+        }
+        const userId = email;
+
+        // Ensure user exists in store
+        store.getOrCreateUser(userId, userId, userId);
 
         // Get existing credentials so we can exclude them (prevent re-registration)
         const userCredentials = store.getUserCredentials(userId);
@@ -69,15 +79,17 @@ router.post('/register/options', requireSession, async (req, res) => {
             authenticatorSelection: {
                 residentKey: 'preferred',
                 userVerification: 'preferred',
-                authenticatorAttachment: 'platform', // prefer built-in authenticator
+                authenticatorAttachment: 'platform',
             },
-            supportedAlgorithmIDs: [-7, -257], // ES256, RS256
+            supportedAlgorithmIDs: [-7, -257],
         });
 
-        // Store challenge server-side (tied to user session)
+        // Store challenge keyed by userId
         store.setChallenge(userId, options.challenge);
+        // Stash userId in session so verify can find it
+        if (req.session) req.session.pendingRegistrationUserId = userId;
 
-        res.json(options);
+        res.json({ ...options, _userId: userId }); // include userId so React can send it back
     } catch (err) {
         console.error('❌ /webauthn/register/options error:', err);
         res.status(500).json({ error: err.message });
@@ -88,10 +100,19 @@ router.post('/register/options', requireSession, async (req, res) => {
  * POST /webauthn/register/verify
  * Verifies the attestation response from navigator.credentials.create()
  * and stores the new credential.
+ * Accepts userId from session or request body.
  */
-router.post('/register/verify', requireSession, async (req, res) => {
+router.post('/register/verify', async (req, res) => {
     try {
-        const { id: userId } = req.session.user;
+        // Resolve userId from session or body
+        const userId = req.session?.user?.id
+            || req.session?.pendingRegistrationUserId
+            || req.body?._userId;
+
+        if (!userId) {
+            return res.status(401).json({ error: 'Cannot determine user. Restart registration.' });
+        }
+
         const body = req.body;
 
         const expectedChallenge = store.getChallenge(userId);
@@ -127,10 +148,10 @@ router.post('/register/verify', requireSession, async (req, res) => {
                 backedUp: credentialBackedUp,
             });
 
-            // Challenge used — clear it
             store.clearChallenge(userId);
+            if (req.session) req.session.pendingRegistrationUserId = undefined;
 
-            console.log(`✅ Passkey registered for user: ${req.session.user.email}`);
+            console.log(`✅ Passkey registered for user: ${userId}`);
             res.json({ verified: true });
         } else {
             res.status(400).json({ verified: false, error: 'Verification failed' });
