@@ -226,11 +226,15 @@ router.post('/login/verify', async (req, res) => {
             return res.status(400).json({ error: 'Challenge expired or missing.' });
         }
 
-        // Find the matching credential
-        const credentialId = body.id;
-        const credential = store.getCredentialById(credentialId);
+        // Prefer rawId because it matches the stored base64url credential ID.
+        const credentialId = body.rawId || body.id;
+        const credential = store.getCredentialById(credentialId) || store.getCredentialById(body.id);
         if (!credential) {
-            return res.status(400).json({ error: 'Credential not found.' });
+            return res.status(400).json({ error: 'Selected passkey is not registered for this account.' });
+        }
+
+        if (credential.userId !== userId) {
+            return res.status(403).json({ error: 'Selected passkey does not belong to the signed-in account.' });
         }
 
         const verification = await verifyAuthenticationResponse({
