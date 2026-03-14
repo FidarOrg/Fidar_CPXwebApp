@@ -1,0 +1,57 @@
+name: Build and Push to AWS ECR
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+env:
+  AWS_REGION: ap-south-1                   # Change to your AWS region
+  ECR_REPOSITORY: cpx/webapp           # Change to your ECR repository name
+
+jobs:
+  build-and-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Extract metadata (tags, labels)
+        id: meta
+        run: |
+          ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}
+          SHORT_SHA=$(echo $GITHUB_SHA | cut -c1-7)
+          echo "image_tag=${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:${SHORT_SHA}" >> $GITHUB_OUTPUT
+          echo "image_latest=${ECR_REGISTRY}/${{ env.ECR_REPOSITORY }}:latest" >> $GITHUB_OUTPUT
+
+      - name: Build Docker image
+        run: |
+          docker build \
+            -t ${{ steps.meta.outputs.image_tag }} \
+            -t ${{ steps.meta.outputs.image_latest }} \
+            .
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push ${{ steps.meta.outputs.image_tag }}
+          docker push ${{ steps.meta.outputs.image_latest }}
+
+      - name: Summary
+        run: |
+          echo "### Docker Image Pushed to ECR" >> $GITHUB_STEP_SUMMARY
+          echo "- **Tagged:** \`${{ steps.meta.outputs.image_tag }}\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Latest:** \`${{ steps.meta.outputs.image_latest }}\`" >> $GITHUB_STEP_SUMMARY
