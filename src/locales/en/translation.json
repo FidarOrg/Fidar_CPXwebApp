@@ -271,7 +271,7 @@
       "guide_title": "How to login",
       "subtitle_1": "Open Smart Bank app → 'QR Login'.",
       "Condition": "Keep this page open until verified.",
-      "backbutton": "Back to login"
+      "backbutton": "Back"
     }
   },
   "atmQRPage": {

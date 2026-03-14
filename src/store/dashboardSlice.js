@@ -36,7 +36,7 @@ export const fetchDashboardData = createAsyncThunk(
       ]);
 
       // Normalize wallet
-      const normalizedWallet = walletData?.amount != null ? walletData : null;
+      const normalizedWallet = walletData?.amount == null ? null : walletData;
 
       // Normalize transactions to same shape your UI expects
       const txItems = Array.isArray(txRaw) ? txRaw : [];
@@ -49,14 +49,13 @@ export const fetchDashboardData = createAsyncThunk(
           id: t.id,
           type: isCredit ? "credit" : "debit",
           amount: `USD ${amountNumber.toFixed(2)}`,
-          description:
-            t.category === "DEPOSIT"
-              ? "Deposit"
-              : t.category === "TRANSFER"
-              ? "Transfer"
-              : t.category || "Transaction",
+          description: (() => {
+            if (t.category === "DEPOSIT") return "Deposit";
+            if (t.category === "TRANSFER") return "Transfer";
+            return t.category || "Transaction";
+          })(),
           time: t.createdAt ? new Date(t.createdAt).toLocaleString() : "",
-          status: t.active ? "completed" : "pending",
+          status: t.active ? "completed" : "pending", // Ensure status reflects QR result
           _raw: t,
         };
       });
@@ -96,7 +95,7 @@ const dashboardSlice = createSlice({
     applyDemoTransfer(state, action) {
   const { amount, toAccount } = action.payload;
 
-  if (!state.wallet || !state.wallet.amount) return;
+  if (!state.wallet?.amount) return;
 
   const numericAmount = Number(amount);
 

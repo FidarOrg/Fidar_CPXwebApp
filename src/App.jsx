@@ -18,20 +18,22 @@ function App() {
   return (
     <Router>
       <Routes>
- 
+
         <Route element={<LanguageProvider />}>
           <Route path="/Emp-login" element={<EmpLogin />} />
-          <Route path="/privacy" element={<PrivacyPolicy/> } />
-          <Route path="/terms" element={<Terms/> } />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<Terms />} />
           <Route path="/" element={<BankLanding />} />
-          <Route path="/qr" element={<QrPage/>} />        
+          <Route path="/qr" element={<QrPage />} />
+          {/* SAML post-login landing — DashBoard with PasskeyBanner (session-based auth) */}
+          <Route path="/saml-dashboard" element={<DashBoard />} />
           <Route element={<ProtectedRoute />}>
-              <Route path="/dashboard" element={<DashBoard/>} />
-              <Route path="/analytics" element={<AnalyticsPage />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/dashboard" element={<DashBoard />} />
+            <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/settings" element={<Settings />} />
+            <Route path="/profile" element={<ProfilePage />} />
           </Route>
-         </Route>
+        </Route>
       </Routes>
     </Router>
   )

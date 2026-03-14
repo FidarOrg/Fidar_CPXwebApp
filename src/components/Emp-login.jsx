@@ -188,35 +188,35 @@ function EmpLogin() {
               {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
               {loading ? t("bankLoginPage.binding") : t("bankLoginPage.bind")}
             </Button>
+
+            {/* ── Divider ── */}
+            <div className="relative my-1">
+              <div className="absolute inset-0 flex items-center">
+                <span className="w-full border-t border-border" />
+              </div>
+              <div className="relative flex justify-center text-xs uppercase">
+                <span className="bg-background px-2 text-muted-foreground">or continue with</span>
+              </div>
+            </div>
+
+            {/* ── SSO Login (PingOne / Keycloak via SAML) ── */}
+            <a
+              href="/login"
+              className="flex items-center justify-center w-full h-11 sm:h-10 gap-2 rounded-lg border border-border
+                         bg-card hover:bg-accent text-sm font-semibold text-foreground
+                         shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] active:scale-95"
+            >
+              <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                <path d="M12 8v4l3 3" />
+              </svg>
+              Sign in with SSO
+            </a>
+
           </CardContent>
 
           <Separator />
 
-          <CardFooter className="flex flex-col space-y-4 text-center">
-            <p className="text-sm text-muted-foreground">
-              {t("bankLoginPage.termsText")}{" "}
-              <Link
-                to="/privacy"
-                className="text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-700 transition-colors duration-200"
-              >
-                {t("bankLoginPage.privacyPolicy")}
-              </Link>{" "}
-              {t("bankLoginPage.and")}{" "}
-              <Link
-                to="/terms"
-                className="text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-700 transition-colors duration-200"
-              >
-                {t("bankLoginPage.terms")}
-              </Link>
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center gap-2">
-              <p className="text-sm text-muted-foreground">
-                {t("bankLoginPage.poweredBy")}
-              </p>
-              <img src={fidarLogo} className="h-10" alt="Fidar Logo" />
-            </div>
-          </CardFooter>
         </Card>
       </div>
     </div>

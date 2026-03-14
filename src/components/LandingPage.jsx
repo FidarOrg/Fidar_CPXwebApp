@@ -93,9 +93,10 @@ export default function EmployeeLanding() {
 
           <div className="flex items-center gap-2 sm:gap-3">
 
+            {/* Employee Login (leads to Emp-login page with QR + SSO + Passkey) */}
             <button
               onClick={() => navigate("/Emp-login")}
-              className="w-32 h-10 text-sm font-semibold rounded-lg
+              className="w-36 h-10 text-sm font-semibold rounded-lg
                 bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900
                 text-white shadow-lg hover:scale-[1.03] active:scale-95
                 hover:shadow-[0_0_15px_rgba(79,70,229,0.5)]
@@ -243,7 +244,7 @@ export default function EmployeeLanding() {
 
         {/* ================= SECURITY ================= */}
         <section id="security" className="py-20 border-t border-border text-center"
-                 dir={lang === "ar" ? "rtl" : "ltr"}>
+          dir={lang === "ar" ? "rtl" : "ltr"}>
           <h3 className="text-xl font-semibold">Enterprise Security</h3>
 
           <p className="text-muted-foreground max-w-2xl mx-auto mt-2">
