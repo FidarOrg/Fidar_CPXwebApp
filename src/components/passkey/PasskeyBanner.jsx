@@ -54,7 +54,7 @@ export default function PasskeyBanner() {
     useEffect(() => {
         if (!samlEmail) return;
         // Ask the backend about this user's passkey status
-        fetch('/api/me', { credentials: 'include' })
+        fetch(`/webauthn/me?email=${encodeURIComponent(samlEmail)}`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (data?.hasPasskey) {
