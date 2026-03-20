@@ -17,6 +17,7 @@ import { KeyRound, ShieldCheck, X, Loader2, Fingerprint, ArrowRight } from 'luci
 import { Button } from '@/components/ui/button';
 import { toast } from '@/hooks/use-toast';
 import { base64urlToBuffer, bufferToBase64url } from '@/lib/webauthn';
+import { FIDAR_API_BASE } from '@/config';
 
 export default function PasskeyBanner() {
     const [status, setStatus]           = useState('loading');
@@ -54,7 +55,7 @@ export default function PasskeyBanner() {
     useEffect(() => {
         if (!samlEmail) return;
         // Ask the backend about this user's passkey status
-        fetch(`/webauthn/me?email=${encodeURIComponent(samlEmail)}`, { credentials: 'include' })
+        fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/me?email=${encodeURIComponent(samlEmail)}`, { credentials: 'include' })
             .then(r => r.ok ? r.json() : null)
             .then(data => {
                 if (data?.hasPasskey) {
@@ -76,7 +77,7 @@ export default function PasskeyBanner() {
         setRegistering(true);
         try {
             // 1. Get registration options — send email in body (no cross-origin cookie needed)
-            const optRes = await fetch('/webauthn/register/options', {
+            const optRes = await fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/register/options`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },
@@ -119,7 +120,7 @@ export default function PasskeyBanner() {
                 clientExtensionResults: cred.getClientExtensionResults?.() || {},
             };
 
-            const verifyRes = await fetch('/webauthn/register/verify', {
+            const verifyRes = await fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/register/verify`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },

@@ -8,6 +8,7 @@
  * Usage:
  *   import { startRegistration, startAuthentication } from '@/lib/webauthn';
  */
+import { FIDAR_API_BASE } from '@/config';
 
 // ── Encoding helpers ──────────────────────────────────────────────────────────
 
@@ -54,7 +55,7 @@ export function bufferToBase64url(buffer) {
  */
 export async function startRegistration() {
     // 1. Get options from server
-    const optRes = await fetch('/webauthn/register/options', {
+    const optRes = await fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/register/options`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },
@@ -116,7 +117,7 @@ export async function startRegistration() {
  */
 export async function startAuthentication(email) {
     // 1. Get options from server
-    const optRes = await fetch('/webauthn/login/options', {
+    const optRes = await fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/login/options`, {
         method: 'POST',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

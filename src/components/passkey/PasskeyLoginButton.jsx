@@ -20,6 +20,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { toast } from '@/hooks/use-toast';
 import { startAuthentication } from '@/lib/webauthn';
+import { FIDAR_API_BASE } from '@/config';
 
 export default function PasskeyLoginButton() {
     const [email, setEmail] = useState('');
@@ -43,7 +44,7 @@ export default function PasskeyLoginButton() {
         try {
             const assertion = await startAuthentication(email.trim());
 
-            const verifyRes = await fetch('/webauthn/login/verify', {
+            const verifyRes = await fetch(`${FIDAR_API_BASE}/fidar/sdk/api/webauthn/login/verify`, {
                 method: 'POST',
                 credentials: 'include',
                 headers: { 'Content-Type': 'application/json' },

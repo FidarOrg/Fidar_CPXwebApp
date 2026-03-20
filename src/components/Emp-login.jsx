@@ -35,6 +35,7 @@ import { useLanguage } from "@/providers/LanguageProvider";
 import { fidar } from "@/lib/fidar";
 import { handleFidarError } from "@/lib/handleFidarError";
 import { handleSecurityError } from "@/lib/handleSecurityError";
+import { FIDAR_API_BASE } from "@/config";
 
 // 🔹 Inline component for language switcher
 function LanguageSwitcher() {
@@ -201,7 +202,7 @@ function EmpLogin() {
 
             {/* ── SSO Login (PingOne / Keycloak via SAML) ── */}
             <a
-              href="/login"
+              href={`${FIDAR_API_BASE}/fidar/sdk/api/saml2/authenticate/pingone`}
               className="flex items-center justify-center w-full h-11 sm:h-10 gap-2 rounded-lg border border-border
                          bg-card hover:bg-accent text-sm font-semibold text-foreground
                          shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.01] active:scale-95"
