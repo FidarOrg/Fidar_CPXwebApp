@@ -1,5 +1,3 @@
-// src/pages/EmployeeDashboardPage.jsx
-
 import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
@@ -187,7 +185,7 @@ export default function EmployeeDashboardPage() {
     setShowAddForm(false);
   };
 
-  // Accept budget task → navigate to QR
+  // Accept budget task via FIDAR passkey signing
   const acceptBudgetTask = async () => {
     const budgetTask = tasks.find((task) => task.id === 7);
     if (!budgetTask) return;
@@ -197,20 +195,27 @@ export default function EmployeeDashboardPage() {
 
     try {
       const approval = await signTaskApproval(budgetTask);
+      const isApproved = approval?.approved === true;
 
       setTasks((prev) =>
         prev.map((task) =>
           task.id === budgetTask.id
             ? {
                 ...task,
-                status: "done",
+                status: isApproved ? "done" : "pending",
                 approval,
               }
             : task
         )
       );
 
-      setOpenBudgetPopup(false);
+      if (isApproved) {
+        setOpenBudgetPopup(false);
+      } else {
+        setTaskApprovalError(
+          "Passkey assertion was not approved. The task remains pending."
+        );
+      }
     } catch (err) {
       setTaskApprovalError(
         err?.message || "Task approval signing was cancelled or failed."
@@ -425,10 +430,8 @@ export default function EmployeeDashboardPage() {
           </p>
 
           <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground">
-            Accepting this task now triggers a passkey signing ceremony. If a
-            FIDAR token is available, the app uses the SDK transaction signing
-            flow. Otherwise it falls back to the existing local device passkey
-            flow.
+            Accepting this task now triggers the FIDAR SDK signing flow using
+            initiateSign followed by signChallenge.
           </div>
 
           {taskApprovalError && (
