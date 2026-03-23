@@ -17,16 +17,14 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { ShieldCheck } from "lucide-react";
+import { Loader2, ShieldCheck } from "lucide-react";
 import { LanguageSwitcher } from "./language-swicther/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
 import { fidar } from "@/lib/fidar";
 import { handleFidarError } from "@/lib/handleFidarError";
 import { handleSecurityError } from "@/lib/handleSecurityError";
-import BluetoothGate from "./BluetoothGate";
-import toast from "react-hot-toast";
-import { ErrorCode, isFidarException } from "fidar-web-sdk";
+import { ErrorCode } from "fidar-web-sdk";
 
 function QrPage() {
   const location = useLocation();
@@ -34,9 +32,9 @@ function QrPage() {
   const { t } = useTranslation();
 
   const customerId = location.state?.customerId;
-  const taskId = location.state?.taskId;
-  const returnTo = location.state?.returnTo || "/dashboard";
 
+  // "idle" | "loading" | "qr" | "verified" | "error"
+  const [phase, setPhase] = useState("idle");
   const [status, setStatus] = useState("STARTING");
   const [error, setError] = useState("");
   const [qrImage, setQrImage] = useState(undefined);
@@ -44,10 +42,9 @@ function QrPage() {
   const [expiresIn] = useState(180);
   const [timeLeft, setTimeLeft] = useState(180);
 
-  const [bluetoothReady, setBluetoothReady] = useState(false);
-
-  // ⏳ Countdown timer
+  // ⏳ Countdown — only during QR phase
   useEffect(() => {
+    if (phase !== "qr") return;
     if (status === "ERROR" || status === "VERIFIED") return;
 
     const timer = setInterval(() => {
@@ -55,86 +52,53 @@ function QrPage() {
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [status]);
+  }, [phase, status]);
 
+  // 🚀 User clicks — SDK handles BLE+QR internally
+  const handleStart = async () => {
+    setPhase("loading");
+    setError("");
 
-  // 🔐 Start QR flow ONLY after Bluetooth is ready
-  useEffect(() => {
-    if (!customerId || !bluetoothReady) return;
-
-    let cancelled = false;
-
-    async function startQRFlow() {
-      setStatus("STARTING");
-      setError("");
-
-      try {
-        await fidar.loginWithQR(
-          (flowStatus) => {
-            if (cancelled) return;
-            setStatus(flowStatus);
-
-            if (flowStatus === "EXPIRED") {
-              setError(t("bankQRPage.Session.expired_description"));
-            }
-          },
-          (imageBase64) => {
-            if (cancelled) return;
-            setQrImage(imageBase64);
+    try {
+      await fidar.bindDevice(
+        (flowStatus) => {
+          // First QR-related status means BLE (if any) is already done
+          if (phase !== "qr") setPhase("qr");
+          setStatus(flowStatus);
+          if (flowStatus === "EXPIRED") {
+            setError(t("bankQRPage.Session.expired_description"));
           }
-        );
-
-        if (!cancelled) {
-          // QR passkey succeeded — navigate back with success flag
-          navigate(returnTo, {
-            replace: true,
-            state: { qrSuccess: true, taskId },
-          });
+        },
+        (imageBase64) => {
+          if (phase !== "qr") setPhase("qr");
+          setQrImage(imageBase64);
         }
-      } catch (err) {
-        if (cancelled) return;
+      );
 
-        if (
-          handleSecurityError(err, {
-            redirect: navigate,
-          })
-        ) {
-          // Security error — navigate back with failure flag
-          navigate(returnTo, {
-            replace: true,
-            state: { qrSuccess: false, taskId },
-          });
-          return;
-        }
-        handleFidarError(err, t);
-        setStatus("ERROR");
-        setError(
-          err?.payload?.message || t("bankQRPage.Connectionissue")
-        );
-        // Passkey failed — navigate back with failure flag after a short delay
-        setTimeout(() => {
-          if (!cancelled) {
-            navigate(returnTo, {
-              replace: true,
-              state: { qrSuccess: false, taskId },
-            });
-          }
-        }, 2500);
-      }
+      navigate("/dashboard");
+    } catch (err) {
+      if (handleSecurityError(err, { redirect: navigate })) return;
+
+      handleFidarError(err, t);
+      setPhase("error");
+      setError(err?.payload?.message || t("bankQRPage.Connectionissue"));
     }
-
-    startQRFlow();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [customerId, bluetoothReady, navigate, t]);
+  };
 
   const isExpired = timeLeft === 0 || status === "EXPIRED";
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
 
-  if (status === "ERROR") {
+  const statusLabel = (() => {
+    if (isExpired) return "EXPIRED";
+    if (status === "VERIFIED") return "VERIFIED";
+    if (status === "QR_READY" || status === "QR_GENERATED") return "READY";
+    if (status === "DEVICE_AUTH_STARTED") return "WAITING";
+    if (status === "PENDING" || status === "STARTING") return "PENDING";
+    return status || "PENDING";
+  })();
+
+  if (phase === "error") {
     return (
       <main className="fixed inset-0 z-50 flex items-center justify-center bg-background">
         <Card className="w-full max-w-md border-destructive">
@@ -146,22 +110,14 @@ function QrPage() {
               {t("bankQRPage.Session.cancelled_description")}
             </CardDescription>
           </CardHeader>
-
           <CardContent className="flex flex-col gap-4">
             <Alert variant="destructive">
-              <AlertTitle>
-                {t("bankQRPage.Security.warning")}
-              </AlertTitle>
+              <AlertTitle>{t("bankQRPage.Security.warning")}</AlertTitle>
               <AlertDescription>
-                {error ||
-                  t("bankQRPage.Session.window_switch_detected")}
+                {error || t("bankQRPage.Session.window_switch_detected")}
               </AlertDescription>
             </Alert>
-
-            <Button
-              className="w-full"
-              onClick={() => navigate(returnTo)}
-            >
+            <Button className="w-full" onClick={() => navigate("/bank-login")}>
               {t("bankQRPage.login.backbutton")}
             </Button>
           </CardContent>
@@ -170,7 +126,6 @@ function QrPage() {
     );
   }
 
-
   if (!customerId) {
     return (
       <main className="relative flex justify-center items-center min-h-screen bg-muted/30 p-4">
@@ -178,7 +133,6 @@ function QrPage() {
           <ModeToggle />
           <LanguageSwitcher />
         </div>
-
         <Card className="w-full max-w-md">
           <CardHeader className="text-center pb-2">
             <CardTitle>{t("bankQRPage.Session.error")}</CardTitle>
@@ -189,7 +143,7 @@ function QrPage() {
           <CardContent>
             <Skeleton className="h-36 w-full rounded-lg" />
             <div className="mt-3 flex justify-end">
-              <Button onClick={() => navigate(returnTo)}>
+              <Button onClick={() => navigate("/")}>
                 {t("bankQRPage.login.backbutton")}
               </Button>
             </div>
@@ -198,17 +152,6 @@ function QrPage() {
       </main>
     );
   }
-
-  const statusLabel = (() => {
-    if (isExpired) return "EXPIRED";
-    if (status === "VERIFIED") return "VERIFIED";
-    if (status === "LOOKUP_SUCCESS") return "LOOKUP";
-    if (status === "QR_READY" || status === "QR_GENERATED") return "READY";
-    if (status === "DEVICE_AUTH_STARTED") return "WAITING";
-    if (status === "PENDING" || status === "STARTING") return "PENDING";
-    if (status === "ERROR") return "ERROR";
-    return status || "PENDING";
-  })();
 
   return (
     <main className="relative flex flex-col items-center justify-center min-h-screen bg-muted/30 p-3">
@@ -223,32 +166,49 @@ function QrPage() {
           aria-hidden="true"
         />
         <Card className="relative shadow-md border rounded-2xl z-10">
-          {!bluetoothReady ? (
-            <BluetoothGate onReady={() => setBluetoothReady(true)} />
-          ) : (
-            <>
-              <CardHeader className="pt-4 px-5 pb-2">
-                <div className="w-full flex justify-center mb-2">
-                  <img
-                    src={logo}
-                    alt="Smart Bank"
-                    className="w-16 sm:w-20 rounded-md shadow select-none"
-                    draggable={false}
-                  />
-                </div>
-                <div className="text-center">
-                  <CardTitle className="text-base sm:text-lg font-semibold">
-                    {t("bankQRPage.title")}
-                  </CardTitle>
-                  <CardDescription className="text-xs text-muted-foreground">
-                    {t("bankQRPage.subtitle")}
-                  </CardDescription>
-                </div>
-              </CardHeader>
+          <CardHeader className="pt-4 px-5 pb-2">
+            <div className="w-full flex justify-center mb-2">
+              <img
+                src={logo}
+                alt="Smart Bank"
+                className="w-16 sm:w-20 rounded-md shadow select-none"
+                draggable={false}
+              />
+            </div>
+            <div className="text-center">
+              <CardTitle className="text-base sm:text-lg font-semibold">
+                {t("bankQRPage.title")}
+              </CardTitle>
+              <CardDescription className="text-xs text-muted-foreground">
+                {t("bankQRPage.subtitle")}
+              </CardDescription>
+            </div>
+          </CardHeader>
 
-              <Separator className="mx-5" />
+          <Separator className="mx-5" />
 
-              <CardContent className="flex flex-col items-center gap-3 py-4">
+          <CardContent className="flex flex-col items-center gap-3 py-4">
+
+            {/* ── Idle: start button ── */}
+            {phase === "idle" && (
+              <Button onClick={handleStart} className="w-full">
+                {t("bankQRPage.title")}
+              </Button>
+            )}
+
+            {/* ── Loading: SDK is handling BLE internally ── */}
+            {phase === "loading" && (
+              <div className="flex flex-col items-center gap-3 py-4">
+                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+                <p className="text-sm text-muted-foreground">
+                  {t("bankQRPage.status")}…
+                </p>
+              </div>
+            )}
+
+            {/* ── QR: show code + timer ── */}
+            {phase === "qr" && (
+              <>
                 <div className="w-[180px] sm:w-[200px]">
                   <AspectRatio ratio={1}>
                     <div className="p-1.5 rounded-lg bg-white shadow-sm h-full w-full flex items-center justify-center">
@@ -301,32 +261,28 @@ function QrPage() {
                     </AlertDescription>
                   </Alert>
                 )}
+              </>
+            )}
 
-                <div className="w-full rounded-md border p-3 bg-background/60">
-                  <p className="font-medium mb-2 text-xs">
-                    {t("bankQRPage.login.guide_title")}
-                  </p>
-                  <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
-                    <li className="flex gap-1 items-start">
-                      <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
-                      <span>{t("bankQRPage.login.subtitle_1")}</span>
-                    </li>
-                    <li>{t("bankQRPage.login.Condition")}</li>
-                  </ul>
-                </div>
+            <div className="w-full rounded-md border p-3 bg-background/60">
+              <p className="font-medium mb-2 text-xs">
+                {t("bankQRPage.login.guide_title")}
+              </p>
+              <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
+                <li className="flex gap-1 items-start">
+                  <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
+                  <span>{t("bankQRPage.login.subtitle_1")}</span>
+                </li>
+                <li>{t("bankQRPage.login.Condition")}</li>
+              </ul>
+            </div>
 
-                <div className="flex w-full justify-end">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => navigate(returnTo)}
-                  >
-                    {t("bankQRPage.login.backbutton")}
-                  </Button>
-                </div>
-              </CardContent>
-            </>
-          )}
+            <div className="flex w-full justify-end">
+              <Button variant="outline" size="sm" onClick={() => navigate("/")}>
+                {t("bankQRPage.login.backbutton")}
+              </Button>
+            </div>
+          </CardContent>
         </Card>
       </div>
     </main>
