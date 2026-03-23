@@ -198,7 +198,7 @@
     "customerIdPlaceholder": "Enter your Employee ID",
     "customerIdTooltip": "Your unique identifier provided by Smart Bank.",
     "login": "Login",
-    "bind": "Bind",
+    "bind": "Bind With Primary Device",
     "loggingIn": "Logging in...",
     "binding": "Binding...",
     "termsText": "By proceeding, you agree to our",

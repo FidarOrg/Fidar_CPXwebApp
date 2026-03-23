@@ -20,20 +20,18 @@ async function approveWithFidarPasskey(task) {
     throw new Error("Unable to resolve the FIDAR user identity for signing.");
   }
 
-  const { txnId, challenge } = await initiateSign({
-    userId,
-    amount: task.signing?.amount ?? 1,
-    currency: task.signing?.currency ?? "INR",
-    toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
-    remark: task.signing?.remark ?? `Approve task: ${task.title}`,
-  });
+  // const { txnId, challenge } = await initiateSign({
+  //   userId,
+  //   amount: task.signing?.amount ?? 1,
+  //   currency: task.signing?.currency ?? "INR",
+  //   toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
+  //   remark: task.signing?.remark ?? `Approve task: ${task.title}`,
+  // });
 
-  const assertion = await fidar.signChallenge(challenge);
-  const approved =
-    assertion === true ||
-    assertion?.verified === true ||
-    assertion?.assertion === true ||
-    Boolean(assertion);
+  const assertion = await fidar.signChallenge(
+  "transfer",                                           // "transfer" | "beneficiary"
+  () => initiateSign({ userId, amount, toAccount })     // your backend call that returns { challenge: string, ...rest }
+);
 
   return {
     method: "fidar-passkey",
