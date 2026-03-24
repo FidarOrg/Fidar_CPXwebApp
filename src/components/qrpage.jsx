@@ -117,7 +117,7 @@ function QrPage() {
                 {error || t("bankQRPage.Session.window_switch_detected")}
               </AlertDescription>
             </Alert>
-            <Button className="w-full" onClick={() => navigate("/bank-login")}>
+            <Button className="w-full" onClick={() => navigate("/Emp-login")}>
               {t("bankQRPage.login.backbutton")}
             </Button>
           </CardContent>
