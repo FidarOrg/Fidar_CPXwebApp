@@ -20,7 +20,7 @@ async function approveWithFidarPasskey(task) {
     throw new Error("Unable to resolve the FIDAR user identity for signing.");
   }
 
-  // const { txnId, challenge } = await initiateSign({
+  // const { txnId:txnId: signed?.initResult.txnId, challenge } = await initiateSign({
   //   userId,
   //   amount: task.signing?.amount ?? 1,
   //   currency: task.signing?.currency ?? "INR",
@@ -29,24 +29,26 @@ async function approveWithFidarPasskey(task) {
   // });
 
   const assertion = await fidar.signChallenge(
-  "transfer",                                           // "transfer" | "beneficiary"
-  () => initiateSign({
-    userId,
-    amount: task.signing?.amount ?? 1,
-    currency: task.signing?.currency ?? "INR",
-    toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
-    remark: task.signing?.remark ?? `Approve task: ${task.title}`
-   })     // your backend call that returns { challenge: string, ...rest }
-);
+    "transfer",                                           // "transfer" | "beneficiary"
+    () => initiateSign({
+      userId,
+      amount: task.signing?.amount ?? 1,
+      currency: task.signing?.currency ?? "INR",
+      toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
+      remark: task.signing?.remark ?? `Approve task: ${task.title}`
+    })     // your backend call that returns { challenge: string, ...rest }
+  );
+
+  if(!assertion){
+    throw new Error("User cancelled the signing process.");
+  }
 
   return {
     method: "fidar-passkey",
     verifier: userId,
-    txnId,
+    txnId: assertion?.initResult.txnId,
     signedAt: new Date().toISOString(),
-    assertion,
-    assertionId: assertion?.id ?? null,
-    approved,
+    approved: true
   };
 }
 
