@@ -30,7 +30,13 @@ async function approveWithFidarPasskey(task) {
 
   const assertion = await fidar.signChallenge(
   "transfer",                                           // "transfer" | "beneficiary"
-  () => initiateSign({ userId, amount, toAccount })     // your backend call that returns { challenge: string, ...rest }
+  () => initiateSign({
+    userId,
+    amount: task.signing?.amount ?? 1,
+    currency: task.signing?.currency ?? "INR",
+    toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
+    remark: task.signing?.remark ?? `Approve task: ${task.title}`
+   })     // your backend call that returns { challenge: string, ...rest }
 );
 
   return {
