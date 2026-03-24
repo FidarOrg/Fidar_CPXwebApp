@@ -7,24 +7,6 @@ import { Badge } from "@/components/ui/badge";
 export default function AnalyticsPage() {
   const tasks = [
     {
-      id: 1,
-      title: "Server outage - Payment API",
-      priority: "Critical",
-      status: "Pending",
-      due: "27 Feb 2026",
-      description:
-        "Investigate and resolve the payment API server outage affecting live transactions. Coordinate with DevOps and backend teams to restore service and prevent future downtime.",
-    },
-    {
-      id: 2,
-      title: "Database backup verification",
-      priority: "Critical",
-      status: "In Progress",
-      due: "28 Feb 2026",
-      description:
-        "Verify the integrity of recent database backups. Ensure disaster recovery compliance and confirm backup restoration works correctly in staging environment.",
-    },
-    {
       id: 3,
       title: "Client onboarding review",
       priority: "High",

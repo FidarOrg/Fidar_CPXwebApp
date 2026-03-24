@@ -65,20 +65,6 @@ export default function EmployeeDashboardPage() {
         "Approve the quarterly financial budget for operational expenses and department allocations.",
     },
     {
-      id: 1,
-      title: "Server outage - Payment API",
-      priority: "critical",
-      due: "27 Feb 2026",
-      status: "pending",
-    },
-    {
-      id: 2,
-      title: "Database backup verification",
-      priority: "critical",
-      due: "28 Feb 2026",
-      status: "in-progress",
-    },
-    {
       id: 3,
       title: "Client onboarding review",
       priority: "high",
