@@ -56,9 +56,9 @@ export default function EmployeeDashboardPage() {
       status: "pending",
       requiresSigning: true,
       signing: {
-        amount: 250000,
-        currency: "INR",
-        toAccount: "FIN-BUDGET-Q1",
+        amount: 2500,
+        currency: "USD",
+        toAccount: "3a43d8b7-b2e9-4ea5-983b-a70dc83cc2eb",
         remark: "Approve quarterly financial budget release",
       },
       description:
