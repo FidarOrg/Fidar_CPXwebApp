@@ -166,9 +166,8 @@ export default function PasskeyBanner() {
                     </p>
                 </div>
                 <Button
-                    size="sm"
                     onClick={() => navigate('/dashboard')}
-                    className="bg-green-600 hover:bg-green-700 text-white gap-1.5 shrink-0"
+                    className="passkey-btn gap-1.5 shrink-0"
                 >
                     Go to Dashboard <ArrowRight className="h-3.5 w-3.5" />
                 </Button>
@@ -206,10 +205,9 @@ export default function PasskeyBanner() {
 
                     <div className="mt-3 flex items-center gap-2 flex-wrap">
                         <Button
-                            size="sm"
                             disabled={registering}
                             onClick={handleRegister}
-                            className="bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+                            className="passkey-btn gap-2"
                         >
                             {registering
                                 ? <><Loader2 className="h-3.5 w-3.5 animate-spin" /> Registering…</>

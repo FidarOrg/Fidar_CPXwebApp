@@ -47,6 +47,50 @@ export async function initiateSign(payload) {
 }
 
 /* ---------------------------------
+   COMPLETE SIGNATURE
+   POST /iam/api/transactions/signature/complete
+---------------------------------- */
+export async function completeSignature({ txnId, realm, userId, assertionJson }) {
+  const res = await fetch(
+    `${API_BASE}/iam/api/transactions/signature/complete`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${fidar.getToken()}`,
+      },
+      body: JSON.stringify({
+        txnId,
+        realm,
+        userId,
+        assertionJson,
+      }),
+    }
+  );
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (err) {
+    throw {
+      code: "SERVER_ERROR",
+      message: "Failed to parse completeSignature response",
+      meta: { original: String(err) },
+    };
+  }
+
+  if (!res.ok) {
+    throw {
+      code: "COMPLETE_SIGNATURE_FAILED",
+      message: json?.message || "Signature completion failed",
+      meta: json,
+    };
+  }
+
+  return json;
+}
+
+/* ---------------------------------
    TRANSFER (SIGNED)
    POST /iam/transactions/transfer
 ---------------------------------- */

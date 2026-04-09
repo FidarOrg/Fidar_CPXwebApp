@@ -151,6 +151,34 @@ body.rtl .text-right { text-align: left; }
   padding-inline-start: 3rem;
   padding-inline-end: .75rem;
 }
+.passkey-btn {
+  background: linear-gradient(to right, #1a2e44, #79C6C7);
+  color: #fff;
+  border: none;
+  border-radius: 14px;
+  padding: 12px 20px;
+  font-size: 17px;
+  cursor: pointer;
+  width: 100%;
+  font-family: 'Anton',"sans-serif";
+  font-weight: 400;
+  letter-spacing: 0.5px;
+  box-shadow:
+    0 4px 10px rgba(121, 198, 199, 0.25),
+    inset 0 -2px 4px rgba(0, 0, 0, 0.15);
+  transition:
+    background 0.3s ease,
+    box-shadow 0.3s ease,
+    transform 0.15s ease;
+}
+.clear-btn {
+  background: linear-gradient(to right, #4B1A6E, #E40046);
+  color: #fff;
+  border: none;
+  font-family: 'Anton', sans-serif;
+  font-weight:400;
+  font-size: 17px;
+}
 
 .phone-input .phone-input__button {
   position: absolute !important;
