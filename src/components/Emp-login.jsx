@@ -278,7 +278,7 @@ function EmpLogin() {
                 : t("bankLoginPage.login")}
             </Button> */}
             <Button
-              className="w-full h-11 text-[1rem] sm:h-10 sm:text-sm bg-gradient-to-r from-violet-900 via-purple-1000 to-blue-900 hover:from-pink-600 hover:via-purple-1200 hover:to-blue-600 text-white font-semibold shadow-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(88,28,135,0.6)] hover:scale-[1.02] active:scale-95 rounded-lg"
+              className="passkey-btn h-11"
               disabled={!customerId.trim() || loading || loginLoading || registerLoading}
               onClick={handleBindWithQR}
             >

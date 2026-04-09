@@ -117,7 +117,7 @@ function QrPage() {
                 {error || t("bankQRPage.Session.window_switch_detected")}
               </AlertDescription>
             </Alert>
-            <Button className="w-full" onClick={() => navigate("/Emp-login")}>
+            <Button className="passkey-btn" onClick={() => navigate("/Emp-login")}>
               {t("bankQRPage.login.backbutton")}
             </Button>
           </CardContent>
@@ -143,7 +143,7 @@ function QrPage() {
           <CardContent>
             <Skeleton className="h-36 w-full rounded-lg" />
             <div className="mt-3 flex justify-end">
-              <Button onClick={() => navigate("/")}>
+              <Button className="passkey-btn" onClick={() => navigate("/")}>
                 {t("bankQRPage.login.backbutton")}
               </Button>
             </div>
@@ -191,7 +191,7 @@ function QrPage() {
 
             {/* ── Idle: start button ── */}
             {phase === "idle" && (
-              <Button onClick={handleStart} className="w-full">
+              <Button onClick={handleStart} className="clear-btn w-full rounded-lg">
                 {t("bankQRPage.title")}
               </Button>
             )}

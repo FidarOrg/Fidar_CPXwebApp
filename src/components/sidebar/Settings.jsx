@@ -45,7 +45,7 @@ export default function Settings() {
                   <Input placeholder="Email Address" className="h-11" />
                 </div>
 
-                <Button className="mt-3 bg-blue-600 hover:bg-blue-700">
+                <Button className="passkey-btn mt-3" style={{ width: "auto", padding: "8px 16px", fontSize: "14px", borderRadius: "6px", fontFamily: "inherit" }}>
                   Save Changes
                 </Button>
               </CardContent>
@@ -96,7 +96,7 @@ export default function Settings() {
                   Add an extra layer of security to your Smart Bank account.
                 </p>
 
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button className="passkey-btn" style={{ width: "auto", padding: "8px 16px", fontSize: "14px", borderRadius: "6px", fontFamily: "inherit" }}>
                   Enable 2FA
                 </Button>
               </CardContent>
@@ -155,7 +155,7 @@ export default function Settings() {
                   Choose language, theme, and notification settings.
                 </p>
 
-                <Button className="bg-blue-600 hover:bg-blue-700">
+                <Button className="passkey-btn" style={{ width: "auto", padding: "8px 16px", fontSize: "14px", borderRadius: "6px", fontFamily: "inherit" }}>
                   Open Preferences
                 </Button>
               </CardContent>

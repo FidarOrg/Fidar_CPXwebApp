@@ -278,7 +278,7 @@ export default function EmployeeDashboardPage() {
 
               {task.requiresSigning && task.status !== "done" && (
                 <Button
-                  size="sm"
+                  className="clear-btn rounded-lg"
                   onClick={() => setOpenBudgetPopup(true)}
                 >
                   View
@@ -433,7 +433,7 @@ export default function EmployeeDashboardPage() {
               Cancel
             </Button>
 
-            <Button onClick={acceptBudgetTask} disabled={signingTaskId === 7}>
+            <Button className="passkey-btn" style={{ width: "auto", padding: "10px 28px" }} onClick={acceptBudgetTask} disabled={signingTaskId === 7}>
               {signingTaskId === 7 ? "Signing..." : "Accept"}
             </Button>
 

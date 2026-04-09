@@ -92,9 +92,7 @@ export default function PasskeyLoginButton() {
         return (
             <button
                 onClick={() => setExpanded(true)}
-                className="flex items-center gap-2 px-4 py-2 rounded-lg border border-border
-                   bg-card hover:bg-accent text-sm font-medium text-foreground
-                   shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]"
+                className="passkey-btn flex items-center gap-2"
                 title="Sign in with a registered passkey"
             >
                 <Fingerprint className="h-4 w-4 text-indigo-500" />
@@ -131,8 +129,7 @@ export default function PasskeyLoginButton() {
 
             <div className="flex gap-2">
                 <Button
-                    size="sm"
-                    className="flex-1 bg-indigo-600 hover:bg-indigo-700 text-white gap-2"
+                    className="passkey-btn flex-1 gap-2"
                     disabled={!email.trim() || loading}
                     onClick={handlePasskeyLogin}
                 >
