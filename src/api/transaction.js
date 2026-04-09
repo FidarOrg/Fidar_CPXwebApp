@@ -52,7 +52,7 @@ export async function initiateSign(payload) {
 ---------------------------------- */
 export async function completeSignature({ txnId, realm, userId, assertionJson }) {
   const res = await fetch(
-    `${API_BASE}/iam/api/transactions/signature/complete`,
+    `${API_BASE}/iam/api/transactions/sign/complete`,
     {
       method: "POST",
       headers: {
