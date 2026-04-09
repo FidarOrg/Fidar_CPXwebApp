@@ -4,7 +4,7 @@ import { fidar } from "@/lib/fidar";
  * Must match backend base
  * backend uses: /iam/api/...
  */
-const API_BASE = "https://sdk.fidar.io";
+const API_BASE = "https://app.fidar.io";
 
 /* ---------------------------------
    INITIATE TRANSACTION SIGN
@@ -52,7 +52,7 @@ export async function initiateSign(payload) {
 ---------------------------------- */
 export async function completeSignature({ txnId, realm, userId, assertionJson }) {
   const res = await fetch(
-    `${API_BASE}/iam/api/transactions/sign/complete`,
+    `${API_BASE}/iam/api/transactions/signature/complete`,
     {
       method: "POST",
       headers: {
