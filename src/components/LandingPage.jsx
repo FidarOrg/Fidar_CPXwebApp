@@ -1,10 +1,8 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import fidarLogoDark from "../assets/fidar_light.png";
-import fidarLogoLight from "../assets/fidar_dark.png";
+import fidarLogo from "../assets/banklogo.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
-import { useTheme } from "@/components/theme-provider/theme-provider";
 import { Globe } from "lucide-react";
 
 import {
@@ -72,14 +70,6 @@ export default function EmployeeLanding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { lang } = useLanguage();
-  const { theme } = useTheme();
-  const resolvedTheme =
-    theme === "system"
-      ? window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
-      : theme;
-  const fidarLogo = resolvedTheme === "dark" ? fidarLogoDark : fidarLogoLight;
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden">
@@ -141,31 +131,29 @@ export default function EmployeeLanding() {
               Internal Control Center
             </p>
 
-            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight">
-              <span className="text-[#E11D48]">
-                Employee Operations Dashboard
-              </span>
+            <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-tight bg-gradient-to-r from-red-600 via-red-500 to-rose-400 bg-clip-text text-transparent">
+              Employee Operations Dashboard
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Manage approvals, monitor transactions, oversee security events,
-              and maintain system integrity — all from one secure interface.
+              and maintain system integrity — all from one secure interface
             </p>
 
             {/* Badges */}
-            <div className="flex flex-wrap justify-center gap-6 mt-6">
-              <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10 backdrop-blur">
-                <BadgeCheck className="w-6 h-6 text-[#E11D48]" />
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
+              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
+                <BadgeCheck className="w-5 h-5 text-[#E11D48]" />
                 <span>Role-Based Access</span>
               </div>
 
-              <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10 backdrop-blur">
-                <ShieldCheck className="w-6 h-6 text-[#E11D48]" />
+              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
+                <ShieldCheck className="w-5 h-5 text-[#E11D48]" />
                 <span>Audit Logging</span>
               </div>
 
-              <div className="flex items-center gap-3 px-4 py-2 rounded-lg bg-white/5 border border-white/10 backdrop-blur">
-                <Activity className="w-6 h-6 text-[#E11D48]" />
+              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
+                <Activity className="w-5 h-5 text-[#E11D48]" />
                 <span>Live Monitoring</span>
               </div>
             </div>
@@ -216,7 +204,7 @@ export default function EmployeeLanding() {
             <h2 className="text-2xl font-semibold">Operational Tools</h2>
             <p className="text-muted-foreground max-w-3xl mx-auto mt-3">
               Built for internal teams handling transaction approvals,
-              compliance checks, and system oversight.
+              compliance checks, and system oversight
             </p>
 
             <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-10">
@@ -225,7 +213,7 @@ export default function EmployeeLanding() {
                 <FileCheck className="h-6 w-6 mb-3 text-primary" />
                 <h3>Transaction Approvals</h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Review and authorize high-value transfers with full audit trace.
+                  Review and authorize high-value transfers with full audit trace
                 </p>
               </div>
 
@@ -233,7 +221,7 @@ export default function EmployeeLanding() {
                 <Users className="h-6 w-6 mb-3 text-primary" />
                 <h3>User Management</h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Assign roles, permissions, and enforce internal policies.
+                  Assign roles, permissions, and enforce internal policies
                 </p>
               </div>
 
@@ -241,7 +229,7 @@ export default function EmployeeLanding() {
                 <Database className="h-6 w-6 mb-3 text-primary" />
                 <h3>Data Oversight</h3>
                 <p className="text-sm text-muted-foreground mt-2">
-                  Monitor logs, exports, and system activity in real time.
+                  Monitor logs, exports, and system activity in real time
                 </p>
               </div>
 
@@ -256,7 +244,7 @@ export default function EmployeeLanding() {
 
           <p className="text-muted-foreground max-w-2xl mx-auto mt-2">
             Internal access is protected with layered authentication,
-            biometric verification, and strict audit compliance.
+            biometric verification, and strict audit compliance
           </p>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10 px-4">
@@ -265,7 +253,7 @@ export default function EmployeeLanding() {
               <KeyRound className="h-6 w-6 mb-3 text-primary" />
               <h4>Hardware MFA</h4>
               <p className="text-sm text-muted-foreground mt-2">
-                FIDO-based authentication for internal systems.
+                FIDO-based authentication for internal systems
               </p>
             </div>
 
@@ -273,7 +261,7 @@ export default function EmployeeLanding() {
               <ScanFace className="h-6 w-6 mb-3 text-primary" />
               <h4>Biometric Verification</h4>
               <p className="text-sm text-muted-foreground mt-2">
-                Face authentication for secure approvals.
+                Face authentication for secure approvals
               </p>
             </div>
 
@@ -281,7 +269,7 @@ export default function EmployeeLanding() {
               <ShieldAlert className="h-6 w-6 mb-3 text-primary" />
               <h4>Threat Detection</h4>
               <p className="text-sm text-muted-foreground mt-2">
-                Real-time anomaly and fraud monitoring.
+                Real-time anomaly and fraud monitoring
               </p>
             </div>
 

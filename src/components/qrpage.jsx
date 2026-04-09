@@ -38,9 +38,10 @@ function QrPage() {
   const [status, setStatus] = useState("STARTING");
   const [error, setError] = useState("");
   const [qrImage, setQrImage] = useState(undefined);
+  const [qrWasReady, setQrWasReady] = useState(false);
 
-  const [expiresIn] = useState(180);
-  const [timeLeft, setTimeLeft] = useState(180);
+  const [expiresIn] = useState(60);
+  const [timeLeft, setTimeLeft] = useState(60);
 
   // ⏳ Countdown — only during QR phase
   useEffect(() => {
@@ -97,6 +98,12 @@ function QrPage() {
     if (status === "PENDING" || status === "STARTING") return "PENDING";
     return status || "PENDING";
   })();
+
+  // Latch: once READY, stay ready until expired
+  React.useEffect(() => {
+    if (statusLabel === "READY") setQrWasReady(true);
+    if (isExpired) setQrWasReady(false);
+  }, [statusLabel, isExpired]);
 
   if (phase === "error") {
     return (
@@ -170,7 +177,7 @@ function QrPage() {
             <div className="w-full flex justify-center mb-2">
               <img
                 src={logo}
-                alt="Smart Bank"
+                alt="CPX"
                 className="w-16 sm:w-20 rounded-md shadow select-none"
                 draggable={false}
               />
@@ -207,7 +214,22 @@ function QrPage() {
             )}
 
             {/* ── QR: show code + timer ── */}
-            {phase === "qr" && (
+            {phase === "qr" && isExpired && (
+              <div className="flex flex-col items-center gap-4 py-4 w-full">
+                <p className="text-lg font-bold text-destructive">Session expired</p>
+                <p className="text-sm text-muted-foreground text-center">
+                  Return to login to start a new QR session
+                </p>
+                <Button
+                  className="w-full bg-[#E11D48] hover:bg-[#be123c] text-white font-semibold rounded-lg"
+                  onClick={() => navigate("/Emp-login")}
+                >
+                  Back to login
+                </Button>
+              </div>
+            )}
+
+            {phase === "qr" && !isExpired && (
               <>
                 <div className="w-[180px] sm:w-[200px]">
                   <AspectRatio ratio={1}>
@@ -225,12 +247,15 @@ function QrPage() {
                   </AspectRatio>
                 </div>
 
-                <Badge
-                  variant={isExpired ? "destructive" : "secondary"}
-                  className="uppercase tracking-wide font-semibold px-2 py-0.5 text-xs"
-                >
-                  {t("bankQRPage.status")} {statusLabel}
-                </Badge>
+                {qrWasReady ? (
+                  <p className="text-sm font-semibold text-emerald-500">
+                    QR Code is ready to be scanned
+                  </p>
+                ) : (
+                  <p className="text-sm font-semibold text-yellow-500">
+                    QR Pending
+                  </p>
+                )}
 
                 <div className="w-full max-w-xs text-center">
                   <p className="text-xs mb-1">
@@ -250,17 +275,6 @@ function QrPage() {
                     <AlertDescription>{error}</AlertDescription>
                   </Alert>
                 )}
-
-                {isExpired && (
-                  <Alert className="w-full p-2 text-xs">
-                    <AlertTitle className="text-sm">
-                      {t("bankQRPage.Session.expired")}
-                    </AlertTitle>
-                    <AlertDescription>
-                      {t("bankQRPage.Session.expired_description")}
-                    </AlertDescription>
-                  </Alert>
-                )}
               </>
             )}
 
@@ -268,12 +282,15 @@ function QrPage() {
               <p className="font-medium mb-2 text-xs">
                 {t("bankQRPage.login.guide_title")}
               </p>
-              <ul className="list-disc pl-4 space-y-1 text-xs text-muted-foreground">
+              <ul className="space-y-1 text-xs text-muted-foreground">
                 <li className="flex gap-1 items-start">
                   <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
                   <span>{t("bankQRPage.login.subtitle_1")}</span>
                 </li>
-                <li>{t("bankQRPage.login.Condition")}</li>
+                <li className="flex gap-1 items-start">
+                  <ShieldCheck className="h-3 w-3 mt-0.5 text-emerald-600 shrink-0" />
+                  <span>{t("bankQRPage.login.Condition")}</span>
+                </li>
               </ul>
             </div>
 
