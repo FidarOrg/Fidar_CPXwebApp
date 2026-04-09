@@ -1,8 +1,10 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import fidarLogo from "../assets/fidarlogo.jpg";
+import fidarLogoDark from "../assets/fidar_light.png";
+import fidarLogoLight from "../assets/fidar_dark.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
+import { useTheme } from "@/components/theme-provider/theme-provider";
 import { Globe } from "lucide-react";
 
 import {
@@ -70,6 +72,14 @@ export default function EmployeeLanding() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { lang } = useLanguage();
+  const { theme } = useTheme();
+  const resolvedTheme =
+    theme === "system"
+      ? window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : theme;
+  const fidarLogo = resolvedTheme === "dark" ? fidarLogoDark : fidarLogoLight;
 
   return (
     <div className="min-h-screen flex flex-col bg-background text-foreground relative overflow-hidden">
@@ -82,7 +92,7 @@ export default function EmployeeLanding() {
         <div className="max-w-7xl mx-auto h-16 flex items-center justify-between">
 
           <div className="flex items-center gap-4">
-            <img src={fidarLogo} alt="Fidar Logo" className="h-10 w-auto rounded-md" />
+            <img src={fidarLogo} alt="Fidar Logo" className="h-24 w-auto rounded-md" />
 
             <nav className="hidden md:flex items-center gap-6 text-sm">
               <a href="#operations" className="hover:underline">Operations</a>
