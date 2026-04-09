@@ -151,6 +151,11 @@ body.rtl .text-right { text-align: left; }
   padding-inline-start: 3rem;
   padding-inline-end: .75rem;
 }
+/* Anton font on all buttons */
+button, [role="button"] {
+  font-family: 'Anton', sans-serif !important;
+}
+
 .passkey-btn {
   background: linear-gradient(to right, #1a2e44, #79C6C7);
   color: #fff;

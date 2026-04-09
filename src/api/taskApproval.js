@@ -1,5 +1,5 @@
 import { fidar } from "@/lib/fidar";
-import { initiateSign } from "@/api/transaction";
+import { initiateSign, completeSignature } from "@/api/transaction";
 
 function getFidarUserId(profile) {
   return (
@@ -43,10 +43,19 @@ async function approveWithFidarPasskey(task) {
     throw new Error("User cancelled the signing process.");
   }
 
+  const txnId = assertion?.initResult?.txnId;
+
+  await completeSignature({
+    txnId,
+    realm: "FIDAR_WEBAUTH_V2",
+    userId,
+    assertionJson: assertion,
+  });
+
   return {
     method: "fidar-passkey",
     verifier: userId,
-    txnId: assertion?.initResult.txnId,
+    txnId,
     signedAt: new Date().toISOString(),
     approved: true
   };
