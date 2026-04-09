@@ -4,7 +4,7 @@ import { fidar } from "@/lib/fidar";
  * Must match backend base
  * backend uses: /iam/api/...
  */
-const API_BASE = "https://app.fidar.io";
+const API_BASE = "https://sdk.fidar.io";
 
 /* ---------------------------------
    INITIATE TRANSACTION SIGN
