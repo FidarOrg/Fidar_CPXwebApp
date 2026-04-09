@@ -147,7 +147,7 @@ export default function BluetoothGate({ onReady }) {
       </p>
 
       {!unsupported && !blocked && (
-        <Button onClick={handleAction} disabled={loading}>
+        <Button className="passkey-btn" onClick={handleAction} disabled={loading}>
           {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
           {buttonLabel}
         </Button>

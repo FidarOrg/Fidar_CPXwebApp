@@ -80,7 +80,7 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            <Button>Edit</Button>
+            <Button className="passkey-btn">Edit</Button>
           </div>
         </CardHeader>
 
@@ -135,7 +135,7 @@ export default function ProfilePage() {
 
           </div>
 
-          <Button className="w-full md:w-auto">Edit Profile</Button>
+          <Button className="passkey-btn w-full md:w-auto">Edit Profile</Button>
         </CardContent>
       </Card>
     </div>

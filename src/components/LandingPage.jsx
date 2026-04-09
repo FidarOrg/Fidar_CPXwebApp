@@ -106,11 +106,8 @@ export default function EmployeeLanding() {
             {/* Employee Login (leads to Emp-login page with QR + SSO + Passkey) */}
             <button
               onClick={() => navigate("/Emp-login")}
-              className="w-36 h-10 text-sm font-semibold rounded-lg
-                bg-gradient-to-r from-blue-900 via-indigo-900 to-purple-900
-                text-white shadow-lg hover:scale-[1.03] active:scale-95
-                hover:shadow-[0_0_15px_rgba(79,70,229,0.5)]
-                transition-all duration-300"
+              className="passkey-btn w-36"
+              style={{ padding: "8px 14px", fontSize: "13px", borderRadius: "10px" }}
             >
               Employee Login
             </button>
