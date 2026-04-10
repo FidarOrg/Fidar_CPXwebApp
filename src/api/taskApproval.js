@@ -28,31 +28,29 @@ async function approveWithFidarPasskey(task) {
   //   remark: task.signing?.remark ?? `Approve task: ${task.title}`,
   // });
 
-  const assertion = await fidar.signChallenge(
-    "transfer",                                           // "transfer" | "beneficiary"
+  // signChallenge returns { assertion: object, initResult: T } or null
+  const signed = await fidar.signChallenge(
+    "transfer",
     () => initiateSign({
       userId,
       amount: task.signing?.amount ?? 1,
       currency: task.signing?.currency ?? "INR",
       toAccount: task.signing?.toAccount ?? `TASK-${task.id}`,
       remark: task.signing?.remark ?? `Approve task: ${task.title}`
-    })     // your backend call that returns { challenge: string, ...rest }
+    })
   );
 
-  if(!assertion){
+  if (!signed) {
     throw new Error("User cancelled the signing process.");
   }
 
-  const txnId = assertion?.initResult?.txnId;
-
-  // Strip initResult — backend expects only the WebAuthn assertion portion
-  const { initResult, ...assertionOnly } = assertion;
+  const txnId = signed.initResult?.txnId;
 
   const result = await completeSignature({
     txnId,
     realm: "FIDAR_WEBAUTH_V2",
     userId,
-    assertionJson: assertionOnly,
+    assertionJson: signed.assertion, // only the WebAuthn assertion, not the full wrapper
   });
 
   if (result?.status === "FAILED" || result?.success === false) {
