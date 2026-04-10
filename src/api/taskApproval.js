@@ -45,12 +45,19 @@ async function approveWithFidarPasskey(task) {
 
   const txnId = assertion?.initResult?.txnId;
 
-  await completeSignature({
+  // Strip initResult — backend expects only the WebAuthn assertion portion
+  const { initResult, ...assertionOnly } = assertion;
+
+  const result = await completeSignature({
     txnId,
     realm: "FIDAR_WEBAUTH_V2",
     userId,
-    assertionJson: assertion,
+    assertionJson: assertionOnly,
   });
+
+  if (result?.status === "FAILED" || result?.success === false) {
+    throw new Error(result?.message || "Signature verification failed");
+  }
 
   return {
     method: "fidar-passkey",
