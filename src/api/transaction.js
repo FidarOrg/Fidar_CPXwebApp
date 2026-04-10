@@ -12,7 +12,7 @@ const API_BASE = "https://sdk.fidar.io";
 ---------------------------------- */
 export async function initiateSign(payload) {
   const res = await fetch(
-    `${API_BASE}/iam/api/transactions/sign/initiate`,
+    `${API_BASE}/fidar/sdk/api/transactions/signature/initiate`,
     {
       method: "POST",
       headers: {
@@ -52,7 +52,7 @@ export async function initiateSign(payload) {
 ---------------------------------- */
 export async function completeSignature({ txnId, realm, userId, assertionJson }) {
   const res = await fetch(
-    `${API_BASE}/iam/api/transactions/signature/complete`,
+    `${API_BASE}/fidar/sdk/api/transactions/signature/complete`,
     {
       method: "POST",
       headers: {
