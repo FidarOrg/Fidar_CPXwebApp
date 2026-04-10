@@ -40,10 +40,7 @@ export async function initiateSign(payload) {
     };
   }
 
-  return {
-    txnId: String(json.txnId),
-    challenge: String(json.challenge),
-  };
+  return String(json.challenge);
 }
 
 /* ---------------------------------
