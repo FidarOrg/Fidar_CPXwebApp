@@ -44,6 +44,7 @@ export default function EmployeeDashboardPage() {
   const designation = "Senior Operations Manager";
 
   const [openBudgetPopup, setOpenBudgetPopup] = useState(false);
+  const [selectedTask, setSelectedTask] = useState(null);
   const [signingTaskId, setSigningTaskId] = useState(null);
   const [taskApprovalError, setTaskApprovalError] = useState("");
 
@@ -203,21 +204,20 @@ export default function EmployeeDashboardPage() {
     setShowAddForm(false);
   };
 
-  // Accept budget task via FIDAR passkey signing
+  // Accept a signing task via FIDAR passkey signing
   const acceptBudgetTask = async () => {
-    const budgetTask = tasks.find((task) => task.id === 7);
-    if (!budgetTask) return;
+    if (!selectedTask) return;
 
     setTaskApprovalError("");
-    setSigningTaskId(budgetTask.id);
+    setSigningTaskId(selectedTask.id);
 
     try {
-      const approval = await signTaskApproval(budgetTask);
+      const approval = await signTaskApproval(selectedTask);
       const isApproved = approval?.approved === true;
 
       setTasks((prev) =>
         prev.map((task) =>
-          task.id === budgetTask.id
+          task.id === selectedTask.id
             ? {
                 ...task,
                 status: isApproved ? "done" : "pending",
@@ -311,7 +311,11 @@ export default function EmployeeDashboardPage() {
               {task.requiresSigning && task.status !== "done" && (
                 <Button
                   className="clear-btn rounded-lg"
-                  onClick={() => setOpenBudgetPopup(true)}
+                  onClick={() => {
+                    setSelectedTask(task);
+                    setTaskApprovalError("");
+                    setOpenBudgetPopup(true);
+                  }}
                 >
                   View
                 </Button>
@@ -438,13 +442,11 @@ export default function EmployeeDashboardPage() {
         <DialogContent>
 
           <DialogHeader>
-            <DialogTitle>Sanction Financial Budget</DialogTitle>
+            <DialogTitle>{selectedTask?.title}</DialogTitle>
           </DialogHeader>
 
           <p className="text-sm text-muted-foreground">
-            Approve the quarterly financial budget for operational expenses
-            and department allocations. This approval will allow the finance
-            team to release funds.
+            {selectedTask?.description}
           </p>
 
           <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground">
@@ -465,8 +467,8 @@ export default function EmployeeDashboardPage() {
               Cancel
             </Button>
 
-            <Button className="passkey-btn" style={{ width: "auto", padding: "10px 28px" }} onClick={acceptBudgetTask} disabled={signingTaskId === 7}>
-              {signingTaskId === 7 ? "Signing..." : "Accept"}
+            <Button className="passkey-btn" style={{ width: "auto", padding: "10px 28px" }} onClick={acceptBudgetTask} disabled={signingTaskId === selectedTask?.id}>
+              {signingTaskId === selectedTask?.id ? "Signing..." : "Accept"}
             </Button>
 
           </div>
