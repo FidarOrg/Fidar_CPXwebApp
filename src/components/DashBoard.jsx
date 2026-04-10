@@ -65,6 +65,38 @@ export default function EmployeeDashboardPage() {
         "Approve the quarterly financial budget for operational expenses and department allocations.",
     },
     {
+      id: 8,
+      title: "Authorize Emergency Fund Transfer",
+      priority: "critical",
+      due: "10 Apr 2026",
+      status: "pending",
+      requiresSigning: true,
+      signing: {
+        amount: 15000,
+        currency: "USD",
+        toAccount: "5f91c3a2-d4e7-4bc1-a012-b83ef92dd4f1",
+        remark: "Emergency fund transfer for disaster recovery operations",
+      },
+      description:
+        "Authorize an emergency fund transfer to cover disaster recovery and business continuity costs.",
+    },
+    {
+      id: 9,
+      title: "Approve Vendor Contract Payment",
+      priority: "critical",
+      due: "12 Apr 2026",
+      status: "pending",
+      requiresSigning: true,
+      signing: {
+        amount: 8750,
+        currency: "USD",
+        toAccount: "9c27b1e4-f3a8-4d6e-b591-c04da71ee823",
+        remark: "Vendor contract payment for Q2 service agreement",
+      },
+      description:
+        "Approve the Q2 vendor contract payment for third-party service providers under the new SLA agreement.",
+    },
+    {
       id: 3,
       title: "Client onboarding review",
       priority: "high",
