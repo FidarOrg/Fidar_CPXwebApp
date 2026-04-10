@@ -22,7 +22,7 @@ import {
 } from "@/components/ui/tooltip";
 import { Loader2, Globe } from "lucide-react";
 import logo from "../assets/banklogo.png";
-import fidarLogo from "../assets/fidarlogo.jpg";
+import fidarLogo from "../assets/banklogo.png";
 import { toast } from "@/hooks/use-toast";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 import {
