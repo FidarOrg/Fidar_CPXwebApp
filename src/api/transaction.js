@@ -63,7 +63,7 @@ export async function completeSignature({ txnId, realm, userId, assertionJson })
         txnId,
         realm,
         userId,
-        assertionJson,
+        assertionJson: typeof assertionJson === "string" ? assertionJson : JSON.stringify(assertionJson),
       }),
     }
   );
