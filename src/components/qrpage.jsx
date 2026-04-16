@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import logo from "../assets/banklogo.png";
+import logo from "../assets/cpx.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 
 import {
