@@ -47,6 +47,7 @@ export default function EmployeeDashboardPage() {
   const [selectedTask, setSelectedTask] = useState(null);
   const [signingTaskId, setSigningTaskId] = useState(null);
   const [taskApprovalError, setTaskApprovalError] = useState("");
+  const [showTaskInfo, setShowTaskInfo] = useState(false);
 
   const [tasks, setTasks] = useState([
     {
@@ -314,6 +315,7 @@ export default function EmployeeDashboardPage() {
                   onClick={() => {
                     setSelectedTask(task);
                     setTaskApprovalError("");
+                    setShowTaskInfo(false);
                     setOpenBudgetPopup(true);
                   }}
                 >
@@ -449,10 +451,20 @@ export default function EmployeeDashboardPage() {
             {selectedTask?.description}
           </p>
 
-          <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground">
-            Accepting this task now triggers the FIDAR SDK signing flow using
-            initiateSign followed by signChallenge.
-          </div>
+          <button
+            className="text-sm text-primary underline underline-offset-4 hover:opacity-80 text-left"
+            onClick={() => setShowTaskInfo((prev) => !prev)}
+          >
+            {showTaskInfo ? "Hide information" : "Click here for more information"}
+          </button>
+
+          {showTaskInfo && selectedTask && (
+            <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground space-y-1">
+              <p><span className="font-medium text-foreground">Priority:</span> {selectedTask.priority}</p>
+              <p><span className="font-medium text-foreground">Due Date:</span> {selectedTask.due}</p>
+              <p><span className="font-medium text-foreground">Status:</span> {selectedTask.status}</p>
+            </div>
+          )}
 
           {taskApprovalError && (
             <p className="text-sm text-destructive">{taskApprovalError}</p>
