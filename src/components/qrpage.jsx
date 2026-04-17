@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import logo from "../assets/cpx.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
+import { QRCodeSVG } from "qrcode.react";
 
 import {
   Card,
@@ -10,21 +11,26 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Loader2, ShieldCheck } from "lucide-react";
+import { Loader2, ShieldCheck, Bluetooth } from "lucide-react";
 import { LanguageSwitcher } from "./language-swicther/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 
-import { fidar } from "@/lib/fidar";
-import { handleFidarError } from "@/lib/handleFidarError";
-import { handleSecurityError } from "@/lib/handleSecurityError";
-import { ErrorCode } from "fidar-web-sdk";
+// ── QR-BLE constants (temp: no SDK) ──────────────────────────────────────────
+const REALM = "FIDAR_WEBAUTH_V2";
+const CLIENT_ID = "anis";
+const DEVICE_AUTH_BASE = "https://sdk.fidar.io/fidar/sdk/api";
+const DEVICE_ID = "cpx-terminal-001";
+const QR_REFRESH_MS = 1000;   // refresh QR image every 1s
+const POLL_INTERVAL_MS = 5000; // status poll every 5s
+const SLOW_DOWN_MS = 10000;
+const BLE_SERVICE_UUID  = "0000abcd-0000-1000-8000-00805f9b34fb";
+const BLE_CHAR_UUID     = "0000dcba-0000-1000-8000-00805f9b34fb";
 
 function QrPage() {
   const location = useLocation();
@@ -33,77 +39,229 @@ function QrPage() {
 
   const customerId = location.state?.customerId;
 
-  // "idle" | "loading" | "qr" | "verified" | "error"
+  // "idle" | "loading" | "qr" | "error"
   const [phase, setPhase] = useState("idle");
-  const [status, setStatus] = useState("STARTING");
+  // PENDING_QR | PENDING_BLE | PENDING | AUTHORIZED | EXPIRED
+  const [pollStatus, setPollStatus] = useState("PENDING_QR");
+  const [qrToken, setQrToken] = useState(null);
   const [error, setError] = useState("");
-  const [qrImage, setQrImage] = useState(undefined);
-  const [qrWasReady, setQrWasReady] = useState(false);
-
-  const [expiresIn] = useState(60);
+  const [bleLoading, setBleLoading] = useState(false);
+  const [expiresIn, setExpiresIn] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
+
+  const sessionRef = useRef(null);
+  const pollTimerRef = useRef(null);
+  const qrRefreshTimerRef = useRef(null);
+  const bleStartedRef = useRef(false); // prevent double-trigger
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+      if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+    };
+  }, []);
 
   // ⏳ Countdown — only during QR phase
   useEffect(() => {
     if (phase !== "qr") return;
-    if (status === "ERROR" || status === "VERIFIED") return;
-
     const timer = setInterval(() => {
       setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
     }, 1000);
-
     return () => clearInterval(timer);
-  }, [phase, status]);
+  }, [phase]);
 
-  // 🚀 User clicks — SDK handles BLE+QR internally
+  // 📡 BLE flow — web delivers challenge to phone via BLE, phone calls /verify itself
+  const runBleFlow = useCallback(async () => {
+    setBleLoading(true);
+    setError("");
+    console.log("[QR-BLE] runBleFlow triggered");
+    try {
+      // Step 6: create BLE proximity session → get bleSessionId + challenge
+      console.log("[QR-BLE] Creating BLE session...");
+      const sessionRes = await fetch(`${DEVICE_AUTH_BASE}/bluetooth-proximity/session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ realm: REALM, clientId: CLIENT_ID }),
+      });
+      if (!sessionRes.ok) throw new Error(`BLE session failed: HTTP ${sessionRes.status}`);
+      const bleData = await sessionRes.json();
+      console.log("[QR-BLE] BLE session response:", bleData);
+      const { sessionId: bleSessionId, challenge, pairingDeviceId } = bleData;
+      if (!bleSessionId || !challenge) throw new Error("Invalid BLE session response");
+
+      // Step 6b: Web Bluetooth — must come from user gesture (button click)
+      console.log("[QR-BLE] Requesting BLE device...");
+      window.__fidarBlePickerOpen = true;
+      let device;
+      try {
+        device = await navigator.bluetooth.requestDevice({
+          filters: [{ services: [BLE_SERVICE_UUID] }],
+          optionalServices: [BLE_SERVICE_UUID],
+        });
+      } finally {
+        window.__fidarBlePickerOpen = false;
+      }
+
+      const server = await device.gatt?.connect();
+      if (!server) throw new Error("Unable to connect to Bluetooth device");
+
+      const service = await server.getPrimaryService(BLE_SERVICE_UUID);
+      const characteristic = await service.getCharacteristic(BLE_CHAR_UUID);
+
+      // Deliver payload so phone can sign it and call /bluetooth-proximity/verify itself
+      const payload = `${bleSessionId}:${challenge}:${pairingDeviceId ?? ""}`;
+      console.log("[QR-BLE] Writing payload to characteristic:", payload);
+      const encoded = new TextEncoder().encode(payload);
+
+      try {
+        if (characteristic.properties?.write) {
+          await characteristic.writeValue(encoded);
+        } else if (characteristic.properties?.writeWithoutResponse &&
+            characteristic.writeValueWithoutResponse) {
+          await characteristic.writeValueWithoutResponse(encoded);
+        } else {
+          throw new Error("BLE characteristic does not support write");
+        }
+      } finally {
+        if (device.gatt?.connected) device.gatt.disconnect();
+      }
+
+      // Done — phone signs payload and calls /bluetooth-proximity/verify.
+      // Main poll (PENDING_BLE → PENDING) picks this up automatically.
+      console.log("[QR-BLE] Challenge delivered to phone via BLE ✅");
+    } catch (err) {
+      console.error("[QR-BLE] BLE flow error:", err);
+      setError(err.message || "Bluetooth connection failed");
+      bleStartedRef.current = false; // allow retry
+    } finally {
+      setBleLoading(false);
+    }
+  }, []);
+
+  // �🔄 Refresh QR token every 1s via GET /device-auth/qr/{sessionId}
+  const startQrRefresh = useCallback((sessionId) => {
+    const refresh = async () => {
+      try {
+        const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr/${sessionId}`);
+        if (res.ok) {
+          const data = await res.json().catch(() => ({}));
+          // const fresh = data.qr ?? data.qrToken ?? data.token ?? null;
+          if (data.qr) setQrToken(JSON.stringify(data)); // if QR data is an object, stringify it for QRCodeSVG
+        }
+      } catch (err) {
+        console.warn("[QR-BLE] QR token refresh error:", err);
+      }
+    };
+
+    qrRefreshTimerRef.current = setInterval(refresh, QR_REFRESH_MS);
+  }, []);
+
+  // 🔄 Poll /device-auth/qr-ble/poll until AUTHORIZED or EXPIRED
+  const startPolling = useCallback(
+    (session) => {
+      const poll = async () => {
+        try {
+          const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr-ble/poll`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              sessionId: session.sessionId,
+              realm: REALM,
+              clientId: CLIENT_ID,
+              deviceCode: session.deviceCode,
+              codeVerifier: session.codeVerifier,
+              deviceId: DEVICE_ID,
+              deviceType: "WEB",
+            }),
+          });
+
+          let data = {};
+          try { data = await res.json(); } catch (_) {}
+
+          if (res.status === 200 && data.status === "AUTHORIZED") {
+            setPollStatus("AUTHORIZED");
+            if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+            // Store token so ProtectedRoute allows access to /dashboard
+            const accessToken = data.token?.access_token;
+            if (accessToken) {
+              localStorage.setItem("authToken", accessToken);
+            }
+            navigate("/dashboard");
+            return;
+          }
+
+          if (res.status === 410 || data.status === "EXPIRED") {
+            setPollStatus("EXPIRED");
+            if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+            return;
+          }
+
+          if (res.status === 429) {
+            // Server asked us to slow down
+            pollTimerRef.current = setTimeout(poll, SLOW_DOWN_MS);
+            return;
+          }
+
+          // 202 — track status
+          if (data.status) {
+            setPollStatus(data.status);
+            // When PENDING_BLE: stop QR refresh, but BLE is triggered by user button click
+            if (data.status === "PENDING_BLE" && !bleStartedRef.current) {
+              bleStartedRef.current = true;
+              if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+            }
+          }
+          pollTimerRef.current = setTimeout(poll, POLL_INTERVAL_MS);
+        } catch (err) {
+          console.error("[QR-BLE] Poll error:", err);
+          pollTimerRef.current = setTimeout(poll, POLL_INTERVAL_MS);
+        }
+      };
+
+      poll();
+    },
+    [navigate]
+  );
+
+  // 🚀 Start QR-BLE session — calls /device-auth/qr-ble/start-session
   const handleStart = async () => {
     setPhase("loading");
     setError("");
 
     try {
-      await fidar.bindDevice(
-        (flowStatus) => {
-          // First QR-related status means BLE (if any) is already done
-          if (phase !== "qr") setPhase("qr");
-          setStatus(flowStatus);
-          if (flowStatus === "EXPIRED") {
-            setError(t("bankQRPage.Session.expired_description"));
-          }
-        },
-        (imageBase64) => {
-          if (phase !== "qr") setPhase("qr");
-          setQrImage(imageBase64);
-        }
-      );
+      const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr-ble/start-session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ realm: REALM, clientId: CLIENT_ID }),
+      });
 
-      navigate("/dashboard");
+      if (!res.ok) {
+        const errData = await res.json().catch(() => ({}));
+        throw new Error(errData.message || `HTTP ${res.status}`);
+      }
+
+      const { sessionId, qrToken: token, deviceCode, codeVerifier, expiresIn: exp } = await res.json();
+
+      sessionRef.current = { sessionId, deviceCode, codeVerifier };
+      setQrToken(token);
+      setExpiresIn(exp ?? 60);
+      setTimeLeft(exp ?? 60);
+      setPollStatus("PENDING_QR");
+      setPhase("qr");
+
+      startQrRefresh(sessionId);
+      startPolling({ sessionId, deviceCode, codeVerifier });
     } catch (err) {
-      if (handleSecurityError(err, { redirect: navigate })) return;
-
-      handleFidarError(err, t);
+      console.error("[QR-BLE] Start session error:", err);
       setPhase("error");
-      setError(err?.payload?.message || t("bankQRPage.Connectionissue"));
+      setError(err.message || t("bankQRPage.Connectionissue"));
     }
   };
 
-  const isExpired = timeLeft === 0 || status === "EXPIRED";
+  const isExpired = timeLeft === 0 || pollStatus === "EXPIRED";
   const minutes = Math.floor(timeLeft / 60);
   const seconds = timeLeft % 60;
-
-  const statusLabel = (() => {
-    if (isExpired) return "EXPIRED";
-    if (status === "VERIFIED") return "VERIFIED";
-    if (status === "QR_READY" || status === "QR_GENERATED") return "READY";
-    if (status === "DEVICE_AUTH_STARTED") return "WAITING";
-    if (status === "PENDING" || status === "STARTING") return "PENDING";
-    return status || "PENDING";
-  })();
-
-  // Latch: once READY, stay ready until expired
-  React.useEffect(() => {
-    if (statusLabel === "READY") setQrWasReady(true);
-    if (isExpired) setQrWasReady(false);
-  }, [statusLabel, isExpired]);
 
   if (phase === "error") {
     return (
@@ -203,7 +361,7 @@ function QrPage() {
               </Button>
             )}
 
-            {/* ── Loading: SDK is handling BLE internally ── */}
+            {/* ── Loading: starting QR-BLE session ── */}
             {phase === "loading" && (
               <div className="flex flex-col items-center gap-3 py-4">
                 <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -231,30 +389,57 @@ function QrPage() {
 
             {phase === "qr" && !isExpired && (
               <>
-                <div className="w-[180px] sm:w-[200px]">
-                  <AspectRatio ratio={1}>
-                    <div className="p-1.5 rounded-lg bg-white shadow-sm h-full w-full flex items-center justify-center">
-                      {qrImage ? (
-                        <img
-                          src={qrImage}
-                          alt="Login QR"
-                          className="h-full w-full object-contain"
-                        />
-                      ) : (
-                        <Skeleton className="h-full w-full rounded-md" />
-                      )}
-                    </div>
-                  </AspectRatio>
-                </div>
+                {/* ── QR code: only show while waiting to be scanned ── */}
+                {pollStatus === "PENDING_QR" && (
+                  <div className="w-[180px] sm:w-[200px]">
+                    <AspectRatio ratio={1}>
+                      <div className="p-1.5 rounded-lg bg-white shadow-sm h-full w-full flex items-center justify-center">
+                        {qrToken ? (
+                          <QRCodeSVG
+                            value={qrToken}
+                            size={192}
+                            className="h-full w-full"
+                          />
+                        ) : (
+                          <Skeleton className="h-full w-full rounded-md" />
+                        )}
+                      </div>
+                    </AspectRatio>
+                  </div>
+                )}
 
-                {qrWasReady ? (
+                {/* ── Status label ── */}
+                {pollStatus === "PENDING_QR" && (
                   <p className="text-sm font-semibold text-emerald-500">
-                    QR Code is ready to be scanned
+                    Scan QR code with your phone
                   </p>
-                ) : (
-                  <p className="text-sm font-semibold text-yellow-500">
-                    QR Pending
-                  </p>
+                )}
+                {pollStatus === "PENDING_BLE" && (
+                  <div className="flex flex-col items-center gap-3">
+                    <Bluetooth className="h-8 w-8 text-blue-500" />
+                    <p className="text-sm font-semibold text-blue-500 text-center">
+                      QR scanned — tap below to pair via Bluetooth
+                    </p>
+                    <Button
+                      className="passkey-btn w-full"
+                      onClick={() => runBleFlow()}
+                      disabled={bleLoading}
+                    >
+                      {bleLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                      {bleLoading ? "Connecting via Bluetooth…" : "Connect via Bluetooth"}
+                    </Button>
+                    {error && (
+                      <p className="text-xs text-destructive text-center">{error}</p>
+                    )}
+                  </div>
+                )}
+                {pollStatus === "PENDING" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-7 w-7 animate-spin text-yellow-500" />
+                    <p className="text-sm font-semibold text-yellow-500">
+                      Bluetooth verified — approve on your phone
+                    </p>
+                  </div>
                 )}
 
                 <div className="w-full max-w-xs text-center">

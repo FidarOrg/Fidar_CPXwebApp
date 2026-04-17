@@ -13,9 +13,9 @@ function getFidarUserId(profile) {
 }
 
 async function approveWithFidarPasskey(task) {
-  const profile = await fidar.getMyProfile();
-  const userId = getFidarUserId(profile);
-  // const userId = "0fb02b54-117d-4a0a-813c-767ac15d5cee";
+  // const profile = await fidar.getMyProfile();
+  // const userId = getFidarUserId(profile);
+  const userId = "b0cec7e2-1ec4-4898-b40f-fd238f150148";
 
   if (!userId) {
     throw new Error("Unable to resolve the FIDAR user identity for signing.");
