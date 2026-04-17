@@ -190,7 +190,7 @@ function EmpLogin() {
         description: t("bankLoginPage.redirectKeycloak"),
       });
 
-      const result = await fidar.login({ realm: "Fidar-CPX", clientId: "anis" });
+      const result = await fidar.login({ realm: "FIDAR_WEBAUTH_V2", clientId: "anis" });
 
       if (result?.accessToken) {
         toast({

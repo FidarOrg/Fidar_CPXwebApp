@@ -49,7 +49,7 @@ async function approveWithFidarPasskey(task) {
 
   const result = await completeSignature({
     txnId,
-    realm: "Fidar-CPX",
+    realm: "FIDAR_WEBAUTH_V2",
     userId,
     assertionJson: signed.assertion, // only the WebAuthn assertion, not the full wrapper
   });
