@@ -18,6 +18,8 @@ import {
   Database,
   Settings,
   BadgeCheck,
+  Layers,
+  ClipboardCheck,
 } from "lucide-react";
 
 import {
@@ -127,7 +129,7 @@ export default function EmployeeLanding() {
         >
           <div className="max-w-3xl mx-auto space-y-4 animate-fade-up -mt-10">
 
-            <p className="uppercase text-[#E11D48] tracking-widest text-xs font-semibold">
+            <p className="uppercase tracking-widest text-xs font-semibold bg-gradient-to-r from-[#1a2e44] via-[#79C6C7] to-[#79C6C7] bg-clip-text text-transparent">
               Internal Control Center
             </p>
 
@@ -136,24 +138,30 @@ export default function EmployeeLanding() {
             </h1>
 
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
-              Manage approvals, monitor transactions, oversee security events,
+              Manage approvals, monitor interactions, oversee security events,
               and maintain system integrity — all from one secure interface
             </p>
 
             {/* Badges */}
             <div className="flex flex-wrap justify-center gap-4 mt-6">
-              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
-                <BadgeCheck className="w-5 h-5 text-[#E11D48]" />
+              <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-teal-400/40 bg-teal-400/10 backdrop-blur text-sm font-medium">
+                <div className="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
+                  <BadgeCheck className="w-4 h-4 text-teal-400" />
+                </div>
                 <span>Role-Based Access</span>
               </div>
 
-              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
-                <ShieldCheck className="w-5 h-5 text-[#E11D48]" />
+              <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-teal-400/40 bg-teal-400/10 backdrop-blur text-sm font-medium">
+                <div className="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
+                  <ShieldCheck className="w-4 h-4 text-teal-400" />
+                </div>
                 <span>Audit Logging</span>
               </div>
 
-              <div className="flex items-center gap-2 px-5 py-2 rounded-full border border-border bg-card/60 backdrop-blur text-sm font-medium">
-                <Activity className="w-5 h-5 text-[#E11D48]" />
+              <div className="flex items-center gap-3 px-5 py-2 rounded-full border border-teal-400/40 bg-teal-400/10 backdrop-blur text-sm font-medium">
+                <div className="w-7 h-7 rounded-full bg-teal-500/20 border border-teal-400/40 flex items-center justify-center">
+                  <Activity className="w-4 h-4 text-teal-400" />
+                </div>
                 <span>Live Monitoring</span>
               </div>
             </div>
@@ -162,37 +170,72 @@ export default function EmployeeLanding() {
         </section>
 
         {/* ================= HOW IT WORKS ================= */}
-        <section className="relative z-10 px-4 lg:px-14 pb-16" dir={lang === "ar" ? "rtl" : "ltr"}>
-          <div className="max-w-7xl mx-auto text-center">
-            <p className="uppercase text-[#E11D48] tracking-widest text-xs font-semibold mb-2">How It Works</p>
-            <h2 className="text-2xl font-bold mb-10">Secure access in three steps</h2>
+        <section className="relative z-10 px-4 lg:px-14 pb-20" dir={lang === "ar" ? "rtl" : "ltr"}>
+          <div className="max-w-6xl mx-auto text-center">
+            <p className="uppercase tracking-widest text-xs font-semibold mb-2 bg-gradient-to-r from-[#1a2e44] via-[#79C6C7] to-[#79C6C7] bg-clip-text text-transparent">How It Works</p>
+            <h2 className="text-2xl font-bold mb-14">Secure access in three steps</h2>
+
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
               {/* connector line on md+ */}
-              <div className="hidden md:block absolute top-10 left-[calc(16.65%+1rem)] right-[calc(16.65%+1rem)] h-px bg-border z-0" />
+              <div className="hidden md:block absolute top-8 left-[calc(16.65%+1rem)] right-[calc(16.65%+1rem)] h-px bg-border z-0" />
 
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
-                  <span className="text-2xl font-extrabold text-[#E11D48]">1</span>
+              {/* Step 1 */}
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-teal-500/10 border border-teal-400/40 flex items-center justify-center">
+                  <Lock className="w-8 h-8 text-teal-400" />
                 </div>
-                <h3 className="font-semibold">Employee Authenticates</h3>
-                <p className="text-sm text-muted-foreground max-w-xs">Staff log in using device-bound passkeys or biometrics — no passwords, no OTPs.</p>
+                <h3 className="text-lg font-bold">1. Employee Signs In</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Staff authenticate using a device-bound Fidar Q-Key — no passwords, no OTPs. The
+                  cryptographic key never leaves the device's secure enclave.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mt-1">
+                  {["Passwordless", "Passkeys", "PQC"].map((tag) => (
+                    <span key={tag} className="px-3 py-1 rounded-full border border-teal-400/40 bg-teal-400/10 text-white text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
-                  <span className="text-2xl font-extrabold text-[#E11D48]">2</span>
+              {/* Step 2 */}
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-teal-500/10 border border-teal-400/40 flex items-center justify-center">
+                  <Layers className="w-8 h-8 text-teal-400" />
                 </div>
-                <h3 className="font-semibold">AI Verifies Context</h3>
-                <p className="text-sm text-muted-foreground max-w-xs">Behavioral intelligence validates the session risk score before granting access to sensitive operations.</p>
+                <h3 className="text-lg font-bold">2. AI Verifies Context</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Behavioral intelligence continuously evaluates session risk — analyzing interaction patterns,
+                  location signals, and device posture — before granting access to sensitive operations.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mt-1">
+                  {["Behavioral biometrics", "Real-time risk score", "Zero standing access"].map((tag) => (
+                    <span key={tag} className="px-3 py-1 rounded-full border border-pink-400/40 bg-pink-400/10 text-white text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
 
-              <div className="relative z-10 flex flex-col items-center gap-3">
-                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
-                  <span className="text-2xl font-extrabold text-[#E11D48]">3</span>
+              {/* Step 3 */}
+              <div className="relative z-10 flex flex-col items-center gap-4">
+                <div className="w-16 h-16 rounded-full bg-teal-500/10 border border-teal-400/40 flex items-center justify-center">
+                  <ClipboardCheck className="w-8 h-8 text-teal-400" />
                 </div>
-                <h3 className="font-semibold">Approve &amp; Audit</h3>
-                <p className="text-sm text-muted-foreground max-w-xs">Every approval, transfer, and action is logged with a full immutable audit trail for compliance.</p>
+                <h3 className="text-lg font-bold">3. Approve &amp; Audit</h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
+                  Every interaction and API call is cryptographically signed and written to an immutable audit
+                  trail — providing tamper-proof compliance records from login through to action completion.
+                </p>
+                <div className="flex flex-wrap justify-center gap-2 mt-1">
+                  {["Immutable audit trail", "Cryptographic signing", "Full compliance logging"].map((tag) => (
+                    <span key={tag} className="px-3 py-1 rounded-full border border-pink-400/40 bg-pink-400/10 text-white text-xs font-medium">
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               </div>
+
             </div>
           </div>
         </section>
@@ -206,7 +249,7 @@ export default function EmployeeLanding() {
             <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col gap-3">
               <KeyRound className="w-8 h-8 text-[#E11D48]" />
               <h3 className="font-semibold text-base">Passkey Authentication</h3>
-              <p className="text-xs text-muted-foreground">Phishing-resistant FIDO2 passkeys replace passwords entirely — no OTPs, no friction.</p>
+              <p className="text-xs text-muted-foreground">Phishing-resistant FIDO2 passkeys replaces passwords entirely — no OTPs, no friction.</p>
             </div>
 
             {/* Zero-Trust Security */}

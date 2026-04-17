@@ -12,6 +12,7 @@ export default function BluetoothGate({ onReady }) {
   const [blocked, setBlocked] = useState(false);
   const [unsupported, setUnsupported] = useState(false);
   const [bluetoothAvailable, setBluetoothAvailable] = useState(null);
+  const [connectedDevice, setConnectedDevice] = useState(null);
   const navigate = useNavigate();
 
   /* ---------- Detect Bluetooth ON / OFF ---------- */
@@ -56,10 +57,27 @@ export default function BluetoothGate({ onReady }) {
        * - pairs with Android
        * - polls backend
        * - stores BLE session for QR
+       *
+       * We intercept navigator.bluetooth.requestDevice to capture
+       * the selected device name before the SDK consumes it.
        */
-      await fidar.startBluetoothProximity();
+      let capturedDeviceName = null;
+      const originalRequestDevice = navigator.bluetooth.requestDevice.bind(navigator.bluetooth);
+      navigator.bluetooth.requestDevice = async (options) => {
+        const device = await originalRequestDevice(options);
+        capturedDeviceName = device.name || null;
+        return device;
+      };
 
-      toast.success("Primary device verified.");
+      try {
+        await fidar.startBluetoothProximity();
+      } finally {
+        navigator.bluetooth.requestDevice = originalRequestDevice;
+      }
+
+      const displayName = capturedDeviceName || "your primary device";
+      setConnectedDevice(displayName);
+      toast.success(`Connected to ${displayName}`);
       onReady(); // ✅ QR flow unlocked
 
     } catch (err) {
@@ -145,6 +163,12 @@ export default function BluetoothGate({ onReady }) {
       <p className="text-sm text-muted-foreground max-w-xs">
         {description}
       </p>
+
+      {connectedDevice && (
+        <p className="text-sm font-medium text-green-500">
+          Connected to: <span className="font-bold">{connectedDevice}</span>
+        </p>
+      )}
 
       {!unsupported && !blocked && (
         <Button className="passkey-btn" onClick={handleAction} disabled={loading}>
