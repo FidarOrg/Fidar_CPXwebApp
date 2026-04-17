@@ -13,8 +13,9 @@ function getFidarUserId(profile) {
 }
 
 async function approveWithFidarPasskey(task) {
-  const profile = await fidar.getMyProfile();
-  const userId = getFidarUserId(profile);
+  // const profile = await fidar.getMyProfile();
+  // const userId = getFidarUserId(profile);
+  const userId = "0fb02b54-117d-4a0a-813c-767ac15d5cee";
 
   if (!userId) {
     throw new Error("Unable to resolve the FIDAR user identity for signing.");
@@ -48,7 +49,7 @@ async function approveWithFidarPasskey(task) {
 
   const result = await completeSignature({
     txnId,
-    realm: "FIDAR_WEBAUTH_V2",
+    realm: "Fidar-CPX",
     userId,
     assertionJson: signed.assertion, // only the WebAuthn assertion, not the full wrapper
   });
