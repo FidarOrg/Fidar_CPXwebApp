@@ -20,7 +20,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
-import logo from "@/assets/banklogo.png";
+import logo from "@/assets/cpx.png";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../language-swicther/LanguageSwitcher";
 import { fidar } from "@/lib/fidar"; // ✅ import Fidar to fetch profile

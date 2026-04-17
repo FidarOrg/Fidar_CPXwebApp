@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import fidarLogo from "../assets/banklogo.png";
+import fidarLogo from "../assets/cpx.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 import { Globe } from "lucide-react";
 
@@ -96,8 +96,8 @@ export default function EmployeeLanding() {
             {/* Employee Login (leads to Emp-login page with QR + SSO + Passkey) */}
             <button
               onClick={() => navigate("/Emp-login")}
-              className="passkey-btn w-36"
-              style={{ padding: "8px 14px", fontSize: "13px", borderRadius: "10px" }}
+              className="passkey-btn"
+              style={{ padding: "7px 12px", fontSize: "14px", borderRadius: "8px", width: "auto" }}
             >
               Employee Login
             </button>
@@ -121,7 +121,7 @@ export default function EmployeeLanding() {
 
         {/* ================= HERO ================= */}
         <section
-          className="relative z-10 flex items-start justify-center pt-24 min-h-[calc(100vh-2rem)]
+          className="relative z-10 flex items-start justify-center pt-24 pb-16
                       px-4 lg:px-8 text-center"
           dir={lang === "ar" ? "rtl" : "ltr"}
         >
@@ -161,37 +161,73 @@ export default function EmployeeLanding() {
           </div>
         </section>
 
-        {/* ================= DASHBOARD PREVIEW STRIP ================= */}
-        <section className="relative z-30 -mt-80 px-4 lg:px-14">
+        {/* ================= HOW IT WORKS ================= */}
+        <section className="relative z-10 px-4 lg:px-14 pb-16" dir={lang === "ar" ? "rtl" : "ltr"}>
+          <div className="max-w-7xl mx-auto text-center">
+            <p className="uppercase text-[#E11D48] tracking-widest text-xs font-semibold mb-2">How It Works</p>
+            <h2 className="text-2xl font-bold mb-10">Secure access in three steps</h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+              {/* connector line on md+ */}
+              <div className="hidden md:block absolute top-10 left-[calc(16.65%+1rem)] right-[calc(16.65%+1rem)] h-px bg-border z-0" />
+
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
+                  <span className="text-2xl font-extrabold text-[#E11D48]">1</span>
+                </div>
+                <h3 className="font-semibold">Employee Authenticates</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">Staff log in using device-bound passkeys or biometrics — no passwords, no OTPs.</p>
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
+                  <span className="text-2xl font-extrabold text-[#E11D48]">2</span>
+                </div>
+                <h3 className="font-semibold">AI Verifies Context</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">Behavioral intelligence validates the session risk score before granting access to sensitive operations.</p>
+              </div>
+
+              <div className="relative z-10 flex flex-col items-center gap-3">
+                <div className="w-16 h-16 rounded-full bg-[#E11D48]/10 border border-[#E11D48]/30 flex items-center justify-center">
+                  <span className="text-2xl font-extrabold text-[#E11D48]">3</span>
+                </div>
+                <h3 className="font-semibold">Approve &amp; Audit</h3>
+                <p className="text-sm text-muted-foreground max-w-xs">Every approval, transfer, and action is logged with a full immutable audit trail for compliance.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ================= WHY FIDAR STRIP ================= */}
+        <section className="relative z-30 px-4 lg:px-14 py-12">
           <div className="max-w-7xl mx-auto bg-card/60 backdrop-blur-2xl border border-border
                           rounded-2xl p-8 shadow-2xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 
-            {/* Pending Approvals */}
-            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all">
-              <p className="text-sm text-muted-foreground">Pending Approvals</p>
-              <h3 className="text-3xl font-bold mt-2">18</h3>
-              <p className="text-xs text-muted-foreground mt-2">High priority: 4</p>
+            {/* Passkey Authentication */}
+            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col gap-3">
+              <KeyRound className="w-8 h-8 text-[#E11D48]" />
+              <h3 className="font-semibold text-base">Passkey Authentication</h3>
+              <p className="text-xs text-muted-foreground">Phishing-resistant FIDO2 passkeys replace passwords entirely — no OTPs, no friction.</p>
             </div>
 
-            {/* Fraud Alerts */}
-            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all">
-              <p className="text-sm text-muted-foreground">Fraud Alerts</p>
-              <h3 className="text-3xl font-bold mt-2 text-red-500">3</h3>
-              <p className="text-xs text-muted-foreground mt-2">Requires review</p>
+            {/* Zero-Trust Security */}
+            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col gap-3">
+              <ShieldAlert className="w-8 h-8 text-[#E11D48]" />
+              <h3 className="font-semibold text-base">Zero-Trust Architecture</h3>
+              <p className="text-xs text-muted-foreground">Every request is verified continuously. No implicit trust granted to any user or device.</p>
             </div>
 
-            {/* System Health */}
-            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all">
-              <p className="text-sm text-muted-foreground">System Health</p>
-              <h3 className="text-3xl font-bold mt-2 text-green-500">98.6%</h3>
-              <p className="text-xs text-muted-foreground mt-2">All services operational</p>
+            {/* Biometric Verification */}
+            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col gap-3">
+              <ScanFace className="w-8 h-8 text-[#E11D48]" />
+              <h3 className="font-semibold text-base">Biometric Verification</h3>
+              <p className="text-xs text-muted-foreground">Native device biometrics bind identity to hardware — uncloneable and instant.</p>
             </div>
 
-            {/* Active Employees */}
-            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all">
-              <p className="text-sm text-muted-foreground">Active Staff</p>
-              <h3 className="text-3xl font-bold mt-2">42</h3>
-              <p className="text-xs text-muted-foreground mt-2">Online now</p>
+            {/* AI Fraud Prevention */}
+            <div className="bg-card border rounded-2xl p-6 shadow-md hover:shadow-xl transition-all flex flex-col gap-3">
+              <ShieldCheck className="w-8 h-8 text-[#E11D48]" />
+              <h3 className="font-semibold text-base">AI Fraud Prevention</h3>
+              <p className="text-xs text-muted-foreground">Behavioral intelligence and real-time AI models detect and block anomalies before damage occurs.</p>
             </div>
 
           </div>

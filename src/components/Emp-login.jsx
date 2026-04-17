@@ -21,8 +21,10 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Loader2, Globe } from "lucide-react";
-import logo from "../assets/banklogo.png";
-import fidarLogo from "../assets/banklogo.png";
+import logo from "../assets/cpx.png";
+import fidarLogoLight from "../assets/fidar_dark.png";
+import fidarLogoDark from "../assets/fidar_light.png";
+import { useTheme } from "@/components/theme-provider/theme-provider";
 import { toast } from "@/hooks/use-toast";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 import {
@@ -82,6 +84,7 @@ function EmpLogin() {
   const [registerLoading, setRegisterLoading] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
+  const { theme } = useTheme();
   const { lang } = useLanguage();
 
   // QR Bind Flow
@@ -355,7 +358,16 @@ function EmpLogin() {
               <p className="text-sm text-muted-foreground">
                 {t("bankLoginPage.poweredBy")}
               </p>
-              <img src={fidarLogo} className="h-10" alt="Fidar Logo" />
+              <img
+                src={
+                  (theme === "dark" ||
+                    (theme === "system" && window.matchMedia("(prefers-color-scheme: dark)").matches))
+                    ? fidarLogoDark
+                    : fidarLogoLight
+                }
+                className="h-16"
+                alt="Fidar Logo"
+              />
             </div>
           </CardFooter>
         </Card>

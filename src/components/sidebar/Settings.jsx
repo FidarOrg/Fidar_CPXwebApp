@@ -83,21 +83,21 @@ export default function Settings() {
               </CardContent>
             </Card> */}
 
-            {/* TWO-FACTOR AUTH */}
+            {/* FIDO KEY 2FA */}
             <Card className="bg-card/50 border border-white/10 shadow-lg">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-lg">
-                  <Shield className="h-5 w-5" /> Two-Factor Authentication (2FA)
+                  <Shield className="h-5 w-5" /> FidoQ Key
                 </CardTitle>
               </CardHeader>
 
               <CardContent className="space-y-3">
                 <p className="text-muted-foreground text-sm">
-                  Add an extra layer of security to your Smart Bank account.
+                  Add an extra layer of security to your Smart Bank account using a FIDO Key.
                 </p>
 
                 <Button className="passkey-btn" style={{ width: "auto", padding: "8px 16px", fontSize: "14px", borderRadius: "6px", fontFamily: "inherit" }}>
-                  Enable 2FA
+                  Enable FidoQ Key
                 </Button>
               </CardContent>
             </Card>

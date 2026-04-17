@@ -366,7 +366,7 @@ export default function EmployeeDashboardPage() {
                 ) : (
                   <>
                     <h2 className="text-2xl font-bold">
-                      Welcome back, {profile?.name || "Employee"}
+                      Welcome back, {profile?.name ? "Hadi Anwar" : "Employee"}
                     </h2>
 
                     <p className="text-muted-foreground text-sm mt-1">

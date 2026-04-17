@@ -363,9 +363,9 @@
       "updatePassword": "Update Password"
     },
     "twofa": {
-      "title": "Two-Factor Authentication (2FA)",
-      "description": "Add an extra layer of security to your account",
-      "enable": "Enable 2FA"
+      "title": "FIDO Key Two-Factor Authentication (2FA)",
+      "description": "Add an extra layer of security to your account using a FIDO Key",
+      "enable": "Enable FIDO Key"
     },
     "devices": {
       "title": "Device Management",
