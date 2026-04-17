@@ -162,7 +162,7 @@ export default function EmployeeDashboardPage() {
           // For SSO/passkey: get email from sessionStorage (set by PasskeyBanner)
           const samlEmail = sessionStorage.getItem('saml_email');
           if (samlEmail) {
-            setProfile({ name: samlEmail, email: samlEmail, image: null });
+            setProfile({ name: null, email: samlEmail, image: null });
           }
         } else {
           // Original QR-bind flow: use fidar SDK
@@ -366,7 +366,7 @@ export default function EmployeeDashboardPage() {
                 ) : (
                   <>
                     <h2 className="text-2xl font-bold">
-                      Welcome back, {profile?.name ? "Hadi Anwar" : "Employee"}
+                      Welcome back, {profile?.name || "Hadi Anwar"}
                     </h2>
 
                     <p className="text-muted-foreground text-sm mt-1">
