@@ -23,11 +23,10 @@ import { useTranslation } from "react-i18next";
 
 // ── QR-BLE constants (temp: no SDK) ──────────────────────────────────────────
 const REALM = "FIDAR_WEBAUTH_V2";
-const CLIENT_ID = "anis";
-const DEVICE_AUTH_BASE = "https://sdk.fidar.io/fidar/sdk/api";
-const DEVICE_ID = "cpx-terminal-001";
-const QR_REFRESH_MS = 1000;   // refresh QR image every 1s
-const POLL_INTERVAL_MS = 5000; // status poll every 5s
+const CLIENT_ID = "cpx";
+const DEVICE_AUTH_BASE = "https://axpd8hgbc2.ap-south-1.awsapprunner.com/fidar/sdk/api";
+const QR_REFRESH_MS = 2000;   // refresh QR image every 2s
+const POLL_INTERVAL_MS = 3000; // status poll every 3s
 const SLOW_DOWN_MS = 10000;
 const BLE_SERVICE_UUID  = "0000abcd-0000-1000-8000-00805f9b34fb";
 const BLE_CHAR_UUID     = "0000dcba-0000-1000-8000-00805f9b34fb";
@@ -45,6 +44,7 @@ function QrPage() {
   const [pollStatus, setPollStatus] = useState("PENDING_QR");
   const [qrToken, setQrToken] = useState(null);
   const [error, setError] = useState("");
+  const [passkeyLink, setPasskeyLink] = useState(null);
   const [bleLoading, setBleLoading] = useState(false);
   const [expiresIn, setExpiresIn] = useState(60);
   const [timeLeft, setTimeLeft] = useState(60);
@@ -77,20 +77,16 @@ function QrPage() {
     setError("");
     console.log("[QR-BLE] runBleFlow triggered");
     try {
-      // Step 6: create BLE proximity session → get bleSessionId + challenge
-      console.log("[QR-BLE] Creating BLE session...");
-      const sessionRes = await fetch(`${DEVICE_AUTH_BASE}/bluetooth-proximity/session`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ realm: REALM, clientId: CLIENT_ID }),
-      });
-      if (!sessionRes.ok) throw new Error(`BLE session failed: HTTP ${sessionRes.status}`);
-      const bleData = await sessionRes.json();
-      console.log("[QR-BLE] BLE session response:", bleData);
-      const { sessionId: bleSessionId, challenge, pairingDeviceId } = bleData;
-      if (!bleSessionId || !challenge) throw new Error("Invalid BLE session response");
+      const sessionId = sessionRef.current?.sessionId;
+      if (!sessionId) throw new Error("No active session");
 
-      // Step 6b: Web Bluetooth — must come from user gesture (button click)
+      // Generate random challenge component
+      const random = crypto.randomUUID
+        ? crypto.randomUUID()
+        : Math.random().toString(36).slice(2);
+      const payload = `${sessionId}:${random}`;
+
+      // Web Bluetooth — must come from user gesture (button click)
       console.log("[QR-BLE] Requesting BLE device...");
       window.__fidarBlePickerOpen = true;
       let device;
@@ -109,27 +105,36 @@ function QrPage() {
       const service = await server.getPrimaryService(BLE_SERVICE_UUID);
       const characteristic = await service.getCharacteristic(BLE_CHAR_UUID);
 
-      // Deliver payload so phone can sign it and call /bluetooth-proximity/verify itself
-      const payload = `${bleSessionId}:${challenge}:${pairingDeviceId ?? ""}`;
+      // Write challenge to characteristic
       console.log("[QR-BLE] Writing payload to characteristic:", payload);
       const encoded = new TextEncoder().encode(payload);
 
       try {
         if (characteristic.properties?.write) {
           await characteristic.writeValue(encoded);
-        } else if (characteristic.properties?.writeWithoutResponse &&
-            characteristic.writeValueWithoutResponse) {
+        } else if (
+          characteristic.properties?.writeWithoutResponse &&
+          characteristic.writeValueWithoutResponse
+        ) {
           await characteristic.writeValueWithoutResponse(encoded);
         } else {
           throw new Error("BLE characteristic does not support write");
+        }
+
+        // Read back phone's signed response
+        if (characteristic.properties?.read) {
+          const responseValue = await characteristic.readValue();
+          console.log(
+            "[QR-BLE] Phone response received:",
+            new TextDecoder().decode(responseValue)
+          );
         }
       } finally {
         if (device.gatt?.connected) device.gatt.disconnect();
       }
 
-      // Done — phone signs payload and calls /bluetooth-proximity/verify.
-      // Main poll (PENDING_BLE → PENDING) picks this up automatically.
-      console.log("[QR-BLE] Challenge delivered to phone via BLE ✅");
+      // Phone calls /bluetooth-proximity/verify with qrSessionId — poll picks this up.
+      console.log("[QR-BLE] BLE pairing complete ✅");
     } catch (err) {
       console.error("[QR-BLE] BLE flow error:", err);
       setError(err.message || "Bluetooth connection failed");
@@ -147,7 +152,7 @@ function QrPage() {
         if (res.ok) {
           const data = await res.json().catch(() => ({}));
           // const fresh = data.qr ?? data.qrToken ?? data.token ?? null;
-          if (data.qr) setQrToken(JSON.stringify(data)); // if QR data is an object, stringify it for QRCodeSVG
+          if (data.qr) setQrToken(JSON.stringify(data));
         }
       } catch (err) {
         console.warn("[QR-BLE] QR token refresh error:", err);
@@ -169,10 +174,6 @@ function QrPage() {
               sessionId: session.sessionId,
               realm: REALM,
               clientId: CLIENT_ID,
-              deviceCode: session.deviceCode,
-              codeVerifier: session.codeVerifier,
-              deviceId: DEVICE_ID,
-              deviceType: "WEB",
             }),
           });
 
@@ -182,12 +183,14 @@ function QrPage() {
           if (res.status === 200 && data.status === "AUTHORIZED") {
             setPollStatus("AUTHORIZED");
             if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
-            // Store token so ProtectedRoute allows access to /dashboard
-            const accessToken = data.token?.access_token;
-            if (accessToken) {
-              localStorage.setItem("authToken", accessToken);
-            }
-            navigate("/dashboard");
+            setPasskeyLink(data.passkeyLink ?? null);
+            return;
+          }
+
+          if (data.status === "DENIED") {
+            setPollStatus("DENIED");
+            if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+            setError("Manager denied the request");
             return;
           }
 
@@ -411,14 +414,14 @@ function QrPage() {
                 {/* ── Status label ── */}
                 {pollStatus === "PENDING_QR" && (
                   <p className="text-sm font-semibold text-emerald-500">
-                    Scan QR code with your phone
+                    Waiting for phone to scan QR...
                   </p>
                 )}
                 {pollStatus === "PENDING_BLE" && (
                   <div className="flex flex-col items-center gap-3">
                     <Bluetooth className="h-8 w-8 text-blue-500" />
                     <p className="text-sm font-semibold text-blue-500 text-center">
-                      QR scanned — tap below to pair via Bluetooth
+                      Waiting for BLE pairing...
                     </p>
                     <Button
                       className="passkey-btn w-full"
@@ -433,11 +436,44 @@ function QrPage() {
                     )}
                   </div>
                 )}
-                {pollStatus === "PENDING" && (
+                {pollStatus === "PENDING_NFC_VERIFY" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <Loader2 className="h-7 w-7 animate-spin text-purple-500" />
+                    <p className="text-sm font-semibold text-purple-500 text-center">
+                      Waiting for employee NFC tap + OTP...
+                    </p>
+                  </div>
+                )}
+                {pollStatus === "PENDING_APPROVAL" && (
                   <div className="flex flex-col items-center gap-2">
                     <Loader2 className="h-7 w-7 animate-spin text-yellow-500" />
-                    <p className="text-sm font-semibold text-yellow-500">
-                      Bluetooth verified — approve on your phone
+                    <p className="text-sm font-semibold text-yellow-500 text-center">
+                      Waiting for manager to approve...
+                    </p>
+                  </div>
+                )}
+                {pollStatus === "AUTHORIZED" && (
+                  <div className="flex flex-col items-center gap-3 w-full">
+                    <ShieldCheck className="h-10 w-10 text-emerald-500" />
+                    <p className="text-sm font-semibold text-emerald-500 text-center">
+                      Device authorized successfully!
+                    </p>
+                    {passkeyLink && (
+                      <a
+                        href={passkeyLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="w-full"
+                      >
+                        <Button className="passkey-btn w-full">Open Passkey Link</Button>
+                      </a>
+                    )}
+                  </div>
+                )}
+                {pollStatus === "DENIED" && (
+                  <div className="flex flex-col items-center gap-2">
+                    <p className="text-sm font-semibold text-destructive text-center">
+                      {error || "Manager denied the request"}
                     </p>
                   </div>
                 )}
