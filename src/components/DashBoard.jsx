@@ -29,6 +29,7 @@ import { fidar } from "@/lib/fidar";
 import { isFidarException } from "fidar-web-sdk";
 import PasskeyBanner from "@/components/passkey/PasskeyBanner";
 import { signTaskApproval } from "@/api/taskApproval";
+import { initiateCriticalTask, completeCriticalTask, getApprovalStatus } from "@/api/transaction";
 
 export default function EmployeeDashboardPage() {
 
@@ -49,6 +50,15 @@ export default function EmployeeDashboardPage() {
   const [taskApprovalError, setTaskApprovalError] = useState("");
   const [showTaskInfo, setShowTaskInfo] = useState(false);
 
+  // Critical task two-phase flow
+  const [openCriticalDialog, setOpenCriticalDialog] = useState(false);
+  const [criticalTaskPhase, setCriticalTaskPhase] = useState("idle"); // idle | initiating | waiting | completing | done
+  const [criticalTaskSessionId, setCriticalTaskSessionId] = useState(null);
+  const [criticalTaskError, setCriticalTaskError] = useState("");
+
+  // Device role: "primary" = passkey Accept flow, "secondary" = critical_task flow
+  const [deviceRole] = useState(() => localStorage.getItem("deviceRole") || "primary");
+
   const [tasks, setTasks] = useState([
     {
       id: 7,
@@ -62,6 +72,13 @@ export default function EmployeeDashboardPage() {
         currency: "USD",
         toAccount: "3a43d8b7-b2e9-4ea5-983b-a70dc83cc2eb",
         remark: "Approve quarterly financial budget release",
+      },
+      criticalTask: {
+        taskType: "BUDGET_APPROVAL",
+        taskDescription: "Approve quarterly financial budget release",
+        targetResourceId: "3a43d8b7-b2e9-4ea5-983b-a70dc83cc2eb",
+        targetResourceType: "BUDGET",
+        deviceId: "web-browser-or-session-id",
       },
       description:
         "Approve the quarterly financial budget for operational expenses and department allocations.",
@@ -79,6 +96,13 @@ export default function EmployeeDashboardPage() {
         toAccount: "5f91c3a2-d4e7-4bc1-a012-b83ef92dd4f1",
         remark: "Emergency fund transfer for disaster recovery operations",
       },
+      criticalTask: {
+        taskType: "FUND_TRANSFER",
+        taskDescription: "Emergency fund transfer for disaster recovery operations",
+        targetResourceId: "5f91c3a2-d4e7-4bc1-a012-b83ef92dd4f1",
+        targetResourceType: "ACCOUNT",
+        deviceId: "web-browser-or-session-id",
+      },
       description:
         "Authorize an emergency fund transfer to cover disaster recovery and business continuity costs.",
     },
@@ -95,8 +119,32 @@ export default function EmployeeDashboardPage() {
         toAccount: "9c27b1e4-f3a8-4d6e-b591-c04da71ee823",
         remark: "Vendor contract payment for Q2 service agreement",
       },
+      criticalTask: {
+        taskType: "CONTRACT_PAYMENT",
+        taskDescription: "Vendor contract payment for Q2 service agreement",
+        targetResourceId: "9c27b1e4-f3a8-4d6e-b591-c04da71ee823",
+        targetResourceType: "CONTRACT",
+        deviceId: "web-browser-or-session-id",
+      },
       description:
         "Approve the Q2 vendor contract payment for third-party service providers under the new SLA agreement.",
+    },
+    {
+      id: 10,
+      title: "Revoke Secondary Device",
+      priority: "critical",
+      due: "18 Apr 2026",
+      status: "pending",
+      taskCategory: "critical_task",
+      criticalTask: {
+        taskType: "DEVICE_REVOKE",
+        taskDescription: "Revoke secondary device registered on 2026-01-10",
+        targetResourceId: "device-uuid-to-revoke",
+        targetResourceType: "DEVICE",
+        deviceId: "web-browser-or-session-id",
+      },
+      description:
+        "Revoke the secondary device registered on 2026-01-10 to maintain account security.",
     },
     {
       id: 3,
@@ -244,6 +292,63 @@ export default function EmployeeDashboardPage() {
     }
   };
 
+  // Critical task — Phase 1: Initiate
+  const handleInitiateCriticalTask = async () => {
+    if (!selectedTask?.criticalTask) return;
+    setCriticalTaskError("");
+    setCriticalTaskPhase("initiating");
+    try {
+      const result = await initiateCriticalTask(selectedTask.criticalTask);
+      setCriticalTaskSessionId(result.sessionId);
+      setCriticalTaskPhase("waiting");
+    } catch (err) {
+      setCriticalTaskError(err?.message || "Failed to initiate critical task.");
+      setCriticalTaskPhase("idle");
+    }
+  };
+
+  // Critical task — Phase 2: Complete
+  const handleCompleteCriticalTask = async () => {
+    if (!selectedTask?.criticalTask || !criticalTaskSessionId) return;
+    setCriticalTaskError("");
+    setCriticalTaskPhase("completing");
+    try {
+      await completeCriticalTask({ ...selectedTask.criticalTask, sessionId: criticalTaskSessionId });
+      setTasks((prev) =>
+        prev.map((t) => (t.id === selectedTask.id ? { ...t, status: "done" } : t))
+      );
+      setCriticalTaskPhase("done");
+      setTimeout(() => setOpenCriticalDialog(false), 1200);
+    } catch (err) {
+      setCriticalTaskError(err?.message || "Failed to complete critical task.");
+      setCriticalTaskPhase("waiting");
+    }
+  };
+
+  // Poll approval status every 3s while in "waiting" phase
+  useEffect(() => {
+    if (criticalTaskPhase !== "waiting" || !criticalTaskSessionId) return;
+
+    const interval = setInterval(async () => {
+      try {
+        const result = await getApprovalStatus(criticalTaskSessionId);
+        if (result?.status === "APPROVED") {
+          clearInterval(interval);
+          handleCompleteCriticalTask();
+        } else if (result?.status === "REJECTED") {
+          clearInterval(interval);
+          setCriticalTaskError("Task was rejected on the Android device.");
+          setCriticalTaskPhase("idle");
+        }
+      } catch {
+        // silently ignore transient poll failures
+      }
+    }, 3000);
+
+    return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [criticalTaskPhase, criticalTaskSessionId]);
+
   // Status counts
   const statusCounts = useMemo(() => {
     return {
@@ -309,14 +414,21 @@ export default function EmployeeDashboardPage() {
 
             <div className="flex items-center gap-2">
 
-              {task.requiresSigning && task.status !== "done" && (
+              {(task.requiresSigning || task.taskCategory === "critical_task") && task.status !== "done" && (
                 <Button
                   className="clear-btn rounded-lg"
                   onClick={() => {
                     setSelectedTask(task);
-                    setTaskApprovalError("");
-                    setShowTaskInfo(false);
-                    setOpenBudgetPopup(true);
+                    if (deviceRole === "primary" && task.requiresSigning) {
+                      setTaskApprovalError("");
+                      setShowTaskInfo(false);
+                      setOpenBudgetPopup(true);
+                    } else {
+                      setCriticalTaskPhase("idle");
+                      setCriticalTaskSessionId(null);
+                      setCriticalTaskError("");
+                      setOpenCriticalDialog(true);
+                    }
                   }}
                 >
                   View
@@ -494,6 +606,78 @@ export default function EmployeeDashboardPage() {
 
         </DialogContent>
 
+      </Dialog>
+
+      {/* Critical Task Two-Phase Dialog */}
+      <Dialog open={openCriticalDialog} onOpenChange={(v) => {
+        if (!v) {
+          setOpenCriticalDialog(false);
+          setCriticalTaskPhase("idle");
+          setCriticalTaskSessionId(null);
+          setCriticalTaskError("");
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{selectedTask?.title}</DialogTitle>
+          </DialogHeader>
+
+          <p className="text-sm text-muted-foreground">{selectedTask?.description}</p>
+
+          {selectedTask?.criticalTask && (
+            <div className="rounded-md border bg-muted/40 p-3 text-sm text-muted-foreground space-y-1">
+              <p><span className="font-medium text-foreground">Task Type:</span> {selectedTask.criticalTask.taskType}</p>
+              <p><span className="font-medium text-foreground">Target:</span> {selectedTask.criticalTask.targetResourceId}</p>
+              <p><span className="font-medium text-foreground">Resource Type:</span> {selectedTask.criticalTask.targetResourceType}</p>
+            </div>
+          )}
+
+          {(criticalTaskPhase === "waiting" || criticalTaskPhase === "completing") && (
+            <div className="rounded-md border border-yellow-400 bg-yellow-50 dark:bg-yellow-950/30 p-3 text-sm text-yellow-700 dark:text-yellow-300 flex items-center gap-2">
+              <span className="animate-spin inline-block w-3 h-3 border-2 border-yellow-500 border-t-transparent rounded-full" />
+              {criticalTaskPhase === "completing" ? "Executing task…" : "Waiting for approval on your Android device. This will complete automatically once approved."}
+            </div>
+          )}
+
+          {criticalTaskPhase === "done" && (
+            <div className="rounded-md border border-green-500 bg-green-50 dark:bg-green-950/30 p-3 text-sm text-green-700 dark:text-green-300">
+              Critical task executed successfully.
+            </div>
+          )}
+
+          {criticalTaskError && (
+            <p className="text-sm text-destructive">{criticalTaskError}</p>
+          )}
+
+          <div className="flex justify-end gap-3 mt-6">
+            <Button variant="outline" onClick={() => setOpenCriticalDialog(false)}
+              disabled={criticalTaskPhase === "initiating" || criticalTaskPhase === "completing"}>
+              Cancel
+            </Button>
+
+            {(criticalTaskPhase === "idle" || criticalTaskPhase === "initiating") && (
+              <Button
+                className="passkey-btn"
+                style={{ width: "auto", padding: "10px 28px" }}
+                onClick={handleInitiateCriticalTask}
+                disabled={criticalTaskPhase === "initiating"}
+              >
+                {criticalTaskPhase === "initiating" ? "Initiating..." : "Initiate"}
+              </Button>
+            )}
+
+            {(criticalTaskPhase === "waiting" || criticalTaskPhase === "completing") && (
+              <Button
+                className="passkey-btn"
+                style={{ width: "auto", padding: "10px 28px" }}
+                onClick={handleCompleteCriticalTask}
+                disabled={criticalTaskPhase === "completing"}
+              >
+                {criticalTaskPhase === "completing" ? "Completing..." : "Complete"}
+              </Button>
+            )}
+          </div>
+        </DialogContent>
       </Dialog>
 
     </div>

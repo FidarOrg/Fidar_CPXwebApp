@@ -5,6 +5,8 @@ import { fidar } from "@/lib/fidar";
  * backend uses: /iam/api/...
  */
 const API_BASE = "https://sdk.fidar.io";
+const API_IAM = "https://app.fidar.io";
+
 
 /* ---------------------------------
    INITIATE TRANSACTION SIGN
@@ -127,4 +129,101 @@ export async function transfer(payload) {
   }
 
   return json;
+}
+
+/* ---------------------------------
+   CRITICAL TASK — PHASE 1 (INITIATE)
+   POST /iam/transactions/critical_task
+   Returns: { sessionId, ... }
+---------------------------------- */
+export async function initiateCriticalTask({ taskType, taskDescription, targetResourceId, targetResourceType, deviceId }) {
+  const token = localStorage.getItem("authToken");
+  const res = await fetch(
+    `${API_IAM}/iam/transactions/critical_task`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ taskType, taskDescription, targetResourceId, targetResourceType, deviceId }),
+    }
+  );
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (err) {
+    throw { code: "SERVER_ERROR", message: "Failed to parse critical task initiate response", meta: { original: String(err) } };
+  }
+
+  if (!res.ok) {
+    throw { code: "CRITICAL_TASK_INITIATE_FAILED", message: json?.message || "Critical task initiation failed", meta: json };
+  }
+
+  return json; // contains sessionId
+}
+
+/* ---------------------------------
+   CRITICAL TASK — POLL APPROVAL STATUS
+   GET /iam/api/approval/status/<sessionId>
+   Returns: { status: "PENDING" | "APPROVED" | "REJECTED" }
+---------------------------------- */
+export async function getApprovalStatus(sessionId) {
+  const token = localStorage.getItem("authToken");
+  const res = await fetch(
+    `${API_IAM}/iam/api/approval/status/${encodeURIComponent(sessionId)}`,
+    {
+      method: "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    }
+  );
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (err) {
+    throw { code: "SERVER_ERROR", message: "Failed to parse approval status response", meta: { original: String(err) } };
+  }
+
+  if (!res.ok) {
+    throw { code: "APPROVAL_STATUS_FAILED", message: json?.message || "Failed to fetch approval status", meta: json };
+  }
+
+  return json;
+}
+
+/* ---------------------------------
+   CRITICAL TASK — PHASE 2 (COMPLETE)
+   POST /iam/transactions/critical_task  (+ sessionId)
+   Returns: { status: "CRITICAL_TASK_EXECUTED", ... }  →  201 Created
+---------------------------------- */
+export async function completeCriticalTask({ taskType, taskDescription, targetResourceId, targetResourceType, deviceId, sessionId }) {
+  const token = localStorage.getItem("authToken");
+  const res = await fetch(
+    `${API_IAM}/iam/transactions/critical_task`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ taskType, taskDescription, targetResourceId, targetResourceType, deviceId, sessionId }),
+    }
+  );
+
+  let json;
+  try {
+    json = await res.json();
+  } catch (err) {
+    throw { code: "SERVER_ERROR", message: "Failed to parse critical task complete response", meta: { original: String(err) } };
+  }
+
+  if (res.status !== 201 && !res.ok) {
+    throw { code: "CRITICAL_TASK_COMPLETE_FAILED", message: json?.message || "Critical task completion failed", meta: json };
+  }
+
+  return json; // { status: "CRITICAL_TASK_EXECUTED", ... }
 }

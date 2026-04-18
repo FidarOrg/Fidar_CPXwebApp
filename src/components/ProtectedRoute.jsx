@@ -18,9 +18,9 @@ export default function ProtectedRoute() {
     token = tokenFromUrl || existingToken;
   }
 
-  if (!token) {
-    return <Navigate to="/" replace state={{ from: location }} />;
-  }
+  // if (!token) {
+  //   return <Navigate to="/" replace state={{ from: location }} />;
+  // }
 
   return <Outlet />;
 }

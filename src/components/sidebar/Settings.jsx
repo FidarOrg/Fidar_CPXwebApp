@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { ArrowLeft, Shield, Smartphone, User, Globe, Bell } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Header from "@/components/header/Header";
@@ -7,6 +7,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Input from ShadCN
 
 export default function Settings() {
+  const [deviceRole, setDeviceRole] = useState(
+    () => localStorage.getItem("deviceRole") || "primary"
+  );
+
+  const handleDeviceRoleChange = (role) => {
+    setDeviceRole(role);
+    localStorage.setItem("deviceRole", role);
+  };
+
   const devices = [
     { id: 1, name: "Chrome – Windows 10", lastActive: "2 hours ago" },
     { id: 2, name: "Safari – iPhone 14 Pro", lastActive: "Yesterday" },
@@ -99,6 +108,44 @@ export default function Settings() {
                 <Button className="passkey-btn" style={{ width: "auto", padding: "8px 16px", fontSize: "14px", borderRadius: "6px", fontFamily: "inherit" }}>
                   Enable FidoQ Key
                 </Button>
+              </CardContent>
+            </Card>
+
+            {/* DEVICE ROLE */}
+            <Card className="bg-card/50 border border-white/10 shadow-lg">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <Smartphone className="h-5 w-5" /> Device Role
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <p className="text-muted-foreground text-sm">
+                  Select whether this device is the <strong>Primary</strong> approver (uses passkey signing) or a <strong>Secondary</strong> device (requires Android approval for critical tasks).
+                </p>
+                <div className="flex gap-4">
+                  <button
+                    onClick={() => handleDeviceRoleChange("primary")}
+                    className={`flex-1 rounded-lg border p-4 text-sm font-medium transition-colors ${
+                      deviceRole === "primary"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="text-base font-semibold mb-1">Primary</div>
+                    <div className="text-xs font-normal">Approve tasks directly via passkey on this device.</div>
+                  </button>
+                  <button
+                    onClick={() => handleDeviceRoleChange("secondary")}
+                    className={`flex-1 rounded-lg border p-4 text-sm font-medium transition-colors ${
+                      deviceRole === "secondary"
+                        ? "border-primary bg-primary/10 text-primary"
+                        : "border-border text-muted-foreground hover:border-primary/50"
+                    }`}
+                  >
+                    <div className="text-base font-semibold mb-1">Secondary</div>
+                    <div className="text-xs font-normal">Critical tasks require approval from your Android device.</div>
+                  </button>
+                </div>
               </CardContent>
             </Card>
 
