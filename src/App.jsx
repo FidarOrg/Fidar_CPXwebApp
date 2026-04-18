@@ -6,6 +6,7 @@ import ProfilePage from "./components/profile";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { LanguageProvider } from "./providers/LanguageProvider";
 import EmpLogin from "./components/Emp-login.jsx";
+import BindDevice from "./components/BindDevice.jsx";
 import PrivacyPolicy from "./components/policies/Policypage";
 import Terms from "./components/policies/Tcpage";
 import AnalyticsPage from "./components/sidebar/Analytics";
@@ -21,6 +22,7 @@ function App() {
 
         <Route element={<LanguageProvider />}>
           <Route path="/Emp-login" element={<EmpLogin />} />
+          <Route path="/bind-device" element={<BindDevice />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<Terms />} />
           <Route path="/" element={<BankLanding />} />

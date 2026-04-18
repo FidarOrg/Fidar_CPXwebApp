@@ -1,5 +1,4 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
@@ -10,22 +9,12 @@ import {
   CardTitle,
   CardDescription,
 } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { Loader2, Globe } from "lucide-react";
-import logo from "../assets/cpx.png";
+import { Globe } from "lucide-react";
+import logo from "../assets/cpxlogo.png";
 import fidarLogoLight from "../assets/fidar_dark.png";
 import fidarLogoDark from "../assets/fidar_light.png";
 import { useTheme } from "@/components/theme-provider/theme-provider";
-import { toast } from "@/hooks/use-toast";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 import {
   DropdownMenu,
@@ -34,9 +23,6 @@ import {
   DropdownMenuItem,
 } from "@/components/ui/dropdown-menu";
 import { useLanguage } from "@/providers/LanguageProvider";
-import { fidar } from "@/lib/fidar";
-import { handleFidarError } from "@/lib/handleFidarError";
-import { handleSecurityError } from "@/lib/handleSecurityError";
 import { FIDAR_API_BASE } from "@/config";
 
 // 🔹 Inline component for language switcher
@@ -78,148 +64,9 @@ function LanguageSwitcher() {
 }
 
 function EmpLogin() {
-  const [customerId, setCustomerId] = useState("");
-  const [loginLoading, setLoginLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
-  const [registerLoading, setRegisterLoading] = useState(false);
-  const navigate = useNavigate();
   const { t } = useTranslation();
   const { theme } = useTheme();
   const { lang } = useLanguage();
-
-  // QR Bind Flow
-  const handleBindWithQR = async () => {
-    if (!customerId.trim()) return;
-    setLoading(true);
-
-    try {
-      const account = await fidar.getAccountByCustomerId(customerId);
-
-      if (!account) {
-        toast({
-          variant: t("bankLoginPage.toast.loginError.destructive"),
-          title: t("bankLoginPage.toast.loginError.title"),
-          description: t("bankLoginPage.toast.inactive"),
-        });
-        return;
-      }
-
-      toast({
-        title: t("bankQRPage.title"),
-        description: t("bankQRPage.login.subtitle_1"),
-      });
-
-      navigate("/qr", {
-        state: { customerId },
-      });
-
-    } catch (error) {
-      console.error("[FIDAR WEB] QR bind failed:", error);
-
-      // 🔐 GLOBAL IP RISK / VPN HANDLER
-      if (
-        handleSecurityError(error, {
-          redirect: navigate,
-        })
-      ) {
-        return; // ⬅️ STOP FLOW COMPLETELY
-      }
-
-      // ❌ Other SDK / validation errors
-      handleFidarError(error, t);
-    } finally {
-      setLoading(false);
-    }
-
-  };
-
-  const handleRegisterWithQR = async () => {
-    if (!customerId.trim()) return;
-    setRegisterLoading(true);
-
-    try {
-      const account = await fidar.getAccountByCustomerId(customerId);
-
-      if (!account) {
-        toast({
-          variant: t("bankLoginPage.toast.loginError.destructive"),
-          title: t("bankLoginPage.toast.loginError.title"),
-          description: t("bankLoginPage.toast.inactive"),
-        });
-        return;
-      }
-
-      navigate("/register-qr", {
-        state: { customerId },
-      });
-    } catch (error) {
-      console.error("[FIDAR WEB] QR register failed:", error);
-
-      if (
-        handleSecurityError(error, {
-          redirect: navigate,
-        })
-      ) {
-        return;
-      }
-
-      handleFidarError(error, t);
-    } finally {
-      setRegisterLoading(false);
-    }
-  };
-
-  const handleLogin = async () => {
-    if (!customerId.trim()) return;
-    setLoginLoading(true);
-
-    try {
-      const account = await fidar.getAccountByCustomerId(customerId);
-
-      if (!account) {
-        toast({
-          variant: t("bankLoginPage.toast.loginError.destructive"),
-          title: t("bankLoginPage.toast.loginError.title"),
-          description: t("bankLoginPage.toast.inactive"),
-        });
-        return;
-      }
-
-      toast({
-        title: t("bankLoginPage.title"),
-        description: t("bankLoginPage.redirectKeycloak"),
-      });
-
-      const result = await fidar.login({ realm: "FIDAR_WEBAUTH_V2", clientId: "anis" });
-
-      if (result?.accessToken) {
-        toast({
-          title: t("bankLoginPage.toast.loginSuccess.title"),
-          description: t("bankLoginPage.toast.loginSuccess.description"),
-        });
-
-        navigate("/dashboard");
-      }
-    } catch (error) {
-      console.error("[FIDAR WEB] Keycloak login failed:", error);
-
-      if (
-        handleSecurityError(error, {
-          redirect: navigate,
-        })
-      ) {
-        return;
-      }
-
-      handleFidarError(error, t);
-    } finally {
-      setLoginLoading(false);
-    }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") handleBindWithQR();
-  };
 
   return (
     <div className="relative flex items-center justify-center min-h-dvh bg-gradient-to-br from-background to-muted px-3 sm:px-4 mt-4 mb-4 sm:mt-0 sm:mb-0">
@@ -243,82 +90,11 @@ function EmpLogin() {
             />
             <CardTitle>{t("bankLoginPage.title")}</CardTitle>
             <CardDescription className="text-center">
-              {t("bankLoginPage.subtitle")}
+              Please Sign in to continue
             </CardDescription>
           </CardHeader>
 
           <CardContent className="space-y-5 px-4 sm:px-6 pt-3 pb-5">
-            <div className="space-y-2">
-              <Label>{t("bankLoginPage.customerIdLabel")}</Label>
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Input
-                      placeholder={t("bankLoginPage.customerIdPlaceholder")}
-                      value={customerId}
-                      onChange={(e) => setCustomerId(e.target.value)}
-                      onKeyDown={handleKeyPress}
-                      autoComplete="username"
-                      className="h-11"
-                    />
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    {t("bankLoginPage.customerIdTooltip")}
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
-            </div>
-
-            {/* QR Bind */}
-            {/* <Button
-              className="w-full h-11 text-[1rem] sm:h-10 sm:text-sm bg-gradient-to-r from-violet-900 via-purple-1000 to-blue-900 hover:from-pink-600 hover:via-purple-1200 hover:to-blue-600 text-white font-semibold shadow-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(88,28,135,0.6)] hover:scale-[1.02] active:scale-95 rounded-lg"
-              disabled={!customerId.trim() || loginLoading || loading || registerLoading}
-              onClick={handleLogin}
-            >
-              {loginLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loginLoading
-                ? t("bankLoginPage.loggingIn")
-                : t("bankLoginPage.login")}
-            </Button> */}
-            <Button
-              className="passkey-btn h-11"
-              disabled={!customerId.trim() || loading || loginLoading || registerLoading}
-              onClick={handleBindWithQR}
-            >
-              {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {loading ? t("bankLoginPage.binding") : t("bankLoginPage.bind")}
-            </Button>
-            {/* <Button
-              className="w-full h-11 text-[1rem] sm:h-10 sm:text-sm bg-gradient-to-r from-violet-900 via-purple-1000 to-blue-900 hover:from-pink-600 hover:via-purple-1200 hover:to-blue-600 text-white font-semibold shadow-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(88,28,135,0.6)] hover:scale-[1.02] active:scale-95 rounded-lg"
-              disabled={!customerId.trim() || registerLoading || loading || loginLoading}
-              onClick={handleRegisterWithQR}
-            >
-              {registerLoading && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
-              {registerLoading
-                ? t("bankLoginPage.registering")
-                : t("bankLoginPage.register")}
-            </Button> */}
-
-            {/* <p className="text-center text-sm text-muted-foreground mt-2">
-              {t("bankLoginPage.atm_id")}{" "}
-              <span
-                onClick={() => navigate("/atm-login")}
-                className="text-blue-600 dark:text-blue-400 underline cursor-pointer hover:text-blue-700 transition-colors duration-200"
-              >
-                {t("bankLoginPage.click_here")}
-              </span>
-            </p> */}
-            {/* ── Divider ── */}
-            <div className="relative my-1">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t border-border" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">or continue with</span>
-              </div>
-            </div>
             {/* ── SSO Login (PingOne / Keycloak via SAML) ── */}
             <a
               href={`${FIDAR_API_BASE}/fidar/sdk/api/saml2/authenticate/pingone`}
