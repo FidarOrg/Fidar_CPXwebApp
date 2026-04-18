@@ -41,7 +41,7 @@ export default function EmployeeDashboardPage() {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  const designation = "Senior Operations Manager";
+  const designation = "Chief executive officer";
 
   const [openBudgetPopup, setOpenBudgetPopup] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
