@@ -364,21 +364,26 @@ export default function EmployeeDashboardPage() {
                 {loadingProfile ? (
                   <Skeleton className="h-8 w-64" />
                 ) : (
-                  <>
-                    <h2 className="text-2xl font-bold">
-                      {/* Welcome back, {profile?.name || "Hadi Anwar"} */}
-                      Welcome back, Hadi Anwar
-
-                    </h2>
-
-                    <p className="text-muted-foreground text-sm mt-1">
-                      {profile?.email}
-                    </p>
-
-                    <p className="text-sm font-medium text-primary mt-2">
-                      {designation}
-                    </p>
-                  </>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h2 className="text-2xl font-bold">
+                        Welcome back, Hadi Anwar
+                      </h2>
+                      <p className="text-muted-foreground text-sm mt-1">
+                        {profile?.email}
+                      </p>
+                      <p className="text-sm font-medium text-primary mt-2">
+                        {designation}
+                      </p>
+                    </div>
+                    <Button
+                      className="passkey-btn"
+                      style={{ width: "auto", padding: "8px 20px" }}
+                      onClick={() => navigate("/bind-device")}
+                    >
+                      Bind Device
+                    </Button>
+                  </div>
                 )}
 
               </div>

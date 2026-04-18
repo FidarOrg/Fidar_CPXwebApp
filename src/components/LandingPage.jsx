@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import fidarLogo from "../assets/cpx.png";
+import fidarLogo from "../assets/cpxlogo.png";
 import ModeToggle from "@/components/theme-provider/mode-toggle";
 import { Globe } from "lucide-react";
 
