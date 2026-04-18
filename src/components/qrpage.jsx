@@ -20,6 +20,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Loader2, ShieldCheck, Bluetooth } from "lucide-react";
 import { LanguageSwitcher } from "./language-swicther/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
 
 // ── QR-BLE constants (temp: no SDK) ──────────────────────────────────────────
 const REALM = "FIDAR_WEBAUTH_V2";
@@ -135,6 +136,10 @@ function QrPage() {
 
       // Phone calls /bluetooth-proximity/verify with qrSessionId — poll picks this up.
       console.log("[QR-BLE] BLE pairing complete ✅");
+      if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+      if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
+      toast.success("Device Paired Successfully");
+      navigate("/dashboard");
     } catch (err) {
       console.error("[QR-BLE] BLE flow error:", err);
       setError(err.message || "Bluetooth connection failed");
@@ -142,7 +147,7 @@ function QrPage() {
     } finally {
       setBleLoading(false);
     }
-  }, []);
+  }, [navigate]);
 
   // �🔄 Refresh QR token every 1s via GET /device-auth/qr/{sessionId}
   const startQrRefresh = useCallback((sessionId) => {
