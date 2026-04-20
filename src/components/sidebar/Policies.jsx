@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Header from "@/components/header/Header";
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import { Badge } from "@/components/ui/badge";
+import { FileText, CheckCircle2, Search, LayoutGrid } from "lucide-react";
 
 const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold", color: "#000" };
 
@@ -156,11 +157,11 @@ export default function PoliciesPage() {
             {/* Stats Row */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Total Policies", value: POLICIES.length,                                           accent: "#6366f1", bg: "#ede9fe", symbol: "📋" },
-                { label: "Active",         value: POLICIES.filter((p) => p.status === "Active").length,        accent: "#22c55e", bg: "#dcfce7", symbol: "✅" },
-                { label: "Under Review",   value: POLICIES.filter((p) => p.status === "Under Review").length,  accent: "#f59e0b", bg: "#fef3c7", symbol: "🔍" },
-                { label: "Categories",     value: categories.length - 1,                                       accent: "#3b82f6", bg: "#dbeafe", symbol: "🗂️" },
-              ].map(({ label, value, accent, bg, symbol }) => (
+                { label: "Total Policies", value: POLICIES.length,                                           accent: "#1a2e44", bg: "#e8edf2", Icon: FileText },
+                { label: "Active",         value: POLICIES.filter((p) => p.status === "Active").length,        accent: "#1DB96B",  bg: "#e6f9f0", Icon: CheckCircle2 },
+                { label: "Under Review",   value: POLICIES.filter((p) => p.status === "Under Review").length,  accent: "#FFB020",  bg: "#fff8e6", Icon: Search },
+                { label: "Categories",     value: categories.length - 1,                                       accent: "#E40046",  bg: "#ffdde8", Icon: LayoutGrid },
+              ].map(({ label, value, accent, bg, Icon }) => (
                 <div key={label} className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: accent }} />
                   <div className="flex items-start justify-between">
@@ -168,8 +169,8 @@ export default function PoliciesPage() {
                       <p className="text-sm" style={HB}>{label}</p>
                       <p className="text-4xl mt-2" style={HB}>{value}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: bg }}>
-                      {symbol}
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
+                      <Icon size={22} color="#111" strokeWidth={2} />
                     </div>
                   </div>
                 </div>
@@ -193,10 +194,12 @@ export default function PoliciesPage() {
                     onClick={() => setCategoryFilter(cat)}
                     className={`px-3 py-1.5 rounded-full text-xs border transition-colors ${
                       categoryFilter === cat
-                        ? "bg-primary text-primary-foreground border-primary"
+                        ? "border-transparent"
                         : "bg-background border-border hover:border-primary"
                     }`}
-                    style={HB}
+                    style={categoryFilter === cat
+                      ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
+                      : { ...HB }}
                   >
                     {cat}
                   </button>
