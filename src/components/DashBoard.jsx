@@ -296,6 +296,8 @@ export default function EmployeeDashboardPage() {
 
       if (isApproved) {
         setOpenBudgetPopup(false);
+        setSuccessTaskTitle(selectedTask?.title || "Task");
+        setOpenSuccessDialog(true);
       } else {
         setTaskApprovalError(
           "Passkey assertion was not approved. The task remains pending."
