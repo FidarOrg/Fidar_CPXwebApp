@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from "react";
 import Header from "@/components/header/Header";
 import AppSidebar from "@/components/sidebar/app-sidebar";
+import { BarChart2, CheckCircle2, XCircle, Users } from "lucide-react";
 
 const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold", color: "#000" };
 
@@ -105,11 +106,11 @@ export default function AuditPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Total Events",  value: counts.total,   accent: "#6366f1", bg: "#ede9fe", symbol: "📊" },
-                { label: "Successful",    value: counts.success, accent: "#22c55e", bg: "#dcfce7", symbol: "✅" },
-                { label: "Failed",        value: counts.failed,  accent: "#ef4444", bg: "#fee2e2", symbol: "❌" },
-                { label: "Unique Users",  value: counts.users,   accent: "#3b82f6", bg: "#dbeafe", symbol: "👤" },
-              ].map(({ label, value, accent, bg, symbol }) => (
+                { label: "Total Events",  value: counts.total,   accent: "#1a2e44", bg: "#e8edf2", Icon: BarChart2 },
+                { label: "Successful",    value: counts.success, accent: "#1DB96B",  bg: "#e6f9f0", Icon: CheckCircle2 },
+                { label: "Failed",        value: counts.failed,  accent: "#E40046",  bg: "#ffdde8", Icon: XCircle },
+                { label: "Unique Users",  value: counts.users,   accent: "#FFB020",  bg: "#fff8e6", Icon: Users },
+              ].map(({ label, value, accent, bg, Icon }) => (
                 <div key={label} className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: accent }} />
                   <div className="flex items-start justify-between">
@@ -117,8 +118,8 @@ export default function AuditPage() {
                       <p className="text-sm" style={HB}>{label}</p>
                       <p className="text-4xl mt-2" style={HB}>{value}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: bg }}>
-                      {symbol}
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
+                      <Icon size={22} color="#111" strokeWidth={2} />
                     </div>
                   </div>
                 </div>
@@ -141,12 +142,10 @@ export default function AuditPage() {
                   <button
                     key={s}
                     onClick={() => setStatusFilter(s)}
-                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                      statusFilter === s
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background border-border hover:border-primary"
-                    }`}
-                    style={HB}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${statusFilter === s ? "border-transparent" : "bg-background border-border hover:border-primary"}`}
+                    style={statusFilter === s
+                      ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
+                      : { ...HB }}
                   >
                     {s}
                   </button>
@@ -158,12 +157,10 @@ export default function AuditPage() {
                   <button
                     key={a}
                     onClick={() => setActionFilter(a)}
-                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${
-                      actionFilter === a
-                        ? "bg-primary text-primary-foreground border-primary"
-                        : "bg-background border-border hover:border-primary"
-                    }`}
-                    style={HB}
+                    className={`px-3 py-1 rounded-full text-xs border transition-colors ${actionFilter === a ? "border-transparent" : "bg-background border-border hover:border-primary"}`}
+                    style={actionFilter === a
+                      ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
+                      : { ...HB }}
                   >
                     {a}
                   </button>

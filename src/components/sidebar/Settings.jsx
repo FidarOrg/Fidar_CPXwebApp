@@ -31,7 +31,7 @@ const Toggle = ({ checked, onChange, label, sub }) => (
     <button
       onClick={() => onChange(!checked)}
       className="relative w-11 h-6 rounded-full transition-colors flex-shrink-0"
-      style={{ background: checked ? "#79C6C7" : "#d1d5db" }}
+      style={{ background: checked ? "#1DB96B" : "#d1d5db" }}
     >
       <span
         className="absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"
@@ -52,7 +52,7 @@ export default function Settings() {
 
   const [profile, setProfile] = useState({
     name: "Hadi Anwar",
-    email: "hadi.anwar@fidar.io",
+    email: "hadi@cpx.net",
     phone: "+971 50 123 4567",
     department: "Executive Management",
     location: "Dubai, UAE",
@@ -98,13 +98,13 @@ export default function Settings() {
 
             {/* PAGE HEADER */}
             <div className="flex items-center gap-3">
-              <div className="h-6 w-1 rounded-full" style={{ background: "linear-gradient(to bottom, #1a2e44, #79C6C7)" }} />
+              <div className="h-6 w-1 rounded-full" style={{ background: "linear-gradient(to bottom, #1a2e44, #1DB96B)" }} />
               <h1 className="text-2xl" style={HB}>Settings</h1>
             </div>
 
             {/* PROFILE HERO */}
             <div className="rounded-xl border bg-card shadow-sm relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #1a2e44, #79C6C7)" }} />
+              <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #1a2e44, #1DB96B)" }} />
               <div className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5">
                 <img src={hadiAvatar} alt="Hadi Anwar" className="w-20 h-20 rounded-2xl object-cover ring-4 flex-shrink-0" style={{ ringColor: "#79C6C7" }} />
                 <div className="flex-1 min-w-0">
@@ -162,16 +162,16 @@ export default function Settings() {
               </SectionCard>
 
               {/* QUANTUM PASS */}
-              <SectionCard accent="#FF576D" icon={Key} title="Quantum Pass">
+              <SectionCard accent="#FFB020" icon={Key} title="Quantum Pass">
                 <div className="space-y-4 pt-1">
-                  <div className="flex items-center justify-between rounded-xl border p-4" style={{ borderColor: fidoEnabled ? "#79C6C7" : "#e5e7eb", background: fidoEnabled ? "#e0f7f7" : "transparent" }}>
+                  <div className="flex items-center justify-between rounded-xl border p-4" style={{ borderColor: fidoEnabled ? "#1DB96B" : "#e5e7eb", background: fidoEnabled ? "#e6f9f0" : "transparent" }}>
                     <div>
                       <p className="text-sm" style={HB}>{fidoEnabled ? "Passkey Active" : "Passkey Disabled"}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
-                        {fidoEnabled ? "Your account is protected with a FIDO2 passkey." : "Enable passkey for stronger authentication."}
+                        {fidoEnabled ? "Your account is protected with a Quantum Pass." : "Enable passkey for stronger authentication."}
                       </p>
                     </div>
-                    <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ background: fidoEnabled ? "#79C6C7" : "#e5e7eb", color: fidoEnabled ? "#fff" : "#6b7280" }}>
+                    <span className="text-xs font-bold px-3 py-1 rounded-full" style={{ background: fidoEnabled ? "#1DB96B" : "#e5e7eb", color: fidoEnabled ? "#fff" : "#6b7280" }}>
                       {fidoEnabled ? "ENABLED" : "DISABLED"}
                     </span>
                   </div>
@@ -194,7 +194,7 @@ export default function Settings() {
                     {fidoEnabled && (
                       <button
                         className="passkey-btn"
-                        style={{ width: "auto", padding: "8px 20px", fontSize: "14px", background: "#E40046" }}
+                        style={{ width: "auto", padding: "8px 20px", fontSize: "14px", background: "linear-gradient(to right, #4B1A6E, #E40046)", fontFamily: "'Anton', sans-serif" }}
                         onClick={() => setFidoEnabled(false)}
                       >
                         Revoke
@@ -207,7 +207,7 @@ export default function Settings() {
             </div>
 
             {/* NOTIFICATIONS - full width */}
-            <SectionCard accent="#79C6C7" icon={Bell} title="Notifications">
+            <SectionCard accent="#1DB96B" icon={Bell} title="Notifications">
                 <div className="pt-1 grid grid-cols-1 sm:grid-cols-2">
                   <Toggle checked={notifs.pushCritical} onChange={(v) => setNotifs(p => ({ ...p, pushCritical: v }))}
                     label="Critical Task Alerts" sub="Push notification when a critical task requires your approval" />
@@ -240,16 +240,16 @@ export default function Settings() {
                       onClick={() => handleDeviceRoleChange(role)}
                       className="rounded-xl border p-4 text-left transition-all"
                       style={{
-                        borderColor: deviceRole === role ? "#79C6C7" : "#e5e7eb",
+                        borderColor: deviceRole === role ? "#1DB96B" : "#e5e7eb",
                         background: deviceRole === role ? "#e0f7f7" : "transparent",
-                        boxShadow: deviceRole === role ? "0 0 0 2px #79C6C780" : "none",
+                        boxShadow: deviceRole === role ? "0 0 0 2px #1DB96B80" : "none",
                       }}
                     >
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg">{icon}</span>
                         <span className="text-sm" style={HB}>{label}</span>
                         {deviceRole === role && (
-                          <span className="ml-auto text-xs px-2 py-0.5 rounded-full text-white" style={{ background: "#79C6C7" }}>Active</span>
+                          <span className="ml-auto text-xs px-2 py-0.5 rounded-full text-white" style={{ background: "#1DB96B" }}>Active</span>
                         )}
                       </div>
                       <p className="text-xs text-muted-foreground">{desc}</p>
@@ -262,7 +262,7 @@ export default function Settings() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
 
               {/* DEVICE MANAGEMENT */}
-              <SectionCard accent="#FF576D" icon={Smartphone} title="Device Management">
+              <SectionCard accent="#FFB020" icon={Smartphone} title="Device Management">
                 <div className="space-y-3 pt-1">
                   <p className="text-xs text-muted-foreground">Devices that have accessed your account. Remove any device you don't recognise.</p>
                   {devices.map((d) => (
@@ -281,9 +281,9 @@ export default function Settings() {
                         {d.trusted && (
                           <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#e0f7f7", color: "#79C6C7", fontWeight: "bold" }}>Trusted</span>
                         )}
-                        <button
+                      <button
                           className="passkey-btn"
-                          style={{ width: "auto", padding: "5px 12px", fontSize: "12px", background: "#E40046", boxShadow: "none" }}
+                          style={{ width: "auto", padding: "5px 12px", fontSize: "12px", background: "linear-gradient(to right, #4B1A6E, #E40046)", boxShadow: "none", fontFamily: "'Anton', sans-serif" }}
                         >
                           Remove
                         </button>

@@ -26,6 +26,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Clock, RefreshCw, CheckCircle2, ClipboardList } from "lucide-react";
 import { fidar } from "@/lib/fidar";
 import { isFidarException } from "fidar-web-sdk";
 import PasskeyBanner from "@/components/passkey/PasskeyBanner";
@@ -153,7 +154,7 @@ export default function EmployeeDashboardPage() {
     },
     {
       id: 3,
-      title: "Client onboarding review",
+      title: "Client Onboarding Review",
       priority: "high",
       due: "01 Mar 2026",
       status: "pending",
@@ -161,7 +162,7 @@ export default function EmployeeDashboardPage() {
     },
     {
       id: 4,
-      title: "Prepare weekly performance report",
+      title: "Prepare Weekly Performance Report",
       priority: "high",
       due: "03 Mar 2026",
       status: "in-progress",
@@ -169,7 +170,7 @@ export default function EmployeeDashboardPage() {
     },
     {
       id: 5,
-      title: "Update internal documentation",
+      title: "Update Internal Documentation",
       priority: "low",
       due: "05 Mar 2026",
       status: "done",
@@ -177,7 +178,7 @@ export default function EmployeeDashboardPage() {
     },
     {
       id: 6,
-      title: "Team sync meeting preparation",
+      title: "Team Sync Meeting Preparation",
       priority: "low",
       due: "06 Mar 2026",
       status: "pending",
@@ -380,13 +381,14 @@ export default function EmployeeDashboardPage() {
   }, [tasks, activeCategory]);
 
   const STATUS_ICON = {
-    "Pending Tasks":  { color: "#f59e0b", bg: "#fef3c7", symbol: "⏳" },
-    "In Progress":    { color: "#3b82f6", bg: "#dbeafe", symbol: "🔄" },
-    "Completed":      { color: "#22c55e", bg: "#dcfce7", symbol: "✅" },
+    "Pending Tasks":  { color: "#FFB020", bg: "#fff8e6", Icon: Clock },
+    "In Progress":    { color: "#E40046", bg: "#ffdde8", Icon: RefreshCw },
+    "Completed":      { color: "#1DB96B", bg: "#e6f9f0", Icon: CheckCircle2 },
   };
 
   const StatusCard = ({ title, value }) => {
-    const meta = STATUS_ICON[title] ?? { color: "#6b7280", bg: "#f3f4f6", symbol: "📋" };
+    const meta = STATUS_ICON[title] ?? { color: "#6b7280", bg: "#f3f4f6", Icon: ClipboardList };
+    const { Icon } = meta;
     return (
       <div className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
         <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: meta.color }} />
@@ -395,15 +397,15 @@ export default function EmployeeDashboardPage() {
             <p className="text-sm text-muted-foreground">{title}</p>
             <h2 className="text-4xl font-bold mt-2">{value}</h2>
           </div>
-          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: meta.bg }}>
-            {meta.symbol}
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: meta.bg }}>
+            <Icon size={22} color="#111" strokeWidth={2} />
           </div>
         </div>
       </div>
     );
   };
 
-  const PRIORITY_ACCENT = { Critical: "#ef4444", High: "#f97316", Low: "#22c55e" };
+  const PRIORITY_ACCENT = { Critical: "#E40046", High: "#FFB020", Low: "#1DB96B" };
 
   const PrioritySection = ({ title, items, badgeColor }) => (
     <div className="rounded-xl bg-card border shadow-sm overflow-hidden">
@@ -452,6 +454,7 @@ export default function EmployeeDashboardPage() {
               {(task.requiresSigning || task.taskCategory === "critical_task") && task.status !== "done" && (
                 <Button
                   className="clear-btn rounded-lg"
+                  style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold", padding: "4px 12px", fontSize: "12px", height: "auto" }}
                   onClick={() => {
                     setSelectedTask(task);
                     if (deviceRole === "primary" && task.requiresSigning) {
@@ -572,7 +575,7 @@ export default function EmployeeDashboardPage() {
 
             <section className="lg:col-span-12">
               <div className="flex flex-wrap items-center gap-3">
-                <div className="h-6 w-1 rounded-full flex-shrink-0" style={{ background: "linear-gradient(to bottom, #1a2e44, #79C6C7)" }} />
+                <div className="h-6 w-1 rounded-full flex-shrink-0" style={{ background: "linear-gradient(to bottom, #1a2e44, #1DB96B)" }} />
                 <h3 className="text-lg font-semibold flex-shrink-0">
                   These are the tasks assigned to you this week
                 </h3>
@@ -583,7 +586,7 @@ export default function EmployeeDashboardPage() {
                     style={activeCategory === cat
                       ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
                       : { background: "transparent", color: "#111", border: "1.5px solid #e5e7eb", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
-                    className="px-3 py-0.5 rounded-full text-xs transition-all"
+                    className={`px-3 py-0.5 rounded-full text-xs transition-all ${activeCategory === cat ? "text-white" : "text-black"}`}
                   >
                     {cat}
                   </button>

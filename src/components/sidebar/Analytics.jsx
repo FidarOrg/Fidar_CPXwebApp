@@ -1,6 +1,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import Header from "@/components/header/Header";
 import AppSidebar from "@/components/sidebar/app-sidebar";
+import { ClipboardList, Clock, TrendingUp, CheckCircle2 } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -134,14 +135,14 @@ export default function AnalyticsPage() {
 
   const priorityCounts = useMemo(() => [
     { name: "Critical", value: ALL_TASKS.filter((t) => t.priority === "Critical").length, color: "#E40046" },
-    { name: "High",     value: ALL_TASKS.filter((t) => t.priority === "High").length,     color: "#FF576D" },
-    { name: "Low",      value: ALL_TASKS.filter((t) => t.priority === "Low").length,      color: "#79C6C7" },
+    { name: "High",     value: ALL_TASKS.filter((t) => t.priority === "High").length,     color: "#FFB020" },
+    { name: "Low",      value: ALL_TASKS.filter((t) => t.priority === "Low").length,      color: "#1DB96B" },
   ], []);
 
   const statusChartData = useMemo(() => [
-    { name: "Pending",     value: counts.pending,    color: "#FF576D" },
-    { name: "In Progress", value: counts.inProgress, color: "#1a2e44" },
-    { name: "Completed",   value: counts.completed,  color: "#79C6C7" },
+    { name: "Pending",     value: counts.pending,    color: "#FFB020" },
+    { name: "In Progress", value: counts.inProgress, color: "#E40046" },
+    { name: "Completed",   value: counts.completed,  color: "#1DB96B" },
   ], [counts]);
 
   const completionPct = Math.round((counts.completed / counts.total) * 100);
@@ -282,11 +283,11 @@ export default function AnalyticsPage() {
             {/* Summary Cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Total Tasks",  value: counts.total,      accent: "#1a2e44", bg: "#e8edf2", symbol: "📋" },
-                { label: "Pending",      value: counts.pending,    accent: "#FF576D", bg: "#ffe4e8", symbol: "⏳" },
-                { label: "In Progress",  value: counts.inProgress, accent: "#E40046", bg: "#ffdde8", symbol: "🔄" },
-                { label: "Completed",    value: counts.completed,  accent: "#79C6C7", bg: "#e0f7f7", symbol: "✅" },
-              ].map(({ label, value, accent, bg, symbol }) => (
+                { label: "Total Tasks",  value: counts.total,      accent: "#1a2e44", bg: "#e8edf2", Icon: ClipboardList },
+                { label: "Pending",      value: counts.pending,    accent: "#FFB020",  bg: "#fff8e6",  Icon: Clock },
+                { label: "In Progress",  value: counts.inProgress, accent: "#E40046",  bg: "#ffdde8",  Icon: TrendingUp },
+                { label: "Completed",    value: counts.completed,  accent: "#1DB96B",  bg: "#e6f9f0",  Icon: CheckCircle2 },
+              ].map(({ label, value, accent, bg, Icon }) => (
                 <div key={label} className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
                   <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: accent }} />
                   <div className="flex items-start justify-between">
@@ -294,8 +295,8 @@ export default function AnalyticsPage() {
                       <p className="text-sm text-muted-foreground">{label}</p>
                       <p className="text-4xl font-bold mt-2">{value}</p>
                     </div>
-                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: bg }}>
-                      {symbol}
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center flex-shrink-0" style={{ background: bg }}>
+                      <Icon size={22} color="#111" strokeWidth={2} />
                     </div>
                   </div>
                 </div>
@@ -312,7 +313,7 @@ export default function AnalyticsPage() {
                 <div className="w-full h-3 rounded-full bg-muted overflow-hidden">
                   <div
                     className="h-full rounded-full transition-all"
-                    style={{ width: `${completionPct}%`, background: "linear-gradient(to right, #1a2e44, #79C6C7)" }}
+                    style={{ width: `${completionPct}%`, background: "linear-gradient(to right, #1a2e44, #1DB96B)" }}
                   />
                 </div>
                 <p className="text-xs text-muted-foreground text-right">{completionPct}% complete</p>
@@ -324,7 +325,7 @@ export default function AnalyticsPage() {
 
               {/* Donut — Status Breakdown (click to filter) */}
               <div className="rounded-xl border bg-card shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #f59e0b, #3b82f6, #22c55e)" }} />
+                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #FFB020, #E40046, #1DB96B)" }} />
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-1">
                     <div>
@@ -385,7 +386,7 @@ export default function AnalyticsPage() {
 
               {/* Bar — Tasks by Priority (click to filter) */}
               <div className="rounded-xl border bg-card shadow-sm relative overflow-hidden">
-                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #ef4444, #f97316, #22c55e)" }} />
+                <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: "linear-gradient(to right, #E40046, #FFB020, #1DB96B)" }} />
                 <div className="p-5">
                   <div className="flex items-start justify-between mb-1">
                     <div>
