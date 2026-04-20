@@ -57,6 +57,8 @@ export default function EmployeeDashboardPage() {
   const [criticalTaskPhase, setCriticalTaskPhase] = useState("idle"); // idle | initiating | waiting | completing | done
   const [criticalTaskSessionId, setCriticalTaskSessionId] = useState(null);
   const [criticalTaskError, setCriticalTaskError] = useState("");
+  const [openSuccessDialog, setOpenSuccessDialog] = useState(false);
+  const [successTaskTitle, setSuccessTaskTitle] = useState("");
 
   // Device role: "primary" = passkey Accept flow, "secondary" = critical_task flow
   const [deviceRole] = useState(() => localStorage.getItem("deviceRole") || "primary");
@@ -80,6 +82,7 @@ export default function EmployeeDashboardPage() {
         taskType: "BUDGET_APPROVAL",
         taskDescription: "Approve quarterly financial budget release",
         targetResourceId: "3a43d8b7-b2e9-4ea5-983b-a70dc83cc2eb",
+        targetResourceName: "Hadi's Samsung",
         targetResourceType: "BUDGET",
         deviceId: "web-browser-or-session-id",
       },
@@ -104,6 +107,7 @@ export default function EmployeeDashboardPage() {
         taskType: "FUND_TRANSFER",
         taskDescription: "Emergency fund transfer for disaster recovery operations",
         targetResourceId: "5f91c3a2-d4e7-4bc1-a012-b83ef92dd4f1",
+        targetResourceName: "Disaster Recovery Account",
         targetResourceType: "ACCOUNT",
         deviceId: "web-browser-or-session-id",
       },
@@ -128,6 +132,7 @@ export default function EmployeeDashboardPage() {
         taskType: "CONTRACT_PAYMENT",
         taskDescription: "Vendor contract payment for Q2 service agreement",
         targetResourceId: "9c27b1e4-f3a8-4d6e-b591-c04da71ee823",
+        targetResourceName: "Q2 Vendor Contract",
         targetResourceType: "CONTRACT",
         deviceId: "web-browser-or-session-id",
       },
@@ -146,6 +151,7 @@ export default function EmployeeDashboardPage() {
         taskType: "DEVICE_REVOKE",
         taskDescription: "Revoke secondary device registered on 2026-01-10",
         targetResourceId: "device-uuid-to-revoke",
+        targetResourceName: "Hadi's Samsung",
         targetResourceType: "DEVICE",
         deviceId: "web-browser-or-session-id",
       },
@@ -330,7 +336,11 @@ export default function EmployeeDashboardPage() {
         prev.map((t) => (t.id === selectedTask.id ? { ...t, status: "done" } : t))
       );
       setCriticalTaskPhase("done");
-      setTimeout(() => setOpenCriticalDialog(false), 1200);
+      setSuccessTaskTitle(selectedTask?.title || "Task");
+      setTimeout(() => {
+        setOpenCriticalDialog(false);
+        setOpenSuccessDialog(true);
+      }, 800);
     } catch (err) {
       setCriticalTaskError(err?.message || "Failed to complete critical task.");
       setCriticalTaskPhase("waiting");
@@ -548,7 +558,7 @@ export default function EmployeeDashboardPage() {
                       style={{ width: "auto", padding: "8px 20px" }}
                       onClick={() => navigate("/bind-device")}
                     >
-                      Bind Device
+                      Bind Your Device
                     </Button>
                   </div>
                 )}
@@ -718,27 +728,16 @@ export default function EmployeeDashboardPage() {
 
                 <div className="grid grid-cols-[120px_1fr] items-center gap-2">
                   <span className="text-xs uppercase tracking-wide" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Target</span>
-                  <div className="flex items-center gap-1.5">
-                    <span
-                      className="text-sm font-mono truncate max-w-[180px]"
-                      style={{ color: "#000", fontFamily: "monospace", fontWeight: "bold" }}
-                      title={selectedTask.criticalTask.targetResourceId}
+                  <span
+                      className="text-sm truncate max-w-[180px]"
+                      style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
                     >
-                      {selectedTask.criticalTask.targetResourceId?.length > 20
-                        ? `${selectedTask.criticalTask.targetResourceId.slice(0, 8)}…${selectedTask.criticalTask.targetResourceId.slice(-12)}`
-                        : selectedTask.criticalTask.targetResourceId}
+                      {selectedTask.criticalTask.targetResourceName
+                        ? selectedTask.criticalTask.targetResourceName
+                        : selectedTask.criticalTask.targetResourceId?.length > 20
+                          ? `${selectedTask.criticalTask.targetResourceId.slice(0, 8)}…${selectedTask.criticalTask.targetResourceId.slice(-12)}`
+                          : selectedTask.criticalTask.targetResourceId}
                     </span>
-                    <button
-                      onClick={() => navigator.clipboard.writeText(selectedTask.criticalTask.targetResourceId)}
-                      className="text-gray-400 hover:text-blue-500 transition flex-shrink-0"
-                      title="Copy full ID"
-                    >
-                      <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-                      </svg>
-                    </button>
-                  </div>
                 </div>
 
                 <div className="grid grid-cols-[120px_1fr] items-center gap-2">
@@ -827,6 +826,67 @@ export default function EmployeeDashboardPage() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Success Dialog */}
+      <Dialog open={openSuccessDialog} onOpenChange={setOpenSuccessDialog}>
+        <DialogContent className="sm:max-w-sm gap-0 p-0 overflow-hidden [&>button]:hidden" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", border: "none" }}>
+          <DialogTitle className="sr-only">Task Completed</DialogTitle>
+          <div className="flex flex-col items-center px-8 py-10 text-center">
+
+            {/* Animated checkmark */}
+            <div style={{
+              width: 80, height: 80, borderRadius: "50%",
+              background: "linear-gradient(135deg, #1DB96B22, #1DB96B44)",
+              border: "3px solid #1DB96B",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              marginBottom: 20,
+              animation: "successPop 0.4s cubic-bezier(0.175,0.885,0.32,1.275) forwards"
+            }}>
+              <svg width="40" height="40" viewBox="0 0 50 50" fill="none">
+                <path
+                  d="M12 26 L21 35 L38 16"
+                  stroke="#1DB96B"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    strokeDasharray: 40,
+                    strokeDashoffset: 0,
+                    animation: "checkDraw 0.5s ease 0.2s both"
+                  }}
+                />
+              </svg>
+            </div>
+
+            <h2 style={{ fontSize: 20, fontWeight: "bold", color: "#000", marginBottom: 6 }}>
+              Transaction Signing Successful
+            </h2>
+            <p style={{ fontSize: 13, color: "#111", marginBottom: 24, lineHeight: 1.5 }}>
+              <span style={{ fontWeight: "bold", color: "#111" }}>{successTaskTitle}</span> has been
+              signed and executed successfully.
+            </p>
+
+            <button
+              className="passkey-btn"
+              style={{ width: "auto", padding: "10px 36px", fontSize: "15px" }}
+              onClick={() => setOpenSuccessDialog(false)}
+            >
+              Done
+            </button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <style>{`
+        @keyframes successPop {
+          0%   { transform: scale(0.4); opacity: 0; }
+          100% { transform: scale(1);   opacity: 1; }
+        }
+        @keyframes checkDraw {
+          from { stroke-dashoffset: 40; }
+          to   { stroke-dashoffset: 0; }
+        }
+      `}</style>
 
     </div>
   );
