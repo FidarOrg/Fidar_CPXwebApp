@@ -11,6 +11,8 @@ import PrivacyPolicy from "./components/policies/Policypage";
 import Terms from "./components/policies/Tcpage";
 import AnalyticsPage from "./components/sidebar/Analytics";
 import Settings from "./components/sidebar/Settings";
+import PoliciesPage from "./components/sidebar/Policies";
+import AuditPage from "./components/sidebar/Audit";
 
 
 function App() {
@@ -32,6 +34,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/analytics" element={<AnalyticsPage />} />
+            <Route path="/policies" element={<PoliciesPage />} />
+            <Route path="/audit" element={<AuditPage />} />
             <Route path="/settings" element={<Settings />} />
             <Route path="/profile" element={<ProfilePage />} />
           </Route>
