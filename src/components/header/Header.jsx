@@ -21,6 +21,7 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBars } from "@fortawesome/free-solid-svg-icons";
 import logo from "@/assets/cpxlogo.png";
+import hadiAvatar from "@/assets/hadi.jpeg";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "../language-swicther/LanguageSwitcher";
 import { fidar } from "@/lib/fidar"; // ✅ import Fidar to fetch profile
@@ -84,13 +85,10 @@ export default function Header({ open, onOpenChange, type = "bank" }) {
                 title={profile?.name ? profile.name : "User"}
               >
                 <Avatar className="h-9 w-9 ring-2 ring-blue-600 cursor-pointer">
-                  {profile?.image ? (
-                    <AvatarImage src={profile.image} />
-                  ) : (
-                    <AvatarFallback className="bg-blue-100 text-blue-600">
-                      {profile?.name?.split(" ")[0]?.[0].toUpperCase() || "U"}
-                    </AvatarFallback>
-                  )}
+                  <AvatarImage src={hadiAvatar} alt="Hadi Anwar" />
+                  <AvatarFallback className="bg-blue-100 text-blue-600">
+                    {profile?.name?.split(" ")[0]?.[0].toUpperCase() || "U"}
+                  </AvatarFallback>
                 </Avatar>
               </button>
             </DropdownMenuTrigger>

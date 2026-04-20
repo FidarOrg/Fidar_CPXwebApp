@@ -1,4 +1,4 @@
-import { faListCheck, faGear, faHouse } from "@fortawesome/free-solid-svg-icons";
+import { faListCheck, faGear, faHouse, faBook, faClipboardList } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
@@ -11,19 +11,23 @@ export default function AppSidebar() {
   const dir = document.documentElement.dir;
 
   const items = [
-    { label: t("dashboard.overview"), icon: faHouse, path: "/dashboard" },
-    { label: "Tasks", icon: faListCheck, path: "/analytics" },
-    { label: t("dashboard.settings"), icon: faGear, path: "/settings" },
+    { label: t("dashboard.overview"), icon: faHouse,         path: "/dashboard" },
+    { label: "Tasks",                 icon: faListCheck,     path: "/analytics" },
+    { label: "Policies",              icon: faBook,          path: "/policies" },
+    { label: "Audit",                 icon: faClipboardList, path: "/audit" },
+    { label: t("dashboard.settings"), icon: faGear,          path: "/settings" },
   ];
 
   return (
     <aside
-      className={`w-full lg:w-60 shrink-0 bg-sidebar text-sidebar-foreground
-      lg:border-${dir === "rtl" ? "l" : "r"}-2 
-      lg:border-gray-300 lg:dark:border-gray-700
+      className={`w-full lg:w-60 shrink-0 text-sidebar-foreground
       lg:sticky lg:top-14 lg:h-[calc(100vh-56px)]
       ${dir === "rtl" ? "lg:right-0" : "lg:left-0"}
       transition-all duration-300`}
+      style={{
+        background: "#fff",
+        boxShadow: dir === "rtl" ? "-4px 0 16px rgba(0,0,0,0.08)" : "4px 0 16px rgba(0,0,0,0.08)",
+      }}
     >
       <nav className="p-3 space-y-1.5">
         {items.map((it) => {
