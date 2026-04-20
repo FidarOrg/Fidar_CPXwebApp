@@ -100,6 +100,13 @@ function EmpLogin() {
       return;
     }
 
+    // If manager approval was already completed once this session, skip directly to SSO
+    const approvalCount = parseInt(sessionStorage.getItem("manager_approval_count") || "0", 10);
+    if (approvalCount > 0) {
+      window.location.href = `${FIDAR_API_BASE}${SSO_PATH}`;
+      return;
+    }
+
     setApprovalState("pending");
     setErrorMsg("");
 
@@ -140,6 +147,9 @@ function EmpLogin() {
 
           if (pollData.status === "VERIFIED") {
             stopPolling();
+            // Mark approval as done so future logins skip this step
+            const prev = parseInt(sessionStorage.getItem("manager_approval_count") || "0", 10);
+            sessionStorage.setItem("manager_approval_count", String(prev + 1));
             window.location.href = `${FIDAR_API_BASE}${SSO_PATH}`;
           } else if (
             pollData.expiresAt &&
