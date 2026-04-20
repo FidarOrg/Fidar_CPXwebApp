@@ -548,7 +548,7 @@ export default function EmployeeDashboardPage() {
                       style={{ width: "auto", padding: "8px 20px" }}
                       onClick={() => navigate("/bind-device")}
                     >
-                      Bind Device
+                      Bind Your Device
                     </Button>
                   </div>
                 )}
