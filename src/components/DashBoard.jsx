@@ -543,7 +543,7 @@ export default function EmployeeDashboardPage() {
                       />
                       <div>
                         <h2 className="text-2xl font-bold">
-                          Welcome back, Hadi Anwar
+                          Welcome, Hadi Anwar
                         </h2>
                         <p className="text-muted-foreground text-sm mt-0.5">
                           {profile?.email}
