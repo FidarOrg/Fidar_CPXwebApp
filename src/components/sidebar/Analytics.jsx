@@ -276,7 +276,7 @@ export default function AnalyticsPage() {
             <div>
               <h1 className="text-3xl font-bold">Task Analytics</h1>
               <p className="text-muted-foreground mt-1">
-                Weekly task breakdown — pending, in progress, and completed.
+                Weekly team task breakdown — pending, in progress, and completed.
               </p>
             </div>
 
