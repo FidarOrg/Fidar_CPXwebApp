@@ -67,6 +67,7 @@ export default function EmployeeDashboardPage() {
       priority: "critical",
       due: "02 Mar 2026",
       status: "pending",
+      category: "Compliance",
       requiresSigning: true,
       signing: {
         amount: 2500,
@@ -90,6 +91,7 @@ export default function EmployeeDashboardPage() {
       priority: "critical",
       due: "10 Apr 2026",
       status: "pending",
+      category: "Operations",
       requiresSigning: true,
       signing: {
         amount: 15000,
@@ -113,6 +115,7 @@ export default function EmployeeDashboardPage() {
       priority: "critical",
       due: "12 Apr 2026",
       status: "pending",
+      category: "IT Governance",
       requiresSigning: true,
       signing: {
         amount: 8750,
@@ -136,6 +139,7 @@ export default function EmployeeDashboardPage() {
       priority: "critical",
       due: "18 Apr 2026",
       status: "pending",
+      category: "Security",
       taskCategory: "critical_task",
       criticalTask: {
         taskType: "DEVICE_REVOKE",
@@ -153,6 +157,7 @@ export default function EmployeeDashboardPage() {
       priority: "high",
       due: "01 Mar 2026",
       status: "pending",
+      category: "HR",
     },
     {
       id: 4,
@@ -160,6 +165,7 @@ export default function EmployeeDashboardPage() {
       priority: "high",
       due: "03 Mar 2026",
       status: "in-progress",
+      category: "Operations",
     },
     {
       id: 5,
@@ -167,6 +173,7 @@ export default function EmployeeDashboardPage() {
       priority: "low",
       due: "05 Mar 2026",
       status: "done",
+      category: "Privacy",
     },
     {
       id: 6,
@@ -174,6 +181,7 @@ export default function EmployeeDashboardPage() {
       priority: "low",
       due: "06 Mar 2026",
       status: "pending",
+      category: "Risk",
     },
   ]);
 
@@ -182,6 +190,8 @@ export default function EmployeeDashboardPage() {
   const [newTaskPriority, setNewTaskPriority] = useState("low");
   const [newTaskStatus, setNewTaskStatus] = useState("pending");
   const [newTaskDueDate, setNewTaskDueDate] = useState("");
+  const [activeCategory, setActiveCategory] = useState("All");
+  const TASK_CATEGORIES = ["All", "Security", "Privacy", "IT Governance", "Compliance", "Operations", "HR", "Risk"];
 
   // Handle QR result when returning from QR page
   useEffect(() => {
@@ -361,12 +371,13 @@ export default function EmployeeDashboardPage() {
 
   // Group tasks
   const groupedTasks = useMemo(() => {
+    const filtered = activeCategory === "All" ? tasks : tasks.filter((t) => t.category === activeCategory);
     return {
-      critical: tasks.filter((t) => t.priority === "critical"),
-      high: tasks.filter((t) => t.priority === "high"),
-      low: tasks.filter((t) => t.priority === "low"),
+      critical: filtered.filter((t) => t.priority === "critical"),
+      high: filtered.filter((t) => t.priority === "high"),
+      low: filtered.filter((t) => t.priority === "low"),
     };
-  }, [tasks]);
+  }, [tasks, activeCategory]);
 
   const STATUS_ICON = {
     "Pending Tasks":  { color: "#f59e0b", bg: "#fef3c7", symbol: "⏳" },
@@ -560,11 +571,23 @@ export default function EmployeeDashboardPage() {
             {/* Tasks Title */}
 
             <section className="lg:col-span-12">
-              <div className="flex items-center gap-3">
-                <div className="h-6 w-1 rounded-full" style={{ background: "linear-gradient(to bottom, #1a2e44, #79C6C7)" }} />
-                <h3 className="text-lg font-semibold">
+              <div className="flex flex-wrap items-center gap-3">
+                <div className="h-6 w-1 rounded-full flex-shrink-0" style={{ background: "linear-gradient(to bottom, #1a2e44, #79C6C7)" }} />
+                <h3 className="text-lg font-semibold flex-shrink-0">
                   These are the tasks assigned to you this week
                 </h3>
+                {TASK_CATEGORIES.map((cat) => (
+                  <button
+                    key={cat}
+                    onClick={() => setActiveCategory(cat)}
+                    style={activeCategory === cat
+                      ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
+                      : { background: "transparent", color: "#111", border: "1.5px solid #e5e7eb", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
+                    className="px-3 py-0.5 rounded-full text-xs transition-all"
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
             </section>
 
