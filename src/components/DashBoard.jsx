@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 import AppSidebar from "@/components/sidebar/app-sidebar";
+import hadiAvatar from "@/assets/hadi.jpeg";
 import Header from "@/components/header/Header";
 
 import { Badge } from "@/components/ui/badge";
@@ -42,7 +43,7 @@ export default function EmployeeDashboardPage() {
   const [profile, setProfile] = useState(null);
   const [loadingProfile, setLoadingProfile] = useState(true);
 
-  const designation = "Chief executive officer";
+  const designation = "Chief Executive Officer";
 
   const [openBudgetPopup, setOpenBudgetPopup] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
@@ -367,37 +368,60 @@ export default function EmployeeDashboardPage() {
     };
   }, [tasks]);
 
-  const StatusCard = ({ title, value }) => (
-    <div className="rounded-lg p-6 border bg-card">
-      <p className="text-sm text-muted-foreground">{title}</p>
-      <h2 className="text-3xl font-bold mt-2">{value}</h2>
-    </div>
-  );
+  const STATUS_ICON = {
+    "Pending Tasks":  { color: "#f59e0b", bg: "#fef3c7", symbol: "⏳" },
+    "In Progress":    { color: "#3b82f6", bg: "#dbeafe", symbol: "🔄" },
+    "Completed":      { color: "#22c55e", bg: "#dcfce7", symbol: "✅" },
+  };
+
+  const StatusCard = ({ title, value }) => {
+    const meta = STATUS_ICON[title] ?? { color: "#6b7280", bg: "#f3f4f6", symbol: "📋" };
+    return (
+      <div className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+        <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: meta.color }} />
+        <div className="flex items-start justify-between">
+          <div>
+            <p className="text-sm text-muted-foreground">{title}</p>
+            <h2 className="text-4xl font-bold mt-2">{value}</h2>
+          </div>
+          <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: meta.bg }}>
+            {meta.symbol}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const PRIORITY_ACCENT = { Critical: "#ef4444", High: "#f97316", Low: "#22c55e" };
 
   const PrioritySection = ({ title, items, badgeColor }) => (
-    <div className="rounded-lg bg-card border">
+    <div className="rounded-xl bg-card border shadow-sm overflow-hidden">
 
-      <div className="p-6 pb-2 flex justify-between items-center">
+      <div
+        className="px-5 py-4 flex justify-between items-center border-b"
+        style={{ borderTop: `3px solid ${PRIORITY_ACCENT[title] ?? "#6b7280"}` }}
+      >
         <h3 className="font-semibold text-lg">{title}</h3>
         <Badge className={badgeColor}>{items.length}</Badge>
       </div>
 
-      <div className="p-6 pt-2 space-y-4">
+      <div className="p-4 space-y-3">
 
         {items.map((task) => (
 
           <div
             key={task.id}
-            className="flex items-center justify-between p-4 rounded-md border bg-background"
+            className="flex items-center justify-between p-4 rounded-xl border bg-background hover:shadow-sm transition-shadow"
+            style={{ borderLeft: `3px solid ${PRIORITY_ACCENT[title] ?? "#e5e7eb"}` }}
           >
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 min-w-0">
 
-              <Checkbox checked={task.status === "done"} />
+              <Checkbox checked={task.status === "done"} className="flex-shrink-0" />
 
-              <div>
+              <div className="min-w-0">
                 <p
-                  className={`font-medium ${task.status === "done"
+                  className={`font-medium truncate ${task.status === "done"
                     ? "line-through text-muted-foreground"
                     : ""
                     }`}
@@ -405,14 +429,14 @@ export default function EmployeeDashboardPage() {
                   {task.title}
                 </p>
 
-                <p className="text-xs text-muted-foreground">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   Due: {task.due}
                 </p>
               </div>
 
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0 ml-2">
 
               {(task.requiresSigning || task.taskCategory === "critical_task") && task.status !== "done" && (
                 <Button
@@ -442,6 +466,10 @@ export default function EmployeeDashboardPage() {
           </div>
 
         ))}
+
+        {items.length === 0 && (
+          <p className="text-sm text-muted-foreground text-center py-6">No tasks in this category.</p>
+        )}
 
       </div>
 
@@ -474,19 +502,32 @@ export default function EmployeeDashboardPage() {
                 <PasskeyBanner />
 
                 {loadingProfile ? (
-                  <Skeleton className="h-8 w-64" />
+                  <div className="flex items-center gap-4">
+                    <Skeleton className="h-14 w-14 rounded-full" />
+                    <div className="space-y-2">
+                      <Skeleton className="h-6 w-52" />
+                      <Skeleton className="h-4 w-36" />
+                    </div>
+                  </div>
                 ) : (
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h2 className="text-2xl font-bold">
-                        Welcome back, Hadi Anwar
-                      </h2>
-                      <p className="text-muted-foreground text-sm mt-1">
-                        {profile?.email}
-                      </p>
-                      <p className="text-sm font-medium text-primary mt-2">
-                        {designation}
-                      </p>
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex items-center gap-4">
+                      <img
+                        src={hadiAvatar}
+                        alt="Hadi Anwar"
+                        className="w-14 h-14 rounded-full object-cover flex-shrink-0 ring-2 ring-blue-600"
+                      />
+                      <div>
+                        <h2 className="text-2xl font-bold">
+                          Welcome back, Hadi Anwar
+                        </h2>
+                        <p className="text-muted-foreground text-sm mt-0.5">
+                          {profile?.email}
+                        </p>
+                        <p className="text-sm font-medium text-primary mt-1">
+                          {designation}
+                        </p>
+                      </div>
                     </div>
                     <Button
                       className="passkey-btn"
@@ -519,9 +560,12 @@ export default function EmployeeDashboardPage() {
             {/* Tasks Title */}
 
             <section className="lg:col-span-12">
-              <h3 className="text-lg font-semibold">
-                These are the Tasks assigned to you this week
-              </h3>
+              <div className="flex items-center gap-3">
+                <div className="h-6 w-1 rounded-full" style={{ background: "linear-gradient(to bottom, #1a2e44, #79C6C7)" }} />
+                <h3 className="text-lg font-semibold">
+                  These are the tasks assigned to you this week
+                </h3>
+              </div>
             </section>
 
             {/* Task Columns */}

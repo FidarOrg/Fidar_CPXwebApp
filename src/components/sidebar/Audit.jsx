@@ -105,14 +105,22 @@ export default function AuditPage() {
             {/* Stats */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               {[
-                { label: "Total Events",    value: counts.total },
-                { label: "Successful",      value: counts.success },
-                { label: "Failed",          value: counts.failed },
-                { label: "Unique Users",    value: counts.users },
-              ].map(({ label, value }) => (
-                <div key={label} className="rounded-lg p-5 border bg-card">
-                  <p className="text-sm" style={HB}>{label}</p>
-                  <p className="text-4xl mt-1" style={HB}>{value}</p>
+                { label: "Total Events",  value: counts.total,   accent: "#6366f1", bg: "#ede9fe", symbol: "📊" },
+                { label: "Successful",    value: counts.success, accent: "#22c55e", bg: "#dcfce7", symbol: "✅" },
+                { label: "Failed",        value: counts.failed,  accent: "#ef4444", bg: "#fee2e2", symbol: "❌" },
+                { label: "Unique Users",  value: counts.users,   accent: "#3b82f6", bg: "#dbeafe", symbol: "👤" },
+              ].map(({ label, value, accent, bg, symbol }) => (
+                <div key={label} className="rounded-xl p-6 border bg-card shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
+                  <div className="absolute top-0 left-0 right-0 h-1 rounded-t-xl" style={{ background: accent }} />
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <p className="text-sm" style={HB}>{label}</p>
+                      <p className="text-4xl mt-2" style={HB}>{value}</p>
+                    </div>
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center text-xl flex-shrink-0" style={{ background: bg }}>
+                      {symbol}
+                    </div>
+                  </div>
                 </div>
               ))}
             </div>
