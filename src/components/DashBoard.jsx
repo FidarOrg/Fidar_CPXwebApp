@@ -705,21 +705,21 @@ export default function EmployeeDashboardPage() {
 
             {/* Header */}
             <div className="mb-1 pr-6">
-              <h2 className="text-xl font-bold" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>{selectedTask?.title}</h2>
+              <h2 className="text-xl font-bold" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>{selectedTask?.title}</h2>
             </div>
 
             {/* Description */}
-            <p className="text-sm mb-5 leading-relaxed" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
+            <p className="text-sm mb-5 leading-relaxed" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
               {selectedTask?.description}
             </p>
 
             {/* Metadata Card */}
             {selectedTask?.criticalTask && (
-              <div className="bg-gray-50 border border-gray-200 rounded-xl p-4 mb-4 space-y-3">
+              <div className="bg-muted/40 border border-border rounded-xl p-4 mb-4 space-y-3">
 
                 <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-xs uppercase tracking-wide" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Task Type</span>
-                  <span className="text-sm font-semibold bg-blue-50 text-blue-700 px-2 py-0.5 rounded-md w-fit">
+                  <span className="text-xs uppercase tracking-wide text-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Task Type</span>
+                  <span className="text-sm font-semibold bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400 px-2 py-0.5 rounded-md w-fit">
                     {selectedTask.criticalTask.taskType
                       ?.replace(/_/g, " ")
                       .replace(/\b\w/g, (c) => c.toUpperCase())}
@@ -727,10 +727,10 @@ export default function EmployeeDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-xs uppercase tracking-wide" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Target</span>
+                  <span className="text-xs uppercase tracking-wide text-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Target</span>
                   <span
-                      className="text-sm truncate max-w-[180px]"
-                      style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
+                      className="text-sm truncate max-w-[180px] text-foreground"
+                      style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
                     >
                       {selectedTask.criticalTask.targetResourceName
                         ? selectedTask.criticalTask.targetResourceName
@@ -741,8 +741,8 @@ export default function EmployeeDashboardPage() {
                 </div>
 
                 <div className="grid grid-cols-[120px_1fr] items-center gap-2">
-                  <span className="text-xs uppercase tracking-wide" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Resource Type</span>
-                  <span className="text-sm" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
+                  <span className="text-xs uppercase tracking-wide text-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>Resource Type</span>
+                  <span className="text-sm text-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
                     {selectedTask.criticalTask.targetResourceType}
                   </span>
                 </div>
@@ -752,17 +752,17 @@ export default function EmployeeDashboardPage() {
 
             {/* Waiting / Completing Banner */}
             {(criticalTaskPhase === "waiting" || criticalTaskPhase === "completing") && (
-              <div className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl px-4 py-3 mb-4">
+              <div className="flex items-start gap-3 bg-amber-100/50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl px-4 py-3 mb-4">
                 <span className="animate-spin text-amber-500 mt-0.5 flex-shrink-0">
                   <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
                     <path strokeLinecap="round" d="M12 2a10 10 0 0 1 10 10" />
                   </svg>
                 </span>
                 <div>
-                  <p className="text-sm" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
+                  <p className="text-sm text-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
                     {criticalTaskPhase === "completing" ? "Executing task…" : "Waiting for approval"}
                   </p>
-                  <p className="text-xs mt-0.5" style={{ color: "#000", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
+                  <p className="text-xs mt-0.5 text-muted-foreground" style={{ fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}>
                     A push notification was sent to your Android device.
                     This will complete automatically once approved.
                   </p>
@@ -858,11 +858,11 @@ export default function EmployeeDashboardPage() {
               </svg>
             </div>
 
-            <h2 style={{ fontSize: 20, fontWeight: "bold", color: "#000", marginBottom: 6 }}>
+            <h2 className="text-foreground" style={{ fontSize: 20, fontWeight: "bold", marginBottom: 6 }}>
               Transaction Signing Successful
             </h2>
-            <p style={{ fontSize: 13, color: "#111", marginBottom: 24, lineHeight: 1.5 }}>
-              <span style={{ fontWeight: "bold", color: "#111" }}>{successTaskTitle}</span> has been
+            <p className="text-muted-foreground" style={{ fontSize: 13, marginBottom: 24, lineHeight: 1.5 }}>
+              <span className="text-foreground" style={{ fontWeight: "bold" }}>{successTaskTitle}</span> has been
               signed and executed successfully.
             </p>
 
