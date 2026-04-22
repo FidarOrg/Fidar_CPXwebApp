@@ -595,8 +595,8 @@ export default function EmployeeDashboardPage() {
                     onClick={() => setActiveCategory(cat)}
                     style={activeCategory === cat
                       ? { background: "#E40046", color: "#fff", border: "none", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }
-                      : { background: "transparent", color: "#111", border: "1.5px solid #e5e7eb", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
-                    className={`px-3 py-0.5 rounded-full text-xs transition-all ${activeCategory === cat ? "text-white" : "text-black"}`}
+                      : { background: "transparent", fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" }}
+                    className={`px-3 py-0.5 rounded-full text-xs transition-all border border-border ${activeCategory === cat ? "text-white" : "text-foreground"}`}
                   >
                     {cat}
                   </button>

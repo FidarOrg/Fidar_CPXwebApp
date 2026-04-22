@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import hadiAvatar from "@/assets/hadi.jpeg";
 
-const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold", color: "#000" };
+const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" };
 
 const SectionCard = ({ accent, icon: Icon, title, children }) => (
   <Card className="rounded-xl bg-card border shadow-sm hover:shadow-md transition-shadow relative overflow-hidden">
@@ -164,7 +164,7 @@ export default function Settings() {
               {/* QUANTUM PASS */}
               <SectionCard accent="#FFB020" icon={Key} title="Quantum Pass">
                 <div className="space-y-4 pt-1">
-                  <div className="flex items-center justify-between rounded-xl border p-4" style={{ borderColor: fidoEnabled ? "#1DB96B" : "#e5e7eb", background: fidoEnabled ? "#e6f9f0" : "transparent" }}>
+                  <div className="flex items-center justify-between rounded-xl border p-4" style={{ borderColor: fidoEnabled ? "#1DB96B" : undefined, background: fidoEnabled ? "color-mix(in srgb, #1DB96B 12%, transparent)" : "transparent" }}>
                     <div>
                       <p className="text-sm" style={HB}>{fidoEnabled ? "Passkey Active" : "Passkey Disabled"}</p>
                       <p className="text-xs text-muted-foreground mt-0.5">
@@ -240,8 +240,8 @@ export default function Settings() {
                       onClick={() => handleDeviceRoleChange(role)}
                       className="rounded-xl border p-4 text-left transition-all"
                       style={{
-                        borderColor: deviceRole === role ? "#1DB96B" : "#e5e7eb",
-                        background: deviceRole === role ? "#e0f7f7" : "transparent",
+                        borderColor: deviceRole === role ? "#1DB96B" : undefined,
+                        background: deviceRole === role ? "color-mix(in srgb, #1DB96B 12%, transparent)" : "transparent",
                         boxShadow: deviceRole === role ? "0 0 0 2px #1DB96B80" : "none",
                       }}
                     >
@@ -269,7 +269,7 @@ export default function Settings() {
                     <div key={d.id} className="flex items-center justify-between rounded-xl border p-3 gap-3">
                       <div className="flex items-center gap-3 min-w-0">
                         <div className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0 text-base"
-                          style={{ background: d.trusted ? "#e0f7f7" : "#ffe4e8" }}>
+                          style={{ background: d.trusted ? "color-mix(in srgb, #79C6C7 15%, transparent)" : "color-mix(in srgb, #E40046 15%, transparent)" }}>
                           {d.type === "Mobile" ? "📱" : "💻"}
                         </div>
                         <div className="min-w-0">
@@ -279,7 +279,7 @@ export default function Settings() {
                       </div>
                       <div className="flex items-center gap-2 flex-shrink-0">
                         {d.trusted && (
-                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "#e0f7f7", color: "#79C6C7", fontWeight: "bold" }}>Trusted</span>
+                          <span className="text-xs px-2 py-0.5 rounded-full" style={{ background: "color-mix(in srgb, #79C6C7 20%, transparent)", color: "#79C6C7", fontWeight: "bold" }}>Trusted</span>
                         )}
                       <button
                           className="passkey-btn"
