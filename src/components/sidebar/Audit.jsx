@@ -3,7 +3,7 @@ import Header from "@/components/header/Header";
 import AppSidebar from "@/components/sidebar/app-sidebar";
 import { BarChart2, CheckCircle2, XCircle, Users } from "lucide-react";
 
-const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold", color: "#000" };
+const HB = { fontFamily: "'Helvetica World', Helvetica, Arial, sans-serif", fontWeight: "bold" };
 
 const AUDIT_LOGS = [
   { id: 1,  timestamp: "2026-04-20 09:42:11", user: "hadi.anwar@fidar.io",    action: "LOGIN",            resource: "Auth Service",          ip: "192.168.1.14",  status: "Success", details: "Passkey authentication successful" },
@@ -27,24 +27,24 @@ const AUDIT_LOGS = [
 ];
 
 const ACTION_COLORS = {
-  LOGIN:          "bg-blue-100 text-blue-700 border-blue-300",
-  LOGOUT:         "bg-gray-100 text-gray-600 border-gray-300",
-  TASK_INITIATE:  "bg-amber-100 text-amber-700 border-amber-300",
-  TASK_COMPLETE:  "bg-green-100 text-green-700 border-green-300",
-  POLICY_VIEW:    "bg-purple-100 text-purple-700 border-purple-300",
-  POLICY_UPDATE:  "bg-violet-100 text-violet-700 border-violet-300",
-  USER_CREATED:   "bg-cyan-100 text-cyan-700 border-cyan-300",
-  ROLE_CHANGE:    "bg-orange-100 text-orange-700 border-orange-300",
-  SETTINGS_UPDATE:"bg-sky-100 text-sky-700 border-sky-300",
-  DEVICE_BIND:    "bg-teal-100 text-teal-700 border-teal-300",
-  DEVICE_REVOKE:  "bg-red-100 text-red-700 border-red-300",
-  EXPORT:         "bg-lime-100 text-lime-700 border-lime-300",
-  AUDIT_EXPORT:   "bg-indigo-100 text-indigo-700 border-indigo-300",
+  LOGIN:          "bg-blue-100 text-blue-700 border-blue-300 dark:bg-blue-900/30 dark:text-blue-400 dark:border-blue-800",
+  LOGOUT:         "bg-gray-100 text-gray-600 border-gray-300 dark:bg-gray-800/50 dark:text-gray-400 dark:border-gray-700",
+  TASK_INITIATE:  "bg-amber-100 text-amber-700 border-amber-300 dark:bg-amber-900/30 dark:text-amber-400 dark:border-amber-800",
+  TASK_COMPLETE:  "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+  POLICY_VIEW:    "bg-purple-100 text-purple-700 border-purple-300 dark:bg-purple-900/30 dark:text-purple-400 dark:border-purple-800",
+  POLICY_UPDATE:  "bg-violet-100 text-violet-700 border-violet-300 dark:bg-violet-900/30 dark:text-violet-400 dark:border-violet-800",
+  USER_CREATED:   "bg-cyan-100 text-cyan-700 border-cyan-300 dark:bg-cyan-900/30 dark:text-cyan-400 dark:border-cyan-800",
+  ROLE_CHANGE:    "bg-orange-100 text-orange-700 border-orange-300 dark:bg-orange-900/30 dark:text-orange-400 dark:border-orange-800",
+  SETTINGS_UPDATE:"bg-sky-100 text-sky-700 border-sky-300 dark:bg-sky-900/30 dark:text-sky-400 dark:border-sky-800",
+  DEVICE_BIND:    "bg-teal-100 text-teal-700 border-teal-300 dark:bg-teal-900/30 dark:text-teal-400 dark:border-teal-800",
+  DEVICE_REVOKE:  "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
+  EXPORT:         "bg-lime-100 text-lime-700 border-lime-300 dark:bg-lime-900/30 dark:text-lime-400 dark:border-lime-800",
+  AUDIT_EXPORT:   "bg-indigo-100 text-indigo-700 border-indigo-300 dark:bg-indigo-900/30 dark:text-indigo-400 dark:border-indigo-800",
 };
 
 const STATUS_COLORS = {
-  Success: "bg-green-100 text-green-700 border-green-300",
-  Failed:  "bg-red-100 text-red-700 border-red-300",
+  Success: "bg-green-100 text-green-700 border-green-300 dark:bg-green-900/30 dark:text-green-400 dark:border-green-800",
+  Failed:  "bg-red-100 text-red-700 border-red-300 dark:bg-red-900/30 dark:text-red-400 dark:border-red-800",
 };
 
 const ACTIONS = ["All", ...Array.from(new Set(AUDIT_LOGS.map((l) => l.action)))];

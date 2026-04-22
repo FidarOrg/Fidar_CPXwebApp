@@ -20,12 +20,11 @@ export default function AppSidebar() {
 
   return (
     <aside
-      className={`w-full lg:w-60 shrink-0 text-sidebar-foreground
+      className={`w-full lg:w-60 shrink-0 bg-sidebar text-sidebar-foreground
       lg:sticky lg:top-14 lg:h-[calc(100vh-56px)]
       ${dir === "rtl" ? "lg:right-0" : "lg:left-0"}
       transition-all duration-300`}
       style={{
-        background: "#fff",
         boxShadow: dir === "rtl" ? "-4px 0 16px rgba(0,0,0,0.08)" : "4px 0 16px rgba(0,0,0,0.08)",
       }}
     >
