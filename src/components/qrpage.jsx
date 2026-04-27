@@ -25,7 +25,7 @@ import { toast } from "sonner";
 // ── QR-BLE constants (temp: no SDK) ──────────────────────────────────────────
 const REALM = "FIDAR_WEBAUTH_V2";
 const CLIENT_ID = "cpx";
-const DEVICE_AUTH_BASE = "https://axpd8hgbc2.ap-south-1.awsapprunner.com/fidar/sdk/api";
+const DEVICE_AUTH_BASE = "https://sdk.fidar.io/fidar/sdk/api/cpx/device-bind";
 const QR_REFRESH_MS = 2000;   // refresh QR image every 2s
 const POLL_INTERVAL_MS = 3000; // status poll every 3s
 const SLOW_DOWN_MS = 10000;
@@ -153,7 +153,7 @@ function QrPage() {
   const startQrRefresh = useCallback((sessionId) => {
     const refresh = async () => {
       try {
-        const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr/${sessionId}`);
+        const res = await fetch(`${DEVICE_AUTH_BASE}/qr/${sessionId}`);
         if (res.ok) {
           const data = await res.json().catch(() => ({}));
           // const fresh = data.qr ?? data.qrToken ?? data.token ?? null;
@@ -172,7 +172,7 @@ function QrPage() {
     (session) => {
       const poll = async () => {
         try {
-          const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr-ble/poll`, {
+          const res = await fetch(`${DEVICE_AUTH_BASE}/poll`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -238,7 +238,7 @@ function QrPage() {
     setError("");
 
     try {
-      const res = await fetch(`${DEVICE_AUTH_BASE}/device-auth/qr-ble/start-session`, {
+      const res = await fetch(`${DEVICE_AUTH_BASE}/start-session`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ realm: REALM, clientId: CLIENT_ID }),
