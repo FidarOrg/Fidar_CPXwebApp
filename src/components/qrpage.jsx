@@ -18,6 +18,8 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Loader2, ShieldCheck, Bluetooth } from "lucide-react";
+import Lottie from "lottie-react";
+import nfcAnimation from "../assets/nfc_tap.json";
 import { LanguageSwitcher } from "./language-swicther/LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
@@ -53,7 +55,8 @@ function QrPage() {
   const sessionRef = useRef(null);
   const pollTimerRef = useRef(null);
   const qrRefreshTimerRef = useRef(null);
-  const bleStartedRef = useRef(false); // prevent double-trigger
+  const bleStartedRef = useRef(false);
+  const bleCompletedRef = useRef(false); // prevent poll from rolling back to PENDING_BLE
 
   // Cleanup on unmount
   useEffect(() => {
@@ -72,7 +75,7 @@ function QrPage() {
     return () => clearInterval(timer);
   }, [phase]);
 
-  // 📡 BLE flow — web delivers challenge to phone via BLE, phone calls /verify itself
+  // 📡 BLE flow — web does proximity exchange only; Android app calls ble/verify to advance server status
   const runBleFlow = useCallback(async () => {
     setBleLoading(true);
     setError("");
@@ -81,7 +84,6 @@ function QrPage() {
       const sessionId = sessionRef.current?.sessionId;
       if (!sessionId) throw new Error("No active session");
 
-      // Generate random challenge component
       const random = crypto.randomUUID
         ? crypto.randomUUID()
         : Math.random().toString(36).slice(2);
@@ -106,7 +108,6 @@ function QrPage() {
       const service = await server.getPrimaryService(BLE_SERVICE_UUID);
       const characteristic = await service.getCharacteristic(BLE_CHAR_UUID);
 
-      // Write challenge to characteristic
       console.log("[QR-BLE] Writing payload to characteristic:", payload);
       const encoded = new TextEncoder().encode(payload);
 
@@ -122,28 +123,24 @@ function QrPage() {
           throw new Error("BLE characteristic does not support write");
         }
 
-        // Read back phone's signed response
         if (characteristic.properties?.read) {
           const responseValue = await characteristic.readValue();
-          console.log(
-            "[QR-BLE] Phone response received:",
-            new TextDecoder().decode(responseValue)
-          );
+          console.log("[QR-BLE] Phone response received:", new TextDecoder().decode(responseValue));
         }
       } finally {
         if (device.gatt?.connected) device.gatt.disconnect();
       }
 
-      // Phone calls /bluetooth-proximity/verify with qrSessionId — poll picks this up.
-      console.log("[QR-BLE] BLE pairing complete ✅");
-      if (pollTimerRef.current) clearTimeout(pollTimerRef.current);
+      // BLE proximity confirmed — Android app will call ble/verify to advance server to PENDING_NFC_VERIFY
+      console.log("[QR-BLE] BLE exchange complete ✅ — waiting for Android to advance server status");
+      bleCompletedRef.current = true;
       if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
-      toast.success("Device Paired Successfully");
-      navigate("/dashboard");
+      setPollStatus("PENDING_NFC_VERIFY");
+      toast.success("Bluetooth confirmed — tap the NFC card on the phone");
     } catch (err) {
       console.error("[QR-BLE] BLE flow error:", err);
       setError(err.message || "Bluetooth connection failed");
-      bleStartedRef.current = false; // allow retry
+      bleStartedRef.current = false;
     } finally {
       setBleLoading(false);
     }
@@ -185,10 +182,13 @@ function QrPage() {
           let data = {};
           try { data = await res.json(); } catch (_) {}
 
+          console.log("[QR-BLE] Poll response:", res.status, JSON.stringify(data));
+
           if (res.status === 200 && data.status === "AUTHORIZED") {
             setPollStatus("AUTHORIZED");
             if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
             setPasskeyLink(data.passkeyLink ?? null);
+            if (!data.passkeyLink) navigate("/dashboard");
             return;
           }
 
@@ -213,8 +213,10 @@ function QrPage() {
 
           // 202 — track status
           if (data.status) {
-            setPollStatus(data.status);
-            // When PENDING_BLE: stop QR refresh, but BLE is triggered by user button click
+            // Never roll back to PENDING_BLE once BLE pairing is already done
+            if (!(data.status === "PENDING_BLE" && bleCompletedRef.current)) {
+              setPollStatus(data.status);
+            }
             if (data.status === "PENDING_BLE" && !bleStartedRef.current) {
               bleStartedRef.current = true;
               if (qrRefreshTimerRef.current) clearInterval(qrRefreshTimerRef.current);
@@ -442,15 +444,37 @@ function QrPage() {
                   </div>
                 )}
                 {pollStatus === "PENDING_NFC_VERIFY" && (
-                  <div className="flex flex-col items-center gap-2">
-                    <Loader2 className="h-7 w-7 animate-spin text-purple-500" />
-                    <p className="text-sm font-semibold text-purple-500 text-center">
-                      Waiting for employee NFC tap + OTP...
-                    </p>
+                  <div className="flex flex-col items-center gap-4 py-2 w-full">
+                    <Lottie
+                      animationData={nfcAnimation}
+                      loop
+                      autoplay
+                      className="w-36 h-36"
+                    />
+
+                    <div className="text-center space-y-1">
+                      <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
+                        Waiting for NFC tap
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Hold the NFC card near the back of the Android phone
+                      </p>
+                    </div>
+
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                      <Loader2 className="h-3 w-3 animate-spin shrink-0" />
+                      <span>Listening for card tap…</span>
+                    </div>
                   </div>
                 )}
                 {pollStatus === "PENDING_APPROVAL" && (
-                  <div className="flex flex-col items-center gap-2">
+                  <div className="flex flex-col items-center gap-3">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950 border border-emerald-200 dark:border-emerald-800">
+                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400" />
+                      <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400">
+                        NFC card accepted
+                      </span>
+                    </div>
                     <Loader2 className="h-7 w-7 animate-spin text-yellow-500" />
                     <p className="text-sm font-semibold text-yellow-500 text-center">
                       Waiting for manager to approve...
