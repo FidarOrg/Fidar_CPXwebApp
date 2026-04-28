@@ -84,10 +84,16 @@ function QrPage() {
       const sessionId = sessionRef.current?.sessionId;
       if (!sessionId) throw new Error("No active session");
 
-      const random = crypto.randomUUID
-        ? crypto.randomUUID()
-        : Math.random().toString(36).slice(2);
-      const payload = `${sessionId}:${random}`;
+      // Create BLE sub-session on the server to get a proper bleSessionId + challenge
+      const bleRes = await fetch(`${DEVICE_AUTH_BASE}/ble/session`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      if (!bleRes.ok) throw new Error(`BLE session creation failed: HTTP ${bleRes.status}`);
+      const bleData = await bleRes.json();
+      console.log("[QR-BLE] BLE sub-session created:", bleData.sessionId, "challenge:", bleData.challenge);
+      const payload = `${bleData.sessionId}:${bleData.challenge}`;
 
       // Web Bluetooth — must come from user gesture (button click)
       console.log("[QR-BLE] Requesting BLE device...");
