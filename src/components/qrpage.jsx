@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Loader2, ShieldCheck, Bluetooth } from "lucide-react";
+import { Loader2, ShieldCheck, Bluetooth, MessageSquare } from "lucide-react";
 import Lottie from "lottie-react";
 import nfcAnimation from "../assets/nfc_tap.json";
 import { LanguageSwitcher } from "./language-swicther/LanguageSwitcher";
@@ -450,26 +450,48 @@ function QrPage() {
                   </div>
                 )}
                 {pollStatus === "PENDING_NFC_VERIFY" && (
-                  <div className="flex flex-col items-center gap-4 py-2 w-full">
-                    <Lottie
-                      animationData={nfcAnimation}
-                      loop
-                      autoplay
-                      className="w-36 h-36"
-                    />
+                  <div className="flex flex-col items-center gap-3 py-2 w-full">
+                    <p className="text-sm font-semibold text-center text-foreground">
+                      Complete both steps on your phone
+                    </p>
 
-                    <div className="text-center space-y-1">
-                      <p className="text-sm font-semibold text-purple-600 dark:text-purple-400">
-                        Waiting for NFC tap
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Hold the NFC card near the back of the Android phone
-                      </p>
-                    </div>
+                    <div className="grid grid-cols-2 gap-3 w-full">
+                      {/* NFC */}
+                      <div className="flex flex-col items-center gap-2 rounded-xl border bg-purple-50 dark:bg-purple-950/40 border-purple-200 dark:border-purple-800 p-3">
+                        <Lottie
+                          animationData={nfcAnimation}
+                          loop
+                          autoplay
+                          className="w-20 h-20"
+                        />
+                        <p className="text-xs font-semibold text-purple-600 dark:text-purple-400 text-center">
+                          Tap NFC Card
+                        </p>
+                        <p className="text-[10px] text-muted-foreground text-center leading-tight">
+                          Hold card near the back of the phone
+                        </p>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Loader2 className="h-2.5 w-2.5 animate-spin shrink-0" />
+                          <span>Listening…</span>
+                        </div>
+                      </div>
 
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      <Loader2 className="h-3 w-3 animate-spin shrink-0" />
-                      <span>Listening for card tap…</span>
+                      {/* SMS OTP */}
+                      <div className="flex flex-col items-center gap-2 rounded-xl border bg-blue-50 dark:bg-blue-950/40 border-blue-200 dark:border-blue-800 p-3">
+                        <div className="w-20 h-20 flex items-center justify-center">
+                          <MessageSquare className="h-10 w-10 text-blue-500 animate-pulse" />
+                        </div>
+                        <p className="text-xs font-semibold text-blue-600 dark:text-blue-400 text-center">
+                          Enter SMS OTP
+                        </p>
+                        <p className="text-[10px] text-muted-foreground text-center leading-tight">
+                          Enter the code sent to your registered number
+                        </p>
+                        <div className="flex items-center gap-1 text-[10px] text-muted-foreground">
+                          <Loader2 className="h-2.5 w-2.5 animate-spin shrink-0" />
+                          <span>Waiting…</span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 )}
