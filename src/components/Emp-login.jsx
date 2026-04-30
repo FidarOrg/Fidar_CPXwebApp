@@ -28,7 +28,7 @@ import { FIDAR_API_BASE } from "@/config";
 
 const NOTIFY_INITIATE_PATH = "/fidar/sdk/api/transaction/signature/notify/initiate";
 const POLL_PATH = (sessionId) => `/fidar/sdk/api/transaction/signature/poll/${sessionId}`;
-const SSO_PATH = "/fidar/sdk/api/saml2/authenticate/pingone";
+const SSO_PATH = "/fidar/sdk/api/saml2/authenticate/entraid";
 const POLL_INTERVAL_MS = 3000;
 
 // 🔹 Inline component for language switcher
